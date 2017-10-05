@@ -1,0 +1,19 @@
+# Complex Network file:
+#random.seed 1234567890
+
+
+simulation.cycles 1
+
+network.size 500
+
+protocol.link IdleProtocol
+
+protocol.localisation example.update.NodeCoordinates
+
+init.0 example.update.InetInitializer
+init.0.protocol localisation
+
+
+control.io example.update.InetObserver
+control.io.protocol link
+control.io.coord_protocol localisation
