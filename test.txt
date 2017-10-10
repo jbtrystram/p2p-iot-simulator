@@ -4,16 +4,20 @@
 
 simulation.cycles 1
 
-network.size 500
-
-protocol.link IdleProtocol
-
-protocol.localisation example.update.NodeCoordinates
+network.size 10
 
 init.0 example.update.InetInitializer
 init.0.protocol localisation
 
+init.1 example.update.AnnounceInitializer
+init.1.protocol announce
+
+protocol.link IdleProtocol
+protocol.localisation example.update.NodeCoordinates
+protocol.announce example.update.Announce
+protocol.announce.coord_protocol localisation
 
 control.io example.update.InetObserver
 control.io.protocol link
 control.io.coord_protocol localisation
+

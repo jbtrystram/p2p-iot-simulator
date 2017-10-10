@@ -1,5 +1,6 @@
 package example.update;
 
+import peersim.core.Node;
 import peersim.core.Protocol;
 
 /**
@@ -13,6 +14,8 @@ public class NodeCoordinates implements Protocol {
 
     /** 2d coordinates */
     private int x, y;
+
+    private long nodeId;
 
     String prefix;
     // ------------------------------------------------------------------------
@@ -51,6 +54,24 @@ public class NodeCoordinates implements Protocol {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+
+    /**
+     * Return the distance between two nodes.
+     * The distance is computed between the current node and
+     * the one given.
+     *
+     * @param coord
+     *            The NodeCoordinates protocol running on target node.
+     */
+    public int getDistance(NodeCoordinates coord){
+        double distance=0;
+
+        distance=Math.sqrt(Math.pow((this.getX()-coord.getX()),2)+
+                    Math.pow((this.getY()-coord.getY()),2));
+
+        return (int)distance;
     }
 
 }

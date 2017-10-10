@@ -76,7 +76,7 @@ public class InetObserver implements Control {
                     .getProtocol(coordPid)).getX();
             int y = ((NodeCoordinates) current
                     .getProtocol(coordPid)).getY();
-            System.out.println("Node "+i+"; "+x+":"+y );
+             System.out.println("Node "+i+"; "+x+":"+y );
             /*
             for (int index : g.getNeighbours(i)) {
                 Node n = (Node) g.getNode(index);
