@@ -1,37 +1,39 @@
 package example.update;
 
 import peersim.config.Configuration;
-import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
 /**
- * This class initialize the Announce protocol with the correct nodeID.
+ * Observe the list of neighbors maintained by the Announce protocol
  */
-public class AnnounceInitializer implements Control {
+public class NeighborsObservers  implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters
     // ------------------------------------------------------------------------
+
     /**
-     * The protocol to operate on.
+     * The neigbors protocol to look at.
      *
      * @config
      */
-    private static final String PAR_PROT = "protocol";
+    private static final String PAR_NEIGHBORS_PROT = "neigbors_protocol";
 
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
-    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
+    /**
+     * Coordinate protocol identifier. Obtained from config property
+     * {@link #PAR_NEIGHBORS_PROT}.
+     */
     private final int pid;
 
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
-
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
@@ -39,27 +41,24 @@ public class AnnounceInitializer implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public AnnounceInitializer(String prefix) {
-
-        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+    public NeighborsObservers (String prefix) {
+        pid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
     }
 
-    // ------------------------------------------------------------------------
-    // Methods
-    // ------------------------------------------------------------------------
-    /**
-     * Initialize the nodeID in announce protocol.
-     */
+    // Control interface method.
     public boolean execute() {
 
-        Node n ;
-        Announce protocol;
-
         for (int i = 0; i < Network.size(); i++) {
-            n = Network.get(i);
-            protocol = (Announce) n.getProtocol(pid);
-            protocol.setMyself(n.getID());
+
+            Node current = (Node) Network.get(i);
+
+            //System.out.println(i+" have "+ ((Announce)current.getProtocol(pid)).getNeighbors().size() +" neighbors");
+            String neigbors = "";
+            for (int j=0; j < ((Announce)current.getProtocol(pid)).getNeighbors().size(); j++)
+                neigbors += ((Announce)current.getProtocol(pid)).getNeighbors().get(j).getID() + ", ";
+            System.out.println("Node "+i+" neigbors-> "+neigbors);
         }
+
         return false;
     }
 }

@@ -1,8 +1,7 @@
 # Complex Network file:
-#random.seed 1234567890
+random.seed 1234567890
 
-
-simulation.cycles 1
+simulation.cycles 3
 
 network.size 10
 
@@ -16,8 +15,13 @@ protocol.link IdleProtocol
 protocol.localisation example.update.NodeCoordinates
 protocol.announce example.update.Announce
 protocol.announce.coord_protocol localisation
+protocol.announce.max_distance 400
 
 control.io example.update.InetObserver
 control.io.protocol link
 control.io.coord_protocol localisation
+
+control.neighobserver example.update.NeighborsObservers
+control.neighobserver.protocol link
+control.neighobserver.neigbors_protocol announce
 
