@@ -50,7 +50,10 @@ public class InetInitializer implements Control {
     private static final String PAR_PROT = "protocol";
 
     // get max node speed from config file
-    private static final String NODE_SPEED = "max_node_speed";
+    private static final String MAX_NODE_SPEED = "max_node_speed";
+
+    // get min node speed from config file. Under this value node won't move
+    private static final String MIN_NODE_SPEED = "min_node_speed";
 
     // ------------------------------------------------------------------------
     // Fields
@@ -59,6 +62,7 @@ public class InetInitializer implements Control {
     /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
     private final int pid;
     private final int maxSpeed;
+    private final int minSpeed;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -74,7 +78,8 @@ public class InetInitializer implements Control {
     public InetInitializer(String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
-        maxSpeed = Configuration.getInt(prefix + "." + NODE_SPEED);
+        maxSpeed = Configuration.getInt(prefix + "." + MAX_NODE_SPEED);
+        minSpeed = Configuration.getInt(prefix + "." + MIN_NODE_SPEED);
     }
 
     // ------------------------------------------------------------------------
@@ -100,7 +105,14 @@ public class InetInitializer implements Control {
 
             // Set angle and speed
             protocol.setAngle(CommonState.r.nextInt(360));
-            protocol.setSpeed(CommonState.r.nextInt(maxSpeed));
+
+            int speed = CommonState.r.nextInt(maxSpeed);
+            if (speed >= minSpeed) {
+                protocol.setSpeed(speed);
+            }
+            else {
+                protocol.setSpeed(0);
+            }
         }
         return false;
     }

@@ -9,6 +9,7 @@ map_size 1000
 init.0 example.update.InetInitializer
 init.0.protocol localisation
 init.0.max_node_speed 60
+init.0.min_node_speed 10
 
 init.1 example.update.AnnounceInitializer
 init.1.protocol announce
