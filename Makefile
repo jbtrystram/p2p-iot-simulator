@@ -75,10 +75,12 @@ order:
 	mv *.dat graphs/
 
 FILES := $(wildcard graphs/graph*.dat)
-PLOTCMD := $(foreach data, $(FILES), plot/2d_graph.py $(data) &)
+PLOTCMD := $(foreach data, $(FILES), plot/2d_graph.py $(data) ;)
 graph:
-	$(PLOTCMD) wait
+	$(PLOTCMD) #wait
 
 gif: graph
 	convert -delay 20 -loop 1 graphs/*.png map.gif
+	convert map.gif -fuzz 10% -layers Optimize map.gif
+
 
