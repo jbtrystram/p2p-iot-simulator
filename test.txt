@@ -1,12 +1,14 @@
 # Complex Network file:
 random.seed 1234567890
 
-simulation.cycles 3
+simulation.cycles 100
 
-network.size 10
+network.size 20
+map_size 1000
 
 init.0 example.update.InetInitializer
 init.0.protocol localisation
+init.0.max_node_speed 60
 
 init.1 example.update.AnnounceInitializer
 init.1.protocol announce
@@ -15,7 +17,7 @@ protocol.link IdleProtocol
 protocol.localisation example.update.NodeCoordinates
 protocol.announce example.update.Announce
 protocol.announce.coord_protocol localisation
-protocol.announce.max_distance 400
+protocol.announce.max_distance 150
 
 control.io example.update.InetObserver
 control.io.protocol link
@@ -25,3 +27,7 @@ control.neighobserver example.update.NeighborsObservers
 control.neighobserver.protocol link
 control.neighobserver.neigbors_protocol announce
 
+control.nodemover example.update.NodeMover
+control.nodemover.protocol link
+control.nodemover.coord_protocol localisation
+control.nodemover.map_size map_size

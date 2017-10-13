@@ -67,8 +67,18 @@ release: clean all docnew
 	cp jep-2.3.0.jar peersim-$(VER)
 	cp djep-1.0.0.jar peersim-$(VER)
 
-
-
-
-run:	all
+run:	
 	java -cp jep-2.3.0.jar:djep-1.0.0.jar:src peersim.Simulator test.txt
+
+order: 
+	mkdir -p graphs
+	mv *.dat graphs/
+
+FILES := $(wildcard graphs/graph*.dat)
+PLOTCMD := $(foreach data, $(FILES), plot/2d_graph.py $(data) &)
+graph:
+	$(PLOTCMD) wait
+
+gif: graph
+	convert -delay 20 -loop 1 graphs/*.png map.gif
+
