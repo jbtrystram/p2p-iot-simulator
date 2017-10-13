@@ -23,9 +23,14 @@ import peersim.core.Node;
 import peersim.core.*;
 
 import peersim.graph.Graph;
+import peersim.util.FileNameGenerator;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 /**
- * This class prints to files the topology wiring using a Gnuplot friendly
+ * This class prints to files the topology wiring using a Matplotlib friendly
  * syntax. Uses the {@link Graph} interface to visit the topology.
  *
  * @author Gian Paolo Jesi
@@ -42,6 +47,13 @@ public class InetObserver implements Control {
      */
     private static final String PAR_COORDINATES_PROT = "coord_protocol";
 
+    /**
+     * Output logfile name.
+     *
+     * @config
+     */
+    private static final String PAR_FILENAME_BASE = "file_base";
+
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
@@ -51,6 +63,17 @@ public class InetObserver implements Control {
      * {@link #PAR_COORDINATES_PROT}.
      */
     private final int coordPid;
+
+    /* logfile to print data. Name obrtained from config
+     * {@link #PAR_FILENAME_BASE}.
+     */
+     private final String graph_filename;
+
+    /**
+     * Utility class to generate incremental indexed filenames from a common
+     * base given by {@link #graph_filename}.
+     */
+    private final FileNameGenerator fng;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -63,33 +86,48 @@ public class InetObserver implements Control {
      *            the configuration prefix for this class.
      */
     public InetObserver(String prefix) {
-         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
+        coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
+        graph_filename = Configuration.getString(prefix + "."
+                + PAR_FILENAME_BASE, "graph_dump");
+        fng = new FileNameGenerator(graph_filename, ".dat");
     }
+
+
 
     // Control interface method.
     public boolean execute() {
-        for (int i = 1; i < Network.size(); i++) {
 
-            Node current = (Node) Network.get(i);
+        try {
+             // initialize output streams
+            String fname = fng.nextCounterName();
+            FileOutputStream outStream = new FileOutputStream(fname);
+            System.out.println("InetObserver : Writing to file " + fname);
+            PrintStream pstr = new PrintStream(outStream);
+
+            // dump topology:
+            writeGraph(pstr);
+
+            outStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+
+    private void writeGraph(PrintStream file) {
+
+        for (int i = 0; i < Network.size(); i++) {
+
+            Node current = Network.get(i);
 
             int x = ((NodeCoordinates) current
                     .getProtocol(coordPid)).getX();
             int y = ((NodeCoordinates) current
                     .getProtocol(coordPid)).getY();
-             System.out.println("Node "+i+"; "+x+":"+y );
-            /*
-            for (int index : g.getNeighbours(i)) {
-                Node n = (Node) g.getNode(index);
-                double x_from = ((InetCoordinates) n
-                        .getProtocol(coordPid)).getX();
-                double y_from = ((InetCoordinates) n
-                        .getProtocol(coordPid)).getY();
-                ps.println(x_from + " " + y_from);
-                ps.println(x_to + " " + y_to);
-                ps.println();
-            } */
-        }
 
-        return false;
+            file.println(i + ";" + x + ";" + y);
+        }
     }
 }
