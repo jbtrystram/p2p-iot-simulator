@@ -61,10 +61,16 @@ public class Announce implements CDProtocol {
         this.myself = myself;
     }
 
-    public void parseAnnounce(Node sender){
+    public void addAnnounce(Node sender) {
         if (! this.neighbors.contains(sender)) {
             this.neighbors.addLast(sender);
             //System.out.println(myself +" received announce from "+sender.getID());
+        }
+    }
+
+    public void removeAnnounce(Node sender){
+        if (this.neighbors.contains(sender)) {
+            this.neighbors.remove(sender);
         }
 
     }
@@ -74,16 +80,19 @@ public class Announce implements CDProtocol {
 
         // Go through all the nodes in the network
         for (int i = 0; i < Network.size(); i++) {
+            int distance = ((NodeCoordinates) node.getProtocol(coordPid))
+                    .getDistance((NodeCoordinates) Network.get(i).getProtocol(coordPid));
 
-            if ( node.getID() != Network.get(i).getID() && ((NodeCoordinates) node.getProtocol(coordPid))
-                    .getDistance((NodeCoordinates) Network.get(i).getProtocol(coordPid))
+            if ( node.getID() != Network.get(i).getID() && distance
                     <= maxDistance) {
-                //System.out.println(node.getID() + " close to " + Network.get(i).getID());
+                // Node is in range : send announce\
 
-                // Node is in range : send announce
-                ((Announce)Network.get(i).getProtocol(protId)).parseAnnounce(node);
+                ((Announce) Network.get(i).getProtocol(protId)).addAnnounce(node);
             }
-
+            // Node not in range ; try to remove it
+            else{
+                ((Announce) Network.get(i).getProtocol(protId)).removeAnnounce(node);
+            }
         }
 
     }
