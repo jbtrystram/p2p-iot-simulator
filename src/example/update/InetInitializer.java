@@ -49,12 +49,16 @@ public class InetInitializer implements Control {
      */
     private static final String PAR_PROT = "protocol";
 
+    // get max node speed from config file
+    private static final String NODE_SPEED = "max_node_speed";
+
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
     /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
     private final int pid;
+    private final int maxSpeed;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -70,6 +74,7 @@ public class InetInitializer implements Control {
     public InetInitializer(String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
+        maxSpeed = Configuration.getInt(prefix + "." + NODE_SPEED);
     }
 
     // ------------------------------------------------------------------------
@@ -88,9 +93,14 @@ public class InetInitializer implements Control {
         // Set coordinates x,y
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
+            // Set coordinates x,y
             protocol = (NodeCoordinates) n.getProtocol(pid);
             protocol.setX(CommonState.r.nextInt(1000));
             protocol.setY(CommonState.r.nextInt(1000));
+
+            // Set angle and speed
+            protocol.setAngle(CommonState.r.nextInt(360));
+            protocol.setSpeed(CommonState.r.nextInt(maxSpeed));
         }
         return false;
     }

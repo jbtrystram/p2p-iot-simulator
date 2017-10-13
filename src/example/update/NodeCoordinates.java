@@ -15,6 +15,9 @@ public class NodeCoordinates implements Protocol {
     /** 2d coordinates */
     private int x, y;
 
+    /** Angle & speed of the node */
+    private int angle, speed;
+
     private long nodeId;
 
     String prefix;
@@ -56,6 +59,13 @@ public class NodeCoordinates implements Protocol {
         this.y = y;
     }
 
+    public void setAngle(int angle) { this.angle = angle; }
+
+    public int getAngle() { return angle;  }
+
+    public int getSpeed() { return speed;  }
+
+    public void setSpeed(int speed) { this.speed = speed;}
 
     /**
      * Return the distance between two nodes.
@@ -66,10 +76,10 @@ public class NodeCoordinates implements Protocol {
      *            The NodeCoordinates protocol running on target node.
      */
     public int getDistance(NodeCoordinates coord){
-        double distance=0;
+        double distance;
 
-        distance=Math.sqrt(Math.pow((this.getX()-coord.getX()),2)+
-                    Math.pow((this.getY()-coord.getY()),2));
+        distance= Math.sqrt(Math.pow(this.getX()-coord.getX(),2)+
+                    Math.pow(this.getY()-coord.getY(),2));
 
         return (int)distance;
     }
