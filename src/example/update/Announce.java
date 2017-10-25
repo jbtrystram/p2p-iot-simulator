@@ -20,8 +20,6 @@ public class Announce implements CDProtocol {
     private final int maxDistance;
     private static final String PAR_NEIGH_DISTANCE = "max_distance";
 
-    private long myself;
-
     private LinkedList<Node> neighbors = new LinkedList();
 
     // =========================================
@@ -57,9 +55,6 @@ public class Announce implements CDProtocol {
         return neighbors;
     }
 
-    public void setMyself(long myself) {
-        this.myself = myself;
-    }
 
     public void addAnnounce(Node sender) {
         if (! this.neighbors.contains(sender)) {
@@ -73,6 +68,11 @@ public class Announce implements CDProtocol {
             this.neighbors.remove(sender);
         }
 
+    }
+
+    // Invoked by the energy observer when the node is switched off
+    public void cleanNeighborsList(){
+        this.neighbors.clear();
     }
 
     // This is the method called by the simulator at each cycle
