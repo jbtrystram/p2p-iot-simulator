@@ -1,24 +1,29 @@
 # Complex Network file:
 random.seed 1234567890
 
-simulation.cycles 100
+simulation.cycles 15
 
 network.size 20
 map_size 1000
 
-init.0 example.update.InetInitializer
-init.0.protocol localisation
-init.0.max_node_speed 60
-init.0.min_node_speed 10
+init.0 example.update.EnergyInitializer
+init.0.protocol energy
 
-init.1 example.update.AnnounceInitializer
-init.1.protocol announce
+init.1 example.update.InetInitializer
+init.1.protocol localisation
+init.1.max_node_speed 60
+init.1.min_node_speed 10
+
+#init.1 example.update.AnnounceInitializer
+#init.1.protocol announce
+
+protocol.energy example.update.SimpleEnergy
 
 protocol.link IdleProtocol
 protocol.localisation example.update.NodeCoordinates
 protocol.announce example.update.Announce
 protocol.announce.coord_protocol localisation
-protocol.announce.max_distance 150
+protocol.announce.max_distance 75
 
 control.io example.update.InetObserver
 control.io.protocol link
@@ -28,7 +33,16 @@ control.neighobserver example.update.NeighborsObservers
 control.neighobserver.protocol link
 control.neighobserver.neigbors_protocol announce
 
+control.energyobserver example.update.SimpleEnergyObserver
+control.energyobserver.protocol link
+control.energyobserver.energy_protocol energy
+
 control.nodemover example.update.NodeMover
 control.nodemover.protocol link
 control.nodemover.coord_protocol localisation
 control.nodemover.map_size map_size
+
+control.switcher example.update.EnergySwitcher
+control.switcher.protocol link
+control.switcher.energy_protocol energy
+control.switcher.energy_switching_probability 50
