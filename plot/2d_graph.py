@@ -32,6 +32,7 @@ plt.title('Node positions & discovered links')
 
 #plot neigbors relationships
 
+
 for line in open(neigh_file):
 	neighbors = np.fromstring( (line.rstrip('\n')), sep=';', dtype=int)
 	for node in range(1, neighbors.size):
