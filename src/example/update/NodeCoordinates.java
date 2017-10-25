@@ -18,8 +18,6 @@ public class NodeCoordinates implements Protocol {
     /** Angle & speed of the node */
     private int angle, speed;
 
-    private long nodeId;
-
     String prefix;
     // ------------------------------------------------------------------------
     // Constructor

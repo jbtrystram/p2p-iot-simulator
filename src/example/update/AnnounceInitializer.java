@@ -50,15 +50,15 @@ public class AnnounceInitializer implements Control {
      * Initialize the nodeID in announce protocol.
      */
     public boolean execute() {
-
+    /* there is nothing to initialize really
         Node n ;
         Announce protocol;
 
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
-            protocol = (Announce) n.getProtocol(pid);
-            protocol.setMyself(n.getID());
-        }
+            //protocol = (Announce) n.getProtocol(pid);
+           // protocol.setMyself(n.getID());
+        } */
         return false;
     }
 }
