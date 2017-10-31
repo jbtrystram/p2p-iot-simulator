@@ -48,7 +48,7 @@ public class InetObserver implements Control {
     private static final String PAR_COORDINATES_PROT = "coord_protocol";
 
     /**
-     * Output logfile name.
+     * Output logfile name base.
      *
      * @config
      */
@@ -96,6 +96,7 @@ public class InetObserver implements Control {
 
     // Control interface method.
     public boolean execute() {
+        System.out.println("CoordObserver is run");
 
         try {
              // initialize output streams

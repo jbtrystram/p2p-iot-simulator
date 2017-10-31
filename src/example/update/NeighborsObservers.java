@@ -76,6 +76,7 @@ public class NeighborsObservers  implements Control {
 
     // Control interface method.
     public boolean execute() {
+        System.out.println("Neigbors Observer is run");
 
 
         try {

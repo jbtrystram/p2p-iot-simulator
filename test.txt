@@ -3,7 +3,7 @@ random.seed 1234567890
 
 simulation.cycles 15
 
-network.size 20
+network.size 100
 map_size 1000
 
 init.0 example.update.EnergyInitializer
@@ -23,11 +23,12 @@ protocol.link IdleProtocol
 protocol.localisation example.update.NodeCoordinates
 protocol.announce example.update.Announce
 protocol.announce.coord_protocol localisation
-protocol.announce.max_distance 75
+protocol.announce.energy_protocol energy
+protocol.announce.max_distance 150
 
-control.io example.update.InetObserver
-control.io.protocol link
-control.io.coord_protocol localisation
+control.coordObserver example.update.InetObserver
+control.coordObserver.protocol link
+control.coordObserver.coord_protocol localisation
 
 control.neighobserver example.update.NeighborsObservers
 control.neighobserver.protocol link
@@ -45,4 +46,8 @@ control.nodemover.map_size map_size
 control.switcher example.update.EnergySwitcher
 control.switcher.protocol link
 control.switcher.energy_protocol energy
-control.switcher.energy_switching_probability 50
+control.switcher.energy_switching_probability 25
+
+# Specify order
+#order.protocol link,energy,localisation,announce
+#order.observer nodemover,switcher,coordObserver,energyobserver,neighobserver

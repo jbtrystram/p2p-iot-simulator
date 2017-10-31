@@ -29,6 +29,7 @@ public class EnergySwitcher implements Control {
 
 
     public boolean execute() {
+        System.out.println("EnergySwitcher is run");
 
         int node;
         SimpleEnergy nodeEnergy;
