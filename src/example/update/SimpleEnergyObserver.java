@@ -10,9 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-/**
- * Created by jibou on 20/10/17.
- */
 public class SimpleEnergyObserver implements Control {
 
     // ------------------------------------------------------------------------
@@ -26,6 +23,13 @@ public class SimpleEnergyObserver implements Control {
      */
     private static final String PAR_ENERGY_PROT = "energy_protocol";
 
+    /**
+     * Output logfile name base.
+     *
+     * @config
+     */
+    private static final String PAR_FILENAME_BASE = "filename";
+
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
@@ -35,6 +39,17 @@ public class SimpleEnergyObserver implements Control {
      * {@link #PAR_ENERGY_PROT}.
      */
     private final int pid;
+
+    /* logfile to print data. Name obtained from config
+    * {@link #PAR_FILENAME_BASE}.
+    */
+    private final String filename;
+
+    /**
+     * Utility class to generate incremental indexed filenames from a common
+     * base given by {@link #filename}.
+     */
+    private final FileNameGenerator fng;
 
 
     // ------------------------------------------------------------------------
@@ -50,10 +65,35 @@ public class SimpleEnergyObserver implements Control {
     public SimpleEnergyObserver (String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
+        filename = Configuration.getString(prefix + "."
+                + PAR_FILENAME_BASE, "energy_dump");
+        fng = new FileNameGenerator(filename, ".dat");
     }
 
-    // Control interface method.
+    // Control interface method. does the file handling
     public boolean execute() {
+        System.out.println("Energy Observer is run");
+        try {
+            // initialize output streams
+            String fname = fng.nextCounterName();
+            FileOutputStream outStream = new FileOutputStream(fname);
+            System.out.println("EnergyObserver : Writing to file " + fname);
+            PrintStream pstr = new PrintStream(outStream);
+
+            // dump energy states
+            writeData(pstr);
+
+            outStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+
+    // do the actual work
+    private void writeData(PrintStream file) {
 
         String offline = "";
         for (int i = 0; i < Network.size(); i++) {
@@ -61,11 +101,10 @@ public class SimpleEnergyObserver implements Control {
             Node current = Network.get(i);
 
             if (((SimpleEnergy)current.getProtocol(pid)).getOnlineStatus()) {
-                offline += i+",";
-            }
+                file.println(i + ";" + 1);
+
+            }else file.println(i + ";" + 0);
         }
-        System.out.println("offline nodes : "+offline);
-        return false;
     }
 
 
