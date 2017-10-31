@@ -13,11 +13,16 @@ args = parser.parse_args()
 #get neighbors file 
 neigh_file="graphs/neighbors"+args.coord_file.lstrip("graphs/graph")
 
+#get energy data
+energy_file="graphs/energy"+args.coord_file.lstrip("graphs/graph")
+
 
 coord = np.genfromtxt(args.coord_file, delimiter=';')
 
+energy = np.genfromtxt(energy_file, delimiter=';')
+
 #more awesomeness
-plt.xkcd()
+#plt.xkcd()
 
 plt.figure()
 
@@ -41,7 +46,7 @@ for line in open(neigh_file):
 		plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.5, zorder=-1)
 
 # Plot nodes
-plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1)
+plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1, c=energy[:,1])
 
 plt.tight_layout()
 plt.savefig(args.coord_file+'.pdf')
