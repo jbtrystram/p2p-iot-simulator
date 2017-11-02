@@ -74,10 +74,10 @@ order:
 	mkdir -p graphs
 	mv *.dat graphs/
 
-FILES := $(wildcard graphs/graph*.dat)
-PLOTCMD := $(foreach data, $(FILES), python3 plot/2d_graph.py $(data) ;)
 graph:
-	$(PLOTCMD) #wait
+	mkdir -p figs
+	python3 plot/2d_graph.py graphs
+
 
 gif: graph
 	convert -delay 20 -loop 1 graphs/*.png map.gif
