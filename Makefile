@@ -75,7 +75,7 @@ order:
 	mv *.dat graphs/
 
 FILES := $(wildcard graphs/graph*.dat)
-PLOTCMD := $(foreach data, $(FILES), plot/2d_graph.py $(data) ;)
+PLOTCMD := $(foreach data, $(FILES), python3 plot/2d_graph.py $(data) ;)
 graph:
 	$(PLOTCMD) #wait
 
