@@ -1,9 +1,9 @@
 ################### Settings ======================
-#debug.config true
+debug.config true
 MAX_RANGE 150
 
 simulation.cycles 15
-
+battery_failure_probability 50
 network.size 100
 map_size 1000
 random.seed 1234567890
@@ -42,7 +42,7 @@ control.nodemover.map_size map_size
 
 control.switcher example.update.EnergySwitcher
 control.switcher.energy_protocol energy
-control.switcher.energy_switching_probability 25
+control.switcher.energy_switching_probability battery_failure_probability
 
 
 ################ Observers ==============================

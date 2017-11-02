@@ -71,16 +71,18 @@ run:
 	java -cp jep-2.3.0.jar:djep-1.0.0.jar:src peersim.Simulator test.txt
 
 order: 
+	rm -rf graphs/
 	mkdir -p graphs
 	mv *.dat graphs/
 
 graph:
+	rm -rf figs
 	mkdir -p figs
 	python3 plot/2d_graph.py graphs
 
 
 gif: graph
-	convert -delay 20 -loop 1 graphs/*.png map.gif
+	convert -delay 20 -loop 1 figs/*.png map.gif
 	convert map.gif -fuzz 10% -layers Optimize map.gif
 
 

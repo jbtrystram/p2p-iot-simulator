@@ -106,9 +106,10 @@ public class Announce implements CDProtocol {
                     // Node is in range and online : send announce to add myself in Node list
                     ((Announce) Network.get(i).getProtocol(protId)).addAnnounce(node);
                 }
-                // Node not in range or offline; remove myself from Node list
+                // Node not in range or offline; remove it from my neighbors list
                 else {
-                    ((Announce) Network.get(i).getProtocol(protId)).removeAnnounce(node);
+                    ((Announce) node.getProtocol(protId)).removeAnnounce(Network.get(i));
+
                 }
             }
         }

@@ -38,8 +38,8 @@ def plotter(file_seq, path):
         plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1, c=energy[:,1])
 
         plt.tight_layout()
-        plt.savefig("figs/"+seq+'.pdf')
-        #plt.savefig("figs/"+seq+'.png', dpi = (200))
+        #plt.savefig("figs/"+seq+'.pdf')
+        plt.savefig("figs/"+seq+'.png', dpi = (200))
 
 
 
