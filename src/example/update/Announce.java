@@ -77,7 +77,6 @@ public class Announce implements CDProtocol {
 
     // This is the method called by the simulator at each cycle
     public void nextCycle(Node node, int protId) {
-        System.out.println("announce protocol is run");
 
         // don't send any annouce if offline and empty neighbors list
         if ( !(( (SimpleEnergy) (node.getProtocol(energyPid))).getOnlineStatus()) ){

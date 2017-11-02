@@ -96,7 +96,6 @@ public class InetObserver implements Control {
 
     // Control interface method.
     public boolean execute() {
-        System.out.println("CoordObserver is run");
 
         try {
              // initialize output streams

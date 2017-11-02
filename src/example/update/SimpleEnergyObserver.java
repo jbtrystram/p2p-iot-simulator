@@ -72,7 +72,6 @@ public class SimpleEnergyObserver implements Control {
 
     // Control interface method. does the file handling
     public boolean execute() {
-        System.out.println("Energy Observer is run");
         try {
             // initialize output streams
             String fname = fng.nextCounterName();
