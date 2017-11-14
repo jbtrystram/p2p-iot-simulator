@@ -6,6 +6,7 @@ import peersim.core.Protocol;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ import java.util.List;
 public class SoftwareDB implements Protocol {
 
     /* Local available software */
+
     private ArrayList <SoftwarePackage> localPieces;
 
     /* Hashmap : neighbor -> list of packages   */
@@ -35,14 +37,15 @@ public class SoftwareDB implements Protocol {
         return  new SoftwareDB("");
     }
 
+
     //TODO finish
     public boolean addLocalSoftware(String hash, SoftwarePackage soft) {
         for (int i =0; i < localPieces.size(); i++) {
             if ( ! localPieces.get(i).hasHash(hash) ) {
-                localPieces.get(i).
+                localPieces.get(i);
             }
         }
-
+        return true;
     }
 
     // Return a list of the local running software. Polled by the announce protocol regularly

@@ -7,8 +7,7 @@ import peersim.config.Configuration;
 import peersim.core.Node;
 import peersim.transport.Transport;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by jibou on 07/11/17.
@@ -73,6 +72,7 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
      */
 
     // TODO :  design the  announce message to be exchanged between nodes.
+    // delete neighbors into the DB when they are not around
     // write a SoftwareDBInitializer
     // Write appropriate observer
     // test !
@@ -102,12 +102,11 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
  */
 class AnnounceMessage {
 
-    final ArrayList<SoftwarePackage> announcedPackages;
+    final List<SoftwarePackage> announcedPackages;
     final Node sender;
 
     // Constructor
-    public AnnounceMessage( ArrayList<SoftwarePackage> announcedPackages, Node sender )
-    {
+    public AnnounceMessage( List<SoftwarePackage> announcedPackages, Node sender ) {
         this.announcedPackages = announcedPackages;
         this.sender = sender;
     }

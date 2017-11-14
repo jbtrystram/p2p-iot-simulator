@@ -63,11 +63,11 @@ public class SoftwarePackage {
         hashes.forEach((hash) -> this.hashesStatus.put(hash, false));
     }
 
+
     public boolean hasHash(String hash) {
-        if (this.hashesStatus.containsKey(hash) ) return true;
+        if (this.hashesStatus.containsKey(hash)) return true;
         else return false;
     }
-
 
     public void comletePiece(String hash) {
         if ( hashesStatus.containsKey(hash) ){
