@@ -38,18 +38,9 @@ public class SoftwareDB implements Protocol {
     }
 
 
-    //TODO finish
-    public boolean addLocalSoftware(String hash, SoftwarePackage soft) {
-        for (int i =0; i < localPieces.size(); i++) {
-            if ( ! localPieces.get(i).hasHash(hash) ) {
-                localPieces.get(i);
-            }
-        }
-        return true;
-    }
-
     // Return a list of the local running software. Polled by the announce protocol regularly
     ArrayList<SoftwarePackage> getLocalSoftwareList(){
+
         return this.localPieces;
     }
 
@@ -69,6 +60,17 @@ public class SoftwareDB implements Protocol {
     }
 
 
+    public void addLocalSoftware(SoftwarePackage soft, Node neighbor) {
+
+          // already Existing software?
+        int softID = sameSoftware(soft, localPieces);
+        // yes : remove it
+        if ( softID != -1 ) {
+            localPieces.remove(softID);
+        }
+        localPieces.add(soft);
+    }
+
 
     public void addNeigborSoftware(SoftwarePackage soft, Node neighbor) {
         // unknown neighbor ?
@@ -83,5 +85,15 @@ public class SoftwareDB implements Protocol {
             neighborsPieces.get(neighbor).remove(softID);
         }
         neighborsPieces.get(neighbor).add(soft);
+    }
+
+
+    // Remove neighbors in neighborsPieces that are not in the provided list
+    public void keepOnly(List<Node> list){
+        neighborsPieces.keySet().forEach( node -> {
+            if ( ! list.contains(node) ) {
+                neighborsPieces.remove(node);
+            }
+        });
     }
 }

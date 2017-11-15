@@ -64,6 +64,13 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
                     ((Transport) node.getProtocol(FastConfig.getTransport(neighPid))).send(
                         node, neigh, msg, protocolID);
                 });
+
+
+        /**
+         * Once Announce messages have been sent, pass the neighbor list to
+         * the local instance of software DB to remove neighbors that are not around anymore
+         */
+        db.keepOnly(((Announce) node.getProtocol(neighPid)).getNeighbors());
     }
 
     /**
@@ -71,10 +78,9 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
      * It parse the receivied messages from other nodes to build and maintain
      */
 
-    // TODO :  design the  announce message to be exchanged between nodes.
-    // delete neighbors into the DB when they are not around
-    // write a SoftwareDBInitializer
-    // Write appropriate observer
+
+    // TODO write a SoftwareDBInitializer
+    // TODO Write appropriate observer
     // test !
     public void processEvent( Node node, int pid, Object event ) {
 

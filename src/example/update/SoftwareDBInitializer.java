@@ -1,9 +1,13 @@
 package example.update;
 
 import peersim.config.Configuration;
+import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
+
+import java.util.HashSet;
+import java.security.MessageDigest;
 
 
 /**
@@ -53,13 +57,19 @@ public class SoftwareDBInitializer implements Control {
      */
     public boolean execute() {
 
-        Node n ;
-        SimpleEnergy protocol;
+        for (int i = 0; i < Network.size(); i+=(Network.size()/5) ) {
+            Node n = Network.get(i);
+            SoftwareDB protocol = (SoftwareDB) n.getProtocol(pid);
 
-        for (int i = 0; i < Network.size(); i++) {
-            n = Network.get(i);
-            protocol = (SimpleEnergy) n.getProtocol(pid);
-            protocol.setOnlineStatus(true);
+            // create a random software package
+            String name;
+            double version = 1.1;
+            int size;
+            HashSet<String> hashes;
+
+            SoftwarePackage soft = new SoftwarePackage(name, version, size, hashes);
+
+            protocol.addLocalSoftware();
         }
         return false;
     }
