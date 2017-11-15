@@ -78,8 +78,6 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
      * It parse the receivied messages from other nodes to build and maintain
      */
 
-
-    // TODO write a SoftwareDBInitializer
     // TODO Write appropriate observer
     // test !
     public void processEvent( Node node, int pid, Object event ) {

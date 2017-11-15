@@ -2,6 +2,7 @@ package example.update;
 
 import peersim.core.Node;
 import peersim.core.Protocol;
+import peersim.tools.doclets.internal.toolkit.util.SourceToHTMLConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class SoftwareDB implements Protocol {
     }
 
 
-    public void addLocalSoftware(SoftwarePackage soft, Node neighbor) {
+    public void addLocalSoftware(SoftwarePackage soft) {
 
           // already Existing software?
         int softID = sameSoftware(soft, localPieces);
@@ -94,6 +95,16 @@ public class SoftwareDB implements Protocol {
             if ( ! list.contains(node) ) {
                 neighborsPieces.remove(node);
             }
+        });
+    }
+
+    // Nicely print the content of the softwareDB
+    public String toString(){
+        String output = "Local DB:";
+        localPieces.forEach(soft -> {
+            output = output + "-" + soft.getName()+ ":"+soft.getVersion());
+
+
         });
     }
 }
