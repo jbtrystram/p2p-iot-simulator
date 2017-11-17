@@ -68,7 +68,7 @@ public class SoftwareDBObserver implements Control {
     public SoftwareDBObserver (String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
-        filename = Configuration.getString(prefix + "."
+        filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "energy_dump");
         fng = new FileNameGenerator(filename, ".dat");
     }
@@ -77,8 +77,11 @@ public class SoftwareDBObserver implements Control {
     public boolean execute() {
 
         for (int i = 0; i < Network.size(); i++) {
-            System.out.println(
-            ((SoftwareDB) Network.get(i).getProtocol(pid)).toString() );
+
+            String out =  ((SoftwareDB) Network.get(i).getProtocol(pid)).toString();
+            if (! out.isEmpty()) {
+                System.out.println("Node " + i + "\n" + out);
+            }
         }
         return false;
     }

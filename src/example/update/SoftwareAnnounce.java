@@ -30,7 +30,7 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
     // Initialization ==========================
 
     // Constructor
-    SoftwareAnnounce(String prefix){
+    public SoftwareAnnounce(String prefix){
         this.prefix = prefix;
     //get the node NodeCoordinates protocol pid
         this.neighPid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
@@ -53,18 +53,22 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
         // get access to the node software database
         SoftwareDB db = (SoftwareDB) node.getProtocol(dbpid);
 
-        // create a announce message
-        AnnounceMessage msg = new AnnounceMessage(db.getLocalSoftwareList() , node);
 
-        //get neighbors list
-        ((Announce) node.getProtocol(neighPid)).getNeighbors().
-                // iterate
-                forEach( neigh -> {
-                    // send the message to each of them
-                    ((Transport) node.getProtocol(FastConfig.getTransport(neighPid))).send(
-                        node, neigh, msg, protocolID);
-                });
+        // no need to send a message if the database is empty
+        if ( ! db.localIsEmpty() ) {
+            // create a announce message
+            AnnounceMessage msg = new AnnounceMessage(db.getLocalSoftwareList(), node);
 
+            //get neighbors list
+            System.out.println(String.format("%d sent SoftwareAnnounce !", node.getID()));
+            ((Announce) node.getProtocol(neighPid)).getNeighbors().
+                    // iterate
+                            forEach(neigh -> {
+                        // send the message to each of them
+                        ((Transport) node.getProtocol(FastConfig.getTransport(neighPid))).send(
+                                node, neigh, msg, protocolID);
+                    });
+        }
 
         /**
          * Once Announce messages have been sent, pass the neighbor list to
@@ -78,9 +82,10 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
      * It parse the receivied messages from other nodes to build and maintain
      */
 
-    // TODO Write appropriate observer
-    // test !
+
+    // This method is executed whenever a message is recevied
     public void processEvent( Node node, int pid, Object event ) {
+        System.out.println(String.format("%d recevied SoftwareAnnounce !", node.getID()));
 
         // recevied message
         AnnounceMessage message = (AnnounceMessage)event;

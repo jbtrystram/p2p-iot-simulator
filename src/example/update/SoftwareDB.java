@@ -2,12 +2,11 @@ package example.update;
 
 import peersim.core.Node;
 import peersim.core.Protocol;
-import peersim.tools.doclets.internal.toolkit.util.SourceToHTMLConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -91,20 +90,68 @@ public class SoftwareDB implements Protocol {
 
     // Remove neighbors in neighborsPieces that are not in the provided list
     public void keepOnly(List<Node> list){
+        HashSet<Node> toRemove = new HashSet<>();
         neighborsPieces.keySet().forEach( node -> {
             if ( ! list.contains(node) ) {
-                neighborsPieces.remove(node);
+                toRemove.add(node);
             }
         });
+        toRemove.forEach(node -> {
+            neighborsPieces.remove(node);
+        });
+    }
+
+    public boolean localIsEmpty(){
+        if (this.localPieces.size() == 0 ){
+            return true;
+        }
+        else return false;
     }
 
     // Nicely print the content of the softwareDB
     public String toString(){
-        String output = "Local DB:";
-        localPieces.forEach(soft -> {
-            output = output + "-" + soft.getName()+ ":"+soft.getVersion());
+        StringBuilder output = new StringBuilder();
 
+        // localDB
+        if (localPieces.size() != 0 ) {
+            output.append("Local DB :\n");
+            localPieces.forEach(soft -> {
+                output.append("    -" + soft.getName() + ":" + soft.getVersion());
+                output.append("; hashes : ");
+                soft.getPieces().forEach(piece -> {
+                    if (piece != null) {
+                        output.append("v");
+                    } else {
+                        output.append(".");
+                    }
+                });
+                output.append("\n");
+            });
+        }
 
-        });
+        // neighbors
+        if (neighborsPieces.size() != 0) {
+            output.append("-----------------\n");
+            output.append("neigbors DB :\n ");
+            neighborsPieces.keySet().forEach(neighbour -> {
+                output.append("   N" +neighbour.getID()+"\n");
+                neighborsPieces.get(neighbour).forEach(soft -> {
+                    output.append("    -" + soft.getName() + ":" + soft.getVersion());
+                    output.append("; hashes : ");
+                    soft.getPieces().forEach(piece -> {
+                        if (piece != null) {
+                            output.append("v");
+                        } else {
+                            output.append(".");
+                        }
+                    });
+                    output.append("\n");
+                });
+                output.append("   ++++\n");
+            });
+            output.append("===================================\n");
+        }
+
+        return output.toString();
     }
 }

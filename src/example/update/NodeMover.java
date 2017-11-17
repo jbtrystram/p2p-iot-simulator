@@ -71,7 +71,6 @@ public class NodeMover implements Control {
 
     //Move the nodes
     public boolean execute() {
-        System.out.println("Node Mover is run");
 
         int node;
         NodeCoordinates coordinates;

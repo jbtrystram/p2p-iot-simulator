@@ -69,7 +69,7 @@ public class NeighborsObservers  implements Control {
     public NeighborsObservers (String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
-        graph_filename = Configuration.getString(prefix + "."
+        graph_filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "neighbors_dump");
         fng = new FileNameGenerator(graph_filename, ".dat");
     }

@@ -87,7 +87,7 @@ public class InetObserver implements Control {
      */
     public InetObserver(String prefix) {
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
-        graph_filename = Configuration.getString(prefix + "."
+        graph_filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "graph_dump");
         fng = new FileNameGenerator(graph_filename, ".dat");
     }

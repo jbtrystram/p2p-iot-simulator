@@ -65,7 +65,7 @@ public class SimpleEnergyObserver implements Control {
     public SimpleEnergyObserver (String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
-        filename = Configuration.getString(prefix + "."
+        filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "energy_dump");
         fng = new FileNameGenerator(filename, ".dat");
     }
