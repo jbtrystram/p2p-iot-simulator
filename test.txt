@@ -52,6 +52,7 @@ protocol.db example.update.SoftwareDB
 protocol.gossip example.update.SoftwareAnnounce
 protocol.gossip.neighbors_protocol announce
 protocol.gossip.database_protocol db
+protocol.gossip.supervisor_protocol supervisor
 protocol.gossip.transport tr
 protocol.gossip.step PROTOCOL_CYCLE
 
@@ -61,6 +62,10 @@ init.sch2.protocol gossip
 protocol.tr UniformRandomTransport
 protocol.tr.mindelay 0
 protocol.tr.maxdelay 1
+
+protocol.supervisor example.update.Supervisor
+protocol.supervisor.database_protocol db
+protocol.supervisor.transport tr
 
 ################ controls ==============================
 
@@ -94,7 +99,7 @@ control.dbObserver.database_protocol db
 control.dbObserver.step OBERVERS_CYCLE
 
 ################ Order & timings ==============================
-order.protocol link,tr,energy,localisation,db,announce,gossip
+order.protocol link,tr,energy,localisation,db,announce,gossip,supervisor
 order.control coordObserver,energyobserver,neighobserver,dbObserver,nodemover,switcher
 
 # Observers should be run once more at the end

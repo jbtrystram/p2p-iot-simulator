@@ -24,6 +24,9 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
     private final int dbpid;
     private static final String PAR_DATABASE_PROT = "database_protocol";
 
+    private final int supervisorPid;
+    private static final String PAR_SUPER_PROT = "supervisor_protocol";
+
     // =========================================
 
 
@@ -35,6 +38,7 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
     //get the node NodeCoordinates protocol pid
         this.neighPid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
         this.dbpid = Configuration.getPid(prefix + "." + PAR_DATABASE_PROT);
+        this.supervisorPid = Configuration.getPid(prefix + "." + PAR_SUPER_PROT);
     }
 
     public Object clone() {
@@ -60,7 +64,6 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
             AnnounceMessage msg = new AnnounceMessage(db.getLocalSoftwareList(), node);
 
             //get neighbors list
-            System.out.println(String.format("%d sent SoftwareAnnounce !", node.getID()));
             ((Announce) node.getProtocol(neighPid)).getNeighbors().
                     // iterate
                             forEach(neigh -> {
@@ -85,7 +88,6 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
 
     // This method is executed whenever a message is recevied
     public void processEvent( Node node, int pid, Object event ) {
-        System.out.println(String.format("%d recevied SoftwareAnnounce !", node.getID()));
 
         // recevied message
         AnnounceMessage message = (AnnounceMessage)event;
@@ -97,6 +99,9 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
             message.announcedPackages.forEach( soft ->
                 db.addNeigborSoftware(soft, message.sender)
             );
+
+            // notify local Supervisor of the new neighbor
+            ((Supervisor)node.getProtocol(supervisorPid)).newNeighborNotification(message.sender);
         }
     }
 

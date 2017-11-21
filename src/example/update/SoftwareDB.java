@@ -108,6 +108,31 @@ public class SoftwareDB implements Protocol {
         else return false;
     }
 
+    /*
+    * Return a list containing of missing pieces ID in local Database
+    * Compared to the softwarePackage given in parameter
+    * @param : the package to compare the local db against
+     */
+    public List missingPieces(SoftwarePackage required){
+        ArrayList list = new ArrayList();
+        int localindex = sameSoftware(required, localPieces);
+        if ( localindex  == -1){
+            for (int i=0; i< required.getPieces().size(); i++) {
+                list.add(i);
+            }
+        }else{
+            required.getPieces().forEach(piece ->{
+                if ( ! localPieces.get(localindex).getCompletedPieces().contains(piece)){
+                    list.add(required.getPieces().indexOf(piece));
+                }
+            });
+
+        }
+
+
+        return list;
+    }
+
     // Nicely print the content of the softwareDB
     public String toString(){
         StringBuilder output = new StringBuilder();
