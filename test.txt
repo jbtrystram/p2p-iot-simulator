@@ -1,13 +1,13 @@
 ################### Settings ======================
 debug.config true
-MAX_RANGE 150
+MAX_RANGE 300
 
 #simulation.cycles 100
 OBERVERS_CYCLE 50
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 battery_failure_probability 50
-network.size 100
+network.size 20
 map_size 1000
 random.seed 1234567890
 
@@ -24,6 +24,7 @@ init.1 example.update.InetInitializer
 init.1.protocol localisation
 init.1.max_node_speed 60
 init.1.min_node_speed 10
+init.1.nodes_location_file nodes_position.csv
 
 init.2 example.update.SoftwareDBInitializer
 init.2.protocol db
