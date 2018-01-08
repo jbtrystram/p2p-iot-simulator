@@ -19,8 +19,8 @@ def plotter(file_seq, path):
         plt.figure()
         #plt.ylabel('X')
         #plt.xlabel('Y')
-        plt.axis('off')  #remove axises
-        axes = plt.gca() # auto-set ticks
+        #plt.axes.set_axis_off()  #remove axises
+        #axes = plt.gca() # auto-set ticks
 
         #axes.set_xlim([0,1000])
         #axes.set_ylim([0,1000])
