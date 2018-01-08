@@ -95,6 +95,9 @@ public class SoftwareDBInitializer implements Control {
             SoftwareDB protocol = (SoftwareDB) n.getProtocol(pid);
 
             protocol.addLocalSoftware(randomSoftwarePackage("fedora", 27, 15));
+            protocol.getLocalSoftwareList().forEach(soft -> {
+                soft.comleteAllPieces();
+            });
         }
         return false;
     }

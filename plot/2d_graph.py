@@ -19,7 +19,7 @@ def plotter(file_seq, path):
         plt.figure()
         #plt.ylabel('X')
         #plt.xlabel('Y')
-        plt.axis('off')  #remove axises
+        #plt.axis('off')  #remove axises
         axes = plt.gca() # auto-set ticks
 
         #axes.set_xlim([0,1000])
@@ -40,6 +40,7 @@ def plotter(file_seq, path):
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
         plt.savefig("figs/"+seq+'.png', dpi = (200))
+        plt.close()
 
 
 

@@ -51,7 +51,7 @@ public class SoftwarePackage {
 
     public void setVersion(double version) { this.version = version; }
 
-    public Set<String> getPieces(){return this.hashesStatus.keySet();}
+    public List<String> getPieces(){return new ArrayList<String>(this.hashesStatus.keySet());}
 
     public Set<String> getCompletedPieces(){
         Set<String> tmp = new HashSet<>();
@@ -73,6 +73,28 @@ public class SoftwarePackage {
         if ( hashesStatus.containsKey(hash) ){
             hashesStatus.replace(hash, true);
         }
+    }
+
+    public boolean getPieceStatus(String hash){
+        return hashesStatus.get(hash);
+    }
+
+    private void resetPiece(String hash) {
+        if ( hashesStatus.containsKey(hash) ){
+            hashesStatus.replace(hash, false);
+        }
+    }
+
+    public void comleteAllPieces(){
+        this.hashesStatus.keySet().forEach(key ->{
+            comletePiece(key);
+        });
+    }
+
+    public void resetAllPieces() {
+        this.hashesStatus.keySet().forEach(key ->{
+            resetPiece(key);
+        });
     }
 }
 
