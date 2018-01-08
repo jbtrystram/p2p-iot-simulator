@@ -5,6 +5,7 @@ import peersim.core.CommonState;
 import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Supervisor implements EDProtocol{
@@ -52,12 +53,17 @@ public class Supervisor implements EDProtocol{
     public void newNeighborNotification(Node neigh){
         System.out.println("supervisor "+ CommonState.getNode().getID()+ " noticed new node: "+ neigh.getID());
 
-        // no strategy at this time get a random piece we don't have
+        // no strategy at this time : simply add the software our neighbour have but empty
         SoftwareDB db = (SoftwareDB) CommonState.getNode().getProtocol(this.dbPID);
-        HashSet piecestoGet = new HashSet();
 
-
-
+        // get softwares owned by this neighbour
+        ArrayList<SoftwarePackage> toAdd = db.getNeigbourPackageList(neigh);
+        // add them in localdB but empty !
+        if (toAdd != null){
+            toAdd.forEach(soft -> {
+               db.addLocalSoftware(soft);
+            });
+        }
     }
 
 

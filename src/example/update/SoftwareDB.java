@@ -3,11 +3,7 @@ package example.update;
 import peersim.core.Node;
 import peersim.core.Protocol;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class Stores the running software on the local node
@@ -59,8 +55,8 @@ public class SoftwareDB implements Protocol {
         return -1;
     }
 
-
-    public void addLocalSoftware(SoftwarePackage soft) {
+    //default inserted package are created empty.
+    public SoftwarePackage addLocalSoftware(SoftwarePackage soft) {
 
           // already Existing software?
         int softID = sameSoftware(soft, localPieces);
@@ -68,9 +64,20 @@ public class SoftwareDB implements Protocol {
         if ( softID != -1 ) {
             localPieces.remove(softID);
         }
-        localPieces.add(soft);
+        SoftwarePackage toAdd = new SoftwarePackage(soft.getName(), soft.getVersion(), soft.getSize(), new HashSet<>(soft.getPieces()));
+        toAdd.resetAllPieces();
+        localPieces.add(toAdd);
+        return toAdd;
     }
 
+    public SoftwarePackage getLocalSoftware(SoftwarePackage soft){
+        // already Existing software?
+        int softID = sameSoftware(soft, localPieces);
+        // yes : get it
+        if ( softID != -1 ) {
+            return localPieces.get(softID);
+        }else return null;
+    }
 
     public void addNeigborSoftware(SoftwarePackage soft, Node neighbor) {
         // unknown neighbor ?
@@ -84,9 +91,13 @@ public class SoftwareDB implements Protocol {
         if ( softID != -1 ) {
             neighborsPieces.get(neighbor).remove(softID);
         }
-        neighborsPieces.get(neighbor).add(soft);
+        neighborsPieces.get(neighbor).add(new SoftwarePackage(soft.getName(), soft.getVersion(), soft.getSize(), new HashSet<>(soft.getPieces())));
     }
 
+    public ArrayList<SoftwarePackage> getNeigbourPackageList(Node node){
+
+        return this.neighborsPieces.get(node);
+    }
 
     // Remove neighbors in neighborsPieces that are not in the provided list
     public void keepOnly(List<Node> list){
@@ -108,30 +119,6 @@ public class SoftwareDB implements Protocol {
         else return false;
     }
 
-    /*
-    * Return a list containing of missing pieces ID in local Database
-    * Compared to the softwarePackage given in parameter
-    * @param : the package to compare the local db against
-     */
-    public List missingPieces(SoftwarePackage required){
-        ArrayList list = new ArrayList();
-        int localindex = sameSoftware(required, localPieces);
-        if ( localindex  == -1){
-            for (int i=0; i< required.getPieces().size(); i++) {
-                list.add(i);
-            }
-        }else{
-            required.getPieces().forEach(piece ->{
-                if ( ! localPieces.get(localindex).getCompletedPieces().contains(piece)){
-                    list.add(required.getPieces().indexOf(piece));
-                }
-            });
-
-        }
-
-
-        return list;
-    }
 
     // Nicely print the content of the softwareDB
     public String toString(){
@@ -164,7 +151,7 @@ public class SoftwareDB implements Protocol {
                     output.append("    -" + soft.getName() + ":" + soft.getVersion());
                     output.append("; hashes : ");
                     soft.getPieces().forEach(piece -> {
-                        if (piece != null) {
+                        if (piece != null && soft.getPieceStatus(piece)) {
                             output.append("v");
                         } else {
                             output.append(".");
