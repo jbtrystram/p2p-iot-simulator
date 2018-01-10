@@ -97,6 +97,37 @@ public class InetInitializer implements Control {
     // ------------------------------------------------------------------------
     // Methods
     // ------------------------------------------------------------------------
+
+    private void setupNode(int nodeIndex, int xCoord, int yCoord, int speed, int angle){
+        Node n = Network.get(nodeIndex);
+        NodeCoordinates protocol = protocol = (NodeCoordinates) n.getProtocol(pid);
+
+        // Set coordinates x,y
+        protocol.setX(xCoord);
+        protocol.setY(yCoord);
+
+        // Set angle and speed
+        protocol.setAngle(angle);
+        if (speed >= minSpeed) {
+            protocol.setSpeed(speed);
+        }
+        else {
+            protocol.setSpeed(0);
+        }
+    }
+
+    private void randomSetup(int index){
+        for (int i = index; i < Network.size(); i++){
+        int x = CommonState.r.nextInt(1000);
+        int y = CommonState.r.nextInt(1000);
+        int speed = CommonState.r.nextInt(maxSpeed);
+        int angle = CommonState.r.nextInt(360);
+
+        this.setupNode(i, x, y, speed,angle);
+        }
+    }
+
+
     /**
      * Initialize the node coordinates. The first node in the {@link Network} is
      * the root node by default and it is located in the middle (the center of
@@ -104,7 +135,7 @@ public class InetInitializer implements Control {
      */
     public boolean execute() {
 
-        Node n ;
+        Node n;
         NodeCoordinates protocol;
 
         if (nodeLocationFile != null) {
@@ -113,39 +144,30 @@ public class InetInitializer implements Control {
 
                 br = new BufferedReader(new FileReader(nodeLocationFile));
                 String line = "";
-                int i =0;
+                int i = 0;
 
                 while ((line = br.readLine()) != null && i < Network.size()) {
 
                     String[] node_data = line.split(COMMA_DELIMITER);
 
                     if (node_data.length > 0) {
-                        n = Network.get(i);
-                        // Set coordinates x,y
-                        protocol = (NodeCoordinates) n.getProtocol(pid);
-                        protocol.setX( Integer.parseInt(node_data[0]) );
-                        protocol.setY( Integer.parseInt(node_data[1]) );
-
-                        // Set angle and speed
-                        protocol.setAngle(0);
-                        protocol.setSpeed(0);
+                        setupNode(i, Integer.parseInt(node_data[0]), Integer.parseInt(node_data[1]), 0, 0);
                     }
                     i++;
                 }
 
-
                 // test if the file had enough data. if not, exit. //TODO : complete with random data
-                if (i < Network.size()-1){
-                    System.err.println(nodeLocationFile+" doesn't contain enough data for "+Network.size()+" nodes. Please adjust.");
-                    System.exit(1);
+                if (i < Network.size() - 1) {
+                    System.err.println(nodeLocationFile + " doesn't contain enough data for "
+                            + Network.size() + " nodes. Completing with random data" );
+                    this.randomSetup(i);
+                } else if (i <= Network.size() - 1) {
+                    System.err.println(nodeLocationFile + " contain too much data for " + Network.size() + " nodes. Ignoring the rest of the file.");
                 }
-            }
-            catch (Exception fe)
-            {
+            } catch (Exception fe) {
                 System.err.println(fe.getMessage());
                 System.exit(1);
-            }
-            finally {
+            } finally {
                 try {
                     br.close();
                 } catch (IOException ie) {
@@ -159,27 +181,7 @@ public class InetInitializer implements Control {
 
 
         System.err.println("No node location file provided, going random");
-        // Set the root: the index 0 node by default.
-
-        // Set coordinates x,y
-        for (int i = 0; i < Network.size(); i++) {
-            n = Network.get(i);
-            // Set coordinates x,y
-            protocol = (NodeCoordinates) n.getProtocol(pid);
-            protocol.setX(CommonState.r.nextInt(1000));
-            protocol.setY(CommonState.r.nextInt(1000));
-
-            // Set angle and speed
-            protocol.setAngle(CommonState.r.nextInt(360));
-
-            int speed = CommonState.r.nextInt(maxSpeed);
-            if (speed >= minSpeed) {
-                protocol.setSpeed(speed);
-            }
-            else {
-                protocol.setSpeed(0);
-            }
-        }
+        this.randomSetup(0);
         return false;
     }
 
