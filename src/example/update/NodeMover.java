@@ -32,7 +32,7 @@ public class NodeMover implements Control {
 
     private int TICK = 0;
 
-    private List<String[]> postitions;
+    private List<String[]> positions;
 
     // Constructor
     public NodeMover(String prefix){
@@ -43,14 +43,20 @@ public class NodeMover implements Control {
         dataFile = Configuration.getString(prefix + "." + DATA_FILE, null);
 
         EasyCSV parser = new EasyCSV(dataFile);
-        postitions = parser.content;
+        positions = parser.content;
+
     }
 
 
     // This fonction read datafile given in parameter to update nodes position.
     private int[] readCoordinates(int node) {
 
-        return new int[] {Integer.parseInt(postitions.get(node)[TICK]) , Integer.parseInt(postitions.get(node)[TICK+1]) };
+        if (node >= positions.size() || TICK > positions.get(0).length){
+            System.err.println(dataFile + " doesn't contain enough data to move nodes. Quiting");
+            System.exit(1);
+        }
+
+        return new int[] {Integer.parseInt(positions.get(node)[TICK]) , Integer.parseInt(positions.get(node)[TICK+1]) };
     }
 
     // This fonction compute the node next position with the given location.
@@ -106,11 +112,11 @@ public class NodeMover implements Control {
                 newCoordinates = computeCoordinates(coordinates);
             }else{
                 newCoordinates = readCoordinates(node);
-                TICK +=2;
             }
             coordinates.setX(newCoordinates[0]);
             coordinates.setY(newCoordinates[1]);
         }
+        TICK +=2;
         return false;
     }
 }

@@ -32,7 +32,7 @@ public class EasyCSV {
             fis = new FileInputStream(file);
 
             // parses all rows in one go.
-            List<String[]> content = parser.parseAll(fis);
+            content = parser.parseAll(fis);
 
         } catch (IOException e) {
             e.printStackTrace();
