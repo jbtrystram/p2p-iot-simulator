@@ -4,7 +4,8 @@ import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
 
-import java.awt.print.Book;
+import java.util.List;
+
 
 /**
  * Created by jibou on 11/10/17.
@@ -13,7 +14,7 @@ public class NodeMover implements Control {
 
 
     // Fields ===========================
-    int coordPid;
+    private int coordPid;
     private static final String PAR_COORDINATES_PROT = "coord_protocol";
 
     private int maxSpeed;
@@ -22,15 +23,38 @@ public class NodeMover implements Control {
     private int mapSize;
     private static final String MAP_SIZE = "map_size";
 
+    private String dataFile;
+    private static final String DATA_FILE = "data_file";
+
+    // ==========================
+
+    // ======= Variables
+
+    private int TICK = 0;
+
+    private List<String[]> postitions;
+
     // Constructor
     public NodeMover(String prefix){
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
-        //maxSpeed = Configuration.getInt(prefix + "." + NODE_SPEED);
+
         mapSize = Configuration.getInt(prefix + "." + MAP_SIZE);
+
+        dataFile = Configuration.getString(prefix + "." + DATA_FILE, null);
+
+        EasyCSV parser = new EasyCSV(dataFile);
+        postitions = parser.content;
+    }
+
+
+    // This fonction read datafile given in parameter to update nodes position.
+    private int[] readCoordinates(int node) {
+
+        return new int[] {Integer.parseInt(postitions.get(node)[TICK]) , Integer.parseInt(postitions.get(node)[TICK+1]) };
     }
 
     // This fonction compute the node next position with the given location.
-    private void changeCoordinates(NodeCoordinates coord){
+    private int[] computeCoordinates(NodeCoordinates coord){
         boolean outOfBonds;
         // we need doubles to have precision during the computation
         double radians = Math.toRadians(coord.getAngle());
@@ -65,8 +89,7 @@ public class NodeMover implements Control {
                 else if (180 < angle && angle <= 270) { coord.setAngle(360-angle);}
             }
 
-        coord.setX((int)newX);
-        coord.setY((int)newY);
+        return new int[] {(int)newX, (int)newY} ;
     }
 
     //Move the nodes
@@ -74,9 +97,19 @@ public class NodeMover implements Control {
 
         int node;
         NodeCoordinates coordinates;
+        int[] newCoordinates;
+
         for (node=0; node < Network.size(); node++) {
             coordinates = (NodeCoordinates) Network.get(node).getProtocol(coordPid);
-            changeCoordinates(coordinates);
+
+            if (dataFile.equals(null)) {
+                newCoordinates = computeCoordinates(coordinates);
+            }else{
+                newCoordinates = readCoordinates(node);
+                TICK +=2;
+            }
+            coordinates.setX(newCoordinates[0]);
+            coordinates.setY(newCoordinates[1]);
         }
         return false;
     }
