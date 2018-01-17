@@ -24,9 +24,7 @@ import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.List;
 
 /**
  * <p>
@@ -71,8 +69,9 @@ public class InetInitializer implements Control {
     private final int maxSpeed;
     private final int minSpeed;
 
-    private static final String COMMA_DELIMITER = ",";
     private final String nodeLocationFile;
+
+    private List<String[]> positions;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -92,6 +91,11 @@ public class InetInitializer implements Control {
         minSpeed = Configuration.getInt(prefix + "." + MIN_NODE_SPEED);
 
         nodeLocationFile = Configuration.getString(prefix + "." + NODES_LOCATION_FILENAME_PARAM, null);
+
+        if (nodeLocationFile != null ) {
+            EasyCSV parser = new EasyCSV(nodeLocationFile);
+            positions = parser.content;
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -135,28 +139,17 @@ public class InetInitializer implements Control {
      */
     public boolean execute() {
 
-        Node n;
-        NodeCoordinates protocol;
-
         if (nodeLocationFile != null) {
-            BufferedReader br = null;
-            try {
-
-                br = new BufferedReader(new FileReader(nodeLocationFile));
-                String line = "";
                 int i = 0;
+                while (i < Network.size() && i < positions.size() ) {
 
-                while ((line = br.readLine()) != null && i < Network.size()) {
-
-                    String[] node_data = line.split(COMMA_DELIMITER);
-
-                    if (node_data.length > 0) {
-                        setupNode(i, Integer.parseInt(node_data[0]), Integer.parseInt(node_data[1]), 0, 0);
+                    if (positions.get(i).length > 0) {
+                        setupNode(i, Integer.parseInt(positions.get(i)[0]), Integer.parseInt(positions.get(i)[1]), 0, 0);
                     }
                     i++;
                 }
 
-                // test if the file had enough data. if not, exit. //TODO : complete with random data
+                // test if the file had enough data. if not, complete with random data
                 if (i < Network.size() - 1) {
                     System.err.println(nodeLocationFile + " doesn't contain enough data for "
                             + Network.size() + " nodes. Completing with random data" );
@@ -164,17 +157,7 @@ public class InetInitializer implements Control {
                 } else if (i <= Network.size() - 1) {
                     System.err.println(nodeLocationFile + " contain too much data for " + Network.size() + " nodes. Ignoring the rest of the file.");
                 }
-            } catch (Exception fe) {
-                System.err.println(fe.getMessage());
-                System.exit(1);
-            } finally {
-                try {
-                    br.close();
-                } catch (IOException ie) {
-                    System.out.println("Error occured while closing the BufferedReader");
-                    ie.printStackTrace();
-                }
-            }
+
             return false;
         }
 
