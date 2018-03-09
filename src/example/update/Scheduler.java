@@ -6,9 +6,8 @@ import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
-public class Supervisor implements EDProtocol{
+public class Scheduler implements EDProtocol{
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -31,7 +30,7 @@ public class Supervisor implements EDProtocol{
     //private final int downloadPID;
 
     String prefix;
-    public Supervisor(String prefix) {
+    public Scheduler(String prefix) {
         this.prefix = prefix;
 
         // get PIDs of SoftwareDB and Downloader
@@ -39,8 +38,8 @@ public class Supervisor implements EDProtocol{
         //downloadPID = Configuration.getPid(prefix + "." + DOWNLOAD_PROT);
     }
 
-    public Supervisor clone(){
-        return new Supervisor(prefix);
+    public Scheduler clone(){
+        return new Scheduler(prefix);
     }
 
     //receive messages
@@ -69,6 +68,12 @@ public class Supervisor implements EDProtocol{
 
     // TODO : invoke strategy in a separate method
 
+    //TODO update softwareDB. TODO faire toute la glue ici
+    /**
+     * Once NeighborhoodMaintainer messages have been sent, pass the neighbor list to
+     * the local instance of software DB to remove neighbors that are not around anymore
+     */
+       // db.keepOnly(((NeighborhoodMaintainer) node.getProtocol(neighPid)).getNeighbors());
 
     // ask downloader to download something
 

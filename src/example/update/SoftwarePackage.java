@@ -1,41 +1,45 @@
 package example.update;
 
+import java.security.MessageDigest;
 import java.util.*;
 
 /**
  * A class representing a software package.
  * Stores completed hashes
  */
+//TODO : store a proper hash as ID.
 public class SoftwarePackage {
 
-    private String name;
+    private final String name;
     private int size;
     private double version;
+    private final byte[] id;
 
     private HashMap<String, Boolean> hashesStatus;
 
-    SoftwarePackage(String name, double version){
+    public SoftwarePackage(String name, double version){
         this.name = name;
         this.version = version;
         this.size = 0;
         this.hashesStatus = new HashMap<>();
+
+        this.id = (name+version).getBytes();
     }
 
-    SoftwarePackage(String name, double version, int size, Set<String> hashes){
+    public SoftwarePackage(String name, double version, int size, Set<String> hashes){
         this.name = name;
         this.version = version;
         this.size = hashes.size();
         this.hashesStatus = new HashMap<>();
         hashes.forEach((hash) -> this.hashesStatus.put(hash, false));
+
+        this.id = (name+version).getBytes();
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public int getSize() {
         return size;
@@ -49,7 +53,7 @@ public class SoftwarePackage {
         return version;
     }
 
-    public void setVersion(double version) { this.version = version; }
+    public byte[] getId() { return id; }
 
     public List<String> getPieces(){return new ArrayList<String>(this.hashesStatus.keySet());}
 

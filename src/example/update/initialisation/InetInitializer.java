@@ -16,8 +16,9 @@
  *
  */
 
-package example.update;
+package example.update.initialisation;
 
+import example.update.NodeCoordinates;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;

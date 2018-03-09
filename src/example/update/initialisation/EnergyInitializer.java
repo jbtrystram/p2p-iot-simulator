@@ -1,14 +1,16 @@
-package example.update;
+package example.update.initialisation;
 
+import example.update.SimpleEnergy;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
+
 /**
- * This class initialize the Announce protocol with the correct nodeID.
+ * Created by jibou on 20/10/17.
  */
-public class AnnounceInitializer implements Control {
+public class EnergyInitializer implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -38,7 +40,7 @@ public class AnnounceInitializer implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public AnnounceInitializer(String prefix) {
+    public EnergyInitializer(String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
     }
@@ -47,18 +49,21 @@ public class AnnounceInitializer implements Control {
     // Methods
     // ------------------------------------------------------------------------
     /**
-     * Initialize the nodeID in announce protocol.
+     * Initialize the energy state to true in the SimpleEnergy Protocol.
+     * -> "power on"the nodes
      */
     public boolean execute() {
-    /* there is nothing to initialize really
+
         Node n ;
-        Announce protocol;
+        SimpleEnergy protocol;
 
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
-            //protocol = (Announce) n.getProtocol(pid);
-           // protocol.setMyself(n.getID());
-        } */
+            protocol = (SimpleEnergy) n.getProtocol(pid);
+            protocol.setOnlineStatus(true);
+        }
         return false;
     }
+
 }
+

@@ -7,12 +7,13 @@ import peersim.config.Configuration;
 import peersim.core.Node;
 import peersim.transport.Transport;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * Created by jibou on 07/11/17.
  */
-public class SoftwareAnnounce implements EDProtocol, CDProtocol {
+public class Gossiper implements EDProtocol{ //, CDProtocol {
 
     // Fields =================================
     String prefix;
@@ -27,22 +28,25 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
     private final int supervisorPid;
     private static final String PAR_SUPER_PROT = "supervisor_protocol";
 
-    // =========================================
+    // Variables =========================================
+
+    HashSet<byte[]> receviedMessages;
 
 
     // Initialization ==========================
 
     // Constructor
-    public SoftwareAnnounce(String prefix){
+    public Gossiper(String prefix){
         this.prefix = prefix;
     //get the node NodeCoordinates protocol pid
         this.neighPid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
         this.dbpid = Configuration.getPid(prefix + "." + PAR_DATABASE_PROT);
         this.supervisorPid = Configuration.getPid(prefix + "." + PAR_SUPER_PROT);
+        receviedMessages = new HashSet<>();
     }
 
     public Object clone() {
-        return new SoftwareAnnounce(prefix);
+        return new Gossiper(prefix);
     }
 
 
@@ -53,55 +57,49 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
      *
      * It get the neighbors list from the neighbour protocol and update the available software list accordingly
      */
-    public void nextCycle(Node node, int protocolID) {
-        // get access to the node software database
-        SoftwareDB db = (SoftwareDB) node.getProtocol(dbpid);
+    //TODO : don't share whole db each round but forward message upon reception.
+    // And discard already recevied messages.
+    // more gossip style !
+    // let's go full event-driven
+    private void forward(Node sender, Node local, int protocolID, SoftwarePackage soft) {
 
-
-        // no need to send a message if the database is empty
-        if ( ! db.localIsEmpty() ) {
             // create a announce message
-            AnnounceMessage msg = new AnnounceMessage(db.getLocalSoftwareList(), node);
+            NetworkMessage msg = new NetworkMessage(soft, local);
 
             //get neighbors list
-            ((Announce) node.getProtocol(neighPid)).getNeighbors().
+            ((NeighborhoodMaintainer) local.getProtocol(neighPid)).getNeighbors().
                     // iterate
                             forEach(neigh -> {
-                        // send the message to each of them
-                        ((Transport) node.getProtocol(FastConfig.getTransport(neighPid))).send(
-                                node, neigh, msg, protocolID);
-                    });
-        }
-
-        /**
-         * Once Announce messages have been sent, pass the neighbor list to
-         * the local instance of software DB to remove neighbors that are not around anymore
-         */
-        db.keepOnly(((Announce) node.getProtocol(neighPid)).getNeighbors());
+                                if (neigh != sender) {
+                                    // send the message to each of them
+                                    ((Transport) local.getProtocol(FastConfig.getTransport(neighPid))).send(
+                                            local, neigh, msg, protocolID);
+                                }
+                            });
     }
 
     /**
      * This is the standard method to define to process incoming messages.
-     * It parse the receivied messages from other nodes to build and maintain
+     * It parse the receivied messages from other nodes
      */
-
-
-    // This method is executed whenever a message is recevied
+    // This method is executed whenever a message is recevied. we forward it if it was never recevied.
     public void processEvent( Node node, int pid, Object event ) {
 
         // recevied message
-        AnnounceMessage message = (AnnounceMessage)event;
+        NetworkMessage message = (NetworkMessage)event;
 
-        if( message.sender!=null ){
+        if( message.sender!=null && !receviedMessages.contains(message.announcedPackage.getId()) ){
+            receviedMessages.add(message.announcedPackage.getId());
+
             // process each software into the local db.
             SoftwareDB db = (SoftwareDB) node.getProtocol(dbpid);
+            db.addNeigborSoftware(message.announcedPackage, message.sender);
 
-            message.announcedPackages.forEach( soft ->
-                db.addNeigborSoftware(soft, message.sender)
-            );
+            //forward the message to neigbors.
+            forward(message.sender, node, pid, message.announcedPackage);
 
-            // notify local Supervisor of the new neighbor
-            ((Supervisor)node.getProtocol(supervisorPid)).newNeighborNotification(message.sender);
+            // notify local Scheduler of the new neighbor
+            ((Scheduler)node.getProtocol(supervisorPid)).newNeighborNotification(message.sender);
         }
     }
 
@@ -114,14 +112,16 @@ public class SoftwareAnnounce implements EDProtocol, CDProtocol {
  * The type of a message. It contains a list of software packages
  * And the sender Node {@link peersim.core.Node}.
  */
-class AnnounceMessage {
+class NetworkMessage {
 
-    final List<SoftwarePackage> announcedPackages;
+
+
+    final SoftwarePackage announcedPackage;
     final Node sender;
 
     // Constructor
-    public AnnounceMessage( List<SoftwarePackage> announcedPackages, Node sender ) {
-        this.announcedPackages = announcedPackages;
+    public NetworkMessage(SoftwarePackage announcedPackage, Node sender ) {
+        this.announcedPackage = announcedPackage;
         this.sender = sender;
     }
 }

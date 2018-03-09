@@ -1,5 +1,6 @@
-package example.update;
+package example.update.observation;
 
+import example.update.SimpleEnergy;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
@@ -10,10 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-/**
- * Created by jibou on 15/11/17.
- */
-public class SoftwareDBObserver implements Control {
+public class SimpleEnergyObserver implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -24,7 +22,7 @@ public class SoftwareDBObserver implements Control {
      *
      * @config
      */
-    private static final String PAR_PROT = "database_protocol";
+    private static final String PAR_ENERGY_PROT = "energy_protocol";
 
     /**
      * Output logfile name base.
@@ -39,7 +37,7 @@ public class SoftwareDBObserver implements Control {
 
     /**
      * Energy protocol identifier. Obtained from config property
-     * {@link #PAR_PROT}.
+     * {@link #PAR_ENERGY_PROT}.
      */
     private final int pid;
 
@@ -65,9 +63,9 @@ public class SoftwareDBObserver implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public SoftwareDBObserver (String prefix) {
+    public SimpleEnergyObserver (String prefix) {
 
-        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+        pid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
         filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "energy_dump");
         fng = new FileNameGenerator(filename, ".dat");
@@ -75,14 +73,39 @@ public class SoftwareDBObserver implements Control {
 
     // Control interface method. does the file handling
     public boolean execute() {
+        try {
+            // initialize output streams
+            String fname = fng.nextCounterName();
+            FileOutputStream outStream = new FileOutputStream(fname);
+            System.out.println("EnergyObserver : Writing to file " + fname);
+            PrintStream pstr = new PrintStream(outStream);
 
-        for (int i = 0; i < Network.size(); i++) {
+            // dump energy states
+            writeData(pstr);
 
-            String out =  ((SoftwareDB) Network.get(i).getProtocol(pid)).toString();
-            if (! out.isEmpty()) {
-                System.out.println("Node " + i + "\n" + out);
-            }
+            outStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
         return false;
     }
+
+
+    // do the actual work
+    private void writeData(PrintStream file) {
+
+        String offline = "";
+        for (int i = 0; i < Network.size(); i++) {
+
+            Node current = Network.get(i);
+
+            if (((SimpleEnergy)current.getProtocol(pid)).getOnlineStatus()) {
+                file.println(i + ";" + 1);
+
+            }else file.println(i + ";" + 0);
+        }
+    }
+
+
 }
