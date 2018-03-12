@@ -59,8 +59,12 @@ protocol.tr UniformRandomTransport
 protocol.tr.mindelay 0
 protocol.tr.maxdelay 1
 
+init.sch2 CDScheduler
+init.sch2.protocol supervisor
+
 protocol.supervisor example.update.Scheduler
 protocol.supervisor.database_protocol db
+protocol.supervisor.gossip_protocol gossip
 protocol.supervisor.transport tr
 protocol.supervisor.step PROTOCOL_CYCLE
 
@@ -94,7 +98,7 @@ control.switcher.step CONTROL_CYCLE*3
 
 control.dbObserver example.update.observation.SoftwareDBObserver
 control.dbObserver.database_protocol db
-control.dbObserver.step OBERVERS_CYCLE
+control.dbObserver.step OBERVERS_CYCLE*10
 
 ################ Order & timings ==============================
 order.protocol link,tr,energy,localisation,db,neighbor,gossip,supervisor

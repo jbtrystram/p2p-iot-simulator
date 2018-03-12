@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by jibou on 07/11/17.
  */
-public class Gossiper implements EDProtocol{ //, CDProtocol {
+public class Gossiper implements EDProtocol {
 
     // Fields =================================
     String prefix;
@@ -92,6 +92,7 @@ public class Gossiper implements EDProtocol{ //, CDProtocol {
             gossip(message.sender, node, pid, message.announcedPackage);
         }
     }
+
 }
 
 //TODO : gossip TASKS not software packages!!!!!!!!

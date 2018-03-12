@@ -16,7 +16,7 @@ public class Scheduler implements EDProtocol, CDProtocol{
 
     // Protocol to interact with : softwareDB and Downloader
     private static final String DB_PROT = "database_protocol";
-    private static final String DOWNLOAD_PROT = "downloader_protocol";
+    private static final String GOSSIP_PROT = "gossip_protocol";
 
 
     // ------------------------------------------------------------------------
@@ -25,10 +25,11 @@ public class Scheduler implements EDProtocol, CDProtocol{
 
     /**
      * Energy protocol identifier. Obtained from config property
-     * {@link #DB_PROT}, {@link #DOWNLOAD_PROT}.
+     * {@link #DB_PROT}, {@link #GOSSIP_PROT}.
      */
     private final int dbPID;
-    //private final int downloadPID;
+    private final int gossipPID;
+    private int cycle_counter =0;
 
     String prefix;
     public Scheduler(String prefix) {
@@ -36,7 +37,7 @@ public class Scheduler implements EDProtocol, CDProtocol{
 
         // get PIDs of SoftwareDB and Downloader
         dbPID = Configuration.getPid(prefix + "." + DB_PROT);
-        //downloadPID = Configuration.getPid(prefix + "." + DOWNLOAD_PROT);
+        gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROT);
     }
 
     public Scheduler clone(){
@@ -60,16 +61,26 @@ public class Scheduler implements EDProtocol, CDProtocol{
     }
 
 
-    // TODO : invoke strategy
+    // TODO : invoke strategy, GOSSIP JOBS, KEEP JOBS LIST IN SCHEDULER
     public void nextCycle(Node node, int protocolID) {
-        // do something each cycle !
+//
+        if (cycle_counter%4 == 0) {
+            // periodically, gossip all the packages once
+            Gossiper localGossiper = (Gossiper) node.getProtocol(gossipPID);
+            SoftwareDB database = (SoftwareDB) node.getProtocol(dbPID);
+
+            database.getLocalSoftwareList().forEach(soft -> {
+                System.out.println("node "+node.getID()+"periodic gossip "+soft.getName());
+                localGossiper.gossip(node, node, gossipPID, soft);
+            });
+        }
+        cycle_counter += 1;
     }
 
 
 
 
-    //TODO update softwareDB. TODO faire toute la glue ici
-    /**
+  /*
      * Once NeighborhoodMaintainer messages have been sent, pass the neighbor list to
      * the local instance of software DB to remove neighbors that are not around anymore
      */
