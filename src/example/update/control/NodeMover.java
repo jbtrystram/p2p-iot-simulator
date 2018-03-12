@@ -1,5 +1,7 @@
-package example.update;
+package example.update.control;
 
+import example.update.EasyCSV;
+import example.update.NodeCoordinates;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;

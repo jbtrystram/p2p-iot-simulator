@@ -1,6 +1,6 @@
 package example.update;
 
-import peersim.core.Node;
+import example.update.initialisation.InetInitializer;
 import peersim.core.Protocol;
 
 /**

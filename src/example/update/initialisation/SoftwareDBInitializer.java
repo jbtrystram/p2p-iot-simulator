@@ -1,5 +1,7 @@
-package example.update;
+package example.update.initialisation;
 
+import example.update.SoftwareDB;
+import example.update.SoftwarePackage;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;

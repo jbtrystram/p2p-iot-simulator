@@ -35,7 +35,7 @@ public class SoftwareDB implements Protocol {
 
 
     // Return a list of the local running software. Polled by the announce protocol regularly
-    ArrayList<SoftwarePackage> getLocalSoftwareList(){
+    public ArrayList<SoftwarePackage> getLocalSoftwareList(){
 
         return this.localPieces;
     }

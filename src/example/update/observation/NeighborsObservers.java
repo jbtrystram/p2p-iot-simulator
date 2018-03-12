@@ -1,5 +1,6 @@
-package example.update;
+package example.update.observation;
 
+import example.update.NeighborhoodMaintainer;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
@@ -10,46 +11,50 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class SimpleEnergyObserver implements Control {
+/**
+ * Observe the list of neighbors maintained by the NeighborhoodMaintainer protocol
+ */
+public class NeighborsObservers  implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters
     // ------------------------------------------------------------------------
 
     /**
-     * The protocol to look at.
+     * The neigbors protocol to look at.
      *
      * @config
      */
-    private static final String PAR_ENERGY_PROT = "energy_protocol";
+    private static final String PAR_NEIGHBORS_PROT = "neigbors_protocol";
 
     /**
-     * Output logfile name base.
+     * Output logfile name.
      *
      * @config
      */
-    private static final String PAR_FILENAME_BASE = "filename";
+    private static final String PAR_FILENAME_BASE = "file_base";
 
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
     /**
-     * Energy protocol identifier. Obtained from config property
-     * {@link #PAR_ENERGY_PROT}.
+     * Coordinate protocol identifier. Obtained from config property
+     * {@link #PAR_NEIGHBORS_PROT}.
      */
     private final int pid;
 
-    /* logfile to print data. Name obtained from config
+    /* logfile to print data. Name obrtained from config
     * {@link #PAR_FILENAME_BASE}.
     */
-    private final String filename;
+    private final String graph_filename;
 
-    /**
+        /**
      * Utility class to generate incremental indexed filenames from a common
-     * base given by {@link #filename}.
+     * base given by {@link #graph_filename}.
      */
     private final FileNameGenerator fng;
+
 
 
     // ------------------------------------------------------------------------
@@ -62,25 +67,27 @@ public class SimpleEnergyObserver implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public SimpleEnergyObserver (String prefix) {
+    public NeighborsObservers (String prefix) {
 
-        pid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
-        filename = "raw_dat/" +Configuration.getString(prefix + "."
-                + PAR_FILENAME_BASE, "energy_dump");
-        fng = new FileNameGenerator(filename, ".dat");
+        pid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
+        graph_filename = "raw_dat/" +Configuration.getString(prefix + "."
+                + PAR_FILENAME_BASE, "neighbors_dump");
+        fng = new FileNameGenerator(graph_filename, ".dat");
     }
 
-    // Control interface method. does the file handling
+    // Control interface method.
     public boolean execute() {
+
+
         try {
             // initialize output streams
             String fname = fng.nextCounterName();
             FileOutputStream outStream = new FileOutputStream(fname);
-            System.out.println("EnergyObserver : Writing to file " + fname);
+            System.out.println("NeighborsObserver : Writing to file " + fname);
             PrintStream pstr = new PrintStream(outStream);
 
-            // dump energy states
-            writeData(pstr);
+            // dump neigbors relations:
+            writeNeigbors(pstr);
 
             outStream.close();
         } catch (IOException e) {
@@ -90,21 +97,20 @@ public class SimpleEnergyObserver implements Control {
         return false;
     }
 
+    private void writeNeigbors(PrintStream file) {
 
-    // do the actual work
-    private void writeData(PrintStream file) {
 
-        String offline = "";
         for (int i = 0; i < Network.size(); i++) {
 
             Node current = Network.get(i);
 
-            if (((SimpleEnergy)current.getProtocol(pid)).getOnlineStatus()) {
-                file.println(i + ";" + 1);
-
-            }else file.println(i + ";" + 0);
+            String neighbors = "";
+            for (int j = 0; j < ((NeighborhoodMaintainer)current.getProtocol(pid)).getNeighbors().size(); j++) {
+                neighbors += ((NeighborhoodMaintainer) current.getProtocol(pid)).getNeighbors().get(j).getID() + ";";
+            }
+            file.println(i+";"+neighbors);
         }
+
+
     }
-
-
 }

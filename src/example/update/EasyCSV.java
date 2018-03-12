@@ -11,7 +11,7 @@ public class EasyCSV {
 
     public List<String[]> content;
 
-    EasyCSV(String pathToFile){
+    public EasyCSV(String pathToFile){
 
 
         //------------- FIELDS

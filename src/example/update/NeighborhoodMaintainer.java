@@ -5,10 +5,9 @@ import peersim.config.Configuration;
 import peersim.core.Network;
 import peersim.core.Node;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Announce implements CDProtocol {
+public class NeighborhoodMaintainer implements CDProtocol {
 
     // Fields =================================
 
@@ -34,7 +33,7 @@ public class Announce implements CDProtocol {
     // Initialization ==========================
 
     // Constructor
-    public Announce(String prefix) {
+    public NeighborhoodMaintainer(String prefix) {
         //get the node NodeCoordinates protocol pid
         this.prefix = prefix;
         this.coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
@@ -42,8 +41,8 @@ public class Announce implements CDProtocol {
         this.energyPid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
     }
 
-    public Announce clone() {
-        return new Announce(prefix);
+    public NeighborhoodMaintainer clone() {
+        return new NeighborhoodMaintainer(prefix);
     }
     // =========================================
 
@@ -104,15 +103,14 @@ public class Announce implements CDProtocol {
                        && distance <= maxDistance
                         && ((SimpleEnergy)(Network.get(i).getProtocol(energyPid))).getOnlineStatus()) {
                     // Node is in range and online : send announce to add myself in Node list
-                    ((Announce) Network.get(i).getProtocol(protId)).addAnnounce(node);
+                    ((NeighborhoodMaintainer) Network.get(i).getProtocol(protId)).addAnnounce(node);
                 }
                 // Node not in range or offline; remove it from my neighbors list
                 else {
-                    ((Announce) node.getProtocol(protId)).removeAnnounce(Network.get(i));
+                    ((NeighborhoodMaintainer) node.getProtocol(protId)).removeAnnounce(Network.get(i));
 
                 }
             }
         }
-
     }
 }

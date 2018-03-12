@@ -1,15 +1,14 @@
-package example.update;
+package example.update.initialisation;
 
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
-
 /**
- * Created by jibou on 20/10/17.
+ * This class initialize the NeighborhoodMaintainer protocol with the correct nodeID.
  */
-public class EnergyInitializer implements Control {
+public class AnnounceInitializer implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -39,7 +38,7 @@ public class EnergyInitializer implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public EnergyInitializer(String prefix) {
+    public AnnounceInitializer(String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
     }
@@ -48,21 +47,18 @@ public class EnergyInitializer implements Control {
     // Methods
     // ------------------------------------------------------------------------
     /**
-     * Initialize the energy state to true in the SimpleEnergy Protocol.
-     * -> "power on"the nodes
+     * Initialize the nodeID in announce protocol.
      */
     public boolean execute() {
-
+    /* there is nothing to initialize really
         Node n ;
-        SimpleEnergy protocol;
+        NeighborhoodMaintainer protocol;
 
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
-            protocol = (SimpleEnergy) n.getProtocol(pid);
-            protocol.setOnlineStatus(true);
-        }
+            //protocol = (NeighborhoodMaintainer) n.getProtocol(pid);
+           // protocol.setMyself(n.getID());
+        } */
         return false;
     }
-
 }
-

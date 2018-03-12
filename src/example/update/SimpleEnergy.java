@@ -13,7 +13,6 @@ public class SimpleEnergy implements Protocol {
     /* Internal node energy state */
     private boolean online;
 
-    //String prefix;
 
     // ------------------------------------------------------------------------
     // Constructor
