@@ -1,22 +1,23 @@
 package example.update.initialisation;
 
-import example.update.SoftwareDB;
 import example.update.SoftwarePackage;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
+import peersim.edsim.EDSimulator;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.security.MessageDigest;
 
+import example.update.NetworkMessage;
 
 /**
  * Initialize node software DB with software
  */
-public class SoftwareDBInitializer implements Control {
+public class GossipInitializer implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -26,14 +27,14 @@ public class SoftwareDBInitializer implements Control {
      *
      * @config
      */
-    private static final String PAR_PROT = "protocol";
+    private static final String GOSSIP_PROTOCOL = "gossip_protocol";
 
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
-    /** Protocol identifier, obtained from config property {@link #PAR_PROT}. */
-    private final int pid;
+    /** Protocol identifier, obtained from config property {@link #GOSSIP_PROTOCOL}. */
+    private final int gossip_pid;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -46,9 +47,10 @@ public class SoftwareDBInitializer implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public SoftwareDBInitializer(String prefix) {
+    public GossipInitializer(String prefix) {
 
-        pid = Configuration.getPid(prefix + "." + PAR_PROT);
+        gossip_pid = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
+
     }
 
     // ------------------------------------------------------------------------
@@ -94,12 +96,15 @@ public class SoftwareDBInitializer implements Control {
 
         for (int i = 0; i < Network.size(); i+=(Network.size()/2) ) {
             Node n = Network.get(i);
-            SoftwareDB protocol = (SoftwareDB) n.getProtocol(pid);
 
-            protocol.addLocalSoftware(randomSoftwarePackage("fedora", 27, 15));
-            protocol.getLocalSoftwareList().forEach(soft -> {
-                soft.comleteAllPieces();
-            });
+            NetworkMessage msg = new NetworkMessage(randomSoftwarePackage("fedora", 27, 15) , n);
+
+            //trigger gossip
+            EDSimulator.add(70, msg, n, gossip_pid);
+            //protocol.addLocalSoftware(randomSoftwarePackage("fedora", 27, 15));
+            //protocol.getLocalSoftwareList().forEach(soft -> {
+            //    soft.comleteAllPieces();
+            //});
         }
         return false;
     }

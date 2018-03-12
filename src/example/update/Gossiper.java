@@ -5,6 +5,7 @@ import peersim.config.FastConfig;
 import peersim.edsim.EDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Node;
+import peersim.edsim.EDSimulator;
 import peersim.transport.Transport;
 
 import java.util.HashSet;
@@ -22,9 +23,6 @@ public class Gossiper implements EDProtocol{ //, CDProtocol {
     private final int neighPid;
     private static final String PAR_NEIGHBORS_PROT = "neighbors_protocol";
 
-    private final int dbpid;
-    private static final String PAR_DATABASE_PROT = "database_protocol";
-
     private final int supervisorPid;
     private static final String PAR_SUPER_PROT = "supervisor_protocol";
 
@@ -40,7 +38,6 @@ public class Gossiper implements EDProtocol{ //, CDProtocol {
         this.prefix = prefix;
     //get the node NodeCoordinates protocol pid
         this.neighPid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
-        this.dbpid = Configuration.getPid(prefix + "." + PAR_DATABASE_PROT);
         this.supervisorPid = Configuration.getPid(prefix + "." + PAR_SUPER_PROT);
         receviedMessages = new HashSet<>();
     }
@@ -57,12 +54,9 @@ public class Gossiper implements EDProtocol{ //, CDProtocol {
      *
      * It get the neighbors list from the neighbour protocol and update the available software list accordingly
      */
-    //TODO : don't share whole db each round but forward message upon reception.
-    // And discard already recevied messages.
-    // more gossip style !
-    // let's go full event-driven
-    private void forward(Node sender, Node local, int protocolID, SoftwarePackage soft) {
+    public void gossip(Node sender, Node local, int protocolID, SoftwarePackage soft) {
 
+        System.err.println("node "+local.getID()+" is gossiping");
             // create a announce message
             NetworkMessage msg = new NetworkMessage(soft, local);
 
@@ -72,8 +66,7 @@ public class Gossiper implements EDProtocol{ //, CDProtocol {
                             forEach(neigh -> {
                                 if (neigh != sender) {
                                     // send the message to each of them
-                                    ((Transport) local.getProtocol(FastConfig.getTransport(neighPid))).send(
-                                            local, neigh, msg, protocolID);
+                                    EDSimulator.add(25, msg, neigh, protocolID);
                                 }
                             });
     }
@@ -89,39 +82,19 @@ public class Gossiper implements EDProtocol{ //, CDProtocol {
         NetworkMessage message = (NetworkMessage)event;
 
         if( message.sender!=null && !receviedMessages.contains(message.announcedPackage.getId()) ){
+            // add it to history
             receviedMessages.add(message.announcedPackage.getId());
 
-            // process each software into the local db.
-            SoftwareDB db = (SoftwareDB) node.getProtocol(dbpid);
-            db.addNeigborSoftware(message.announcedPackage, message.sender);
+            // notify local Scheduler of the received message
+            ((Scheduler)node.getProtocol(supervisorPid)).processGossipMessage(message.sender, message.announcedPackage);
 
             //forward the message to neigbors.
-            forward(message.sender, node, pid, message.announcedPackage);
-
-            // notify local Scheduler of the new neighbor
-            ((Scheduler)node.getProtocol(supervisorPid)).newNeighborNotification(message.sender);
+            gossip(message.sender, node, pid, message.announcedPackage);
         }
     }
-
 }
 
+//TODO : gossip TASKS not software packages!!!!!!!!
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-/**
- * The type of a message. It contains a list of software packages
- * And the sender Node {@link peersim.core.Node}.
- */
-class NetworkMessage {
-
-
-
-    final SoftwarePackage announcedPackage;
-    final Node sender;
-
-    // Constructor
-    public NetworkMessage(SoftwarePackage announcedPackage, Node sender ) {
-        this.announcedPackage = announcedPackage;
-        this.sender = sender;
-    }
-}

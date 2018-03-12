@@ -1,5 +1,6 @@
 package example.update;
 
+import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Node;
@@ -7,7 +8,7 @@ import peersim.edsim.EDProtocol;
 
 import java.util.ArrayList;
 
-public class Scheduler implements EDProtocol{
+public class Scheduler implements EDProtocol, CDProtocol{
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -48,25 +49,24 @@ public class Scheduler implements EDProtocol{
 
     }
 
-    //process event recevied from softwareDB
-    public void newNeighborNotification(Node neigh){
-        System.out.println("supervisor "+ CommonState.getNode().getID()+ " noticed new node: "+ neigh.getID());
+    //process event received from gossiper
+    public void processGossipMessage(Node neigh, SoftwarePackage message){
+       // System.out.println("supervisor "+ CommonState.getNode().getID()+ "  "+ neigh.getID());
 
         // no strategy at this time : simply add the software our neighbour have but empty
         SoftwareDB db = (SoftwareDB) CommonState.getNode().getProtocol(this.dbPID);
 
-        // get softwares owned by this neighbour
-        ArrayList<SoftwarePackage> toAdd = db.getNeigbourPackageList(neigh);
-        // add them in localdB but empty !
-        if (toAdd != null){
-            toAdd.forEach(soft -> {
-               db.addLocalSoftware(soft);
-            });
-        }
+        db.addNeigborSoftware(message, neigh);
     }
 
 
-    // TODO : invoke strategy in a separate method
+    // TODO : invoke strategy
+    public void nextCycle(Node node, int protocolID) {
+        // do something each cycle !
+    }
+
+
+
 
     //TODO update softwareDB. TODO faire toute la glue ici
     /**

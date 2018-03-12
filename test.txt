@@ -26,8 +26,8 @@ init.1.max_node_speed 60
 init.1.min_node_speed 10
 #init.1.nodes_location_file nodes_position.csv
 
-init.2 example.update.initialisation.SoftwareDBInitializer
-init.2.protocol db
+init.2 example.update.initialisation.GossipInitializer
+init.2.gossip_protocol gossip
 
 
 ################### protocols ===========================
@@ -38,27 +38,22 @@ protocol.energy example.update.SimpleEnergy
 
 protocol.localisation example.update.NodeCoordinates
 
-protocol.announce example.update.NeighborhoodMaintainer
-protocol.announce.coord_protocol localisation
-protocol.announce.energy_protocol energy
-protocol.announce.max_distance MAX_RANGE
-protocol.announce.transport tr
-protocol.announce.step PROTOCOL_CYCLE
+protocol.neighbor example.update.NeighborhoodMaintainer
+protocol.neighbor.coord_protocol localisation
+protocol.neighbor.energy_protocol energy
+protocol.neighbor.max_distance MAX_RANGE
+protocol.neighbor.transport tr
+protocol.neighbor.step PROTOCOL_CYCLE
 
 init.sch1 CDScheduler
-init.sch1.protocol announce
+init.sch1.protocol neighbor
 
 protocol.db example.update.SoftwareDB
 
 protocol.gossip example.update.Gossiper
-protocol.gossip.neighbors_protocol announce
-protocol.gossip.database_protocol db
+protocol.gossip.neighbors_protocol neighbor
 protocol.gossip.supervisor_protocol supervisor
 protocol.gossip.transport tr
-protocol.gossip.step PROTOCOL_CYCLE
-
-init.sch2 CDScheduler
-init.sch2.protocol gossip
 
 protocol.tr UniformRandomTransport
 protocol.tr.mindelay 0
@@ -67,6 +62,7 @@ protocol.tr.maxdelay 1
 protocol.supervisor example.update.Scheduler
 protocol.supervisor.database_protocol db
 protocol.supervisor.transport tr
+protocol.supervisor.step PROTOCOL_CYCLE
 
 ################ controls ==============================
 
@@ -84,34 +80,35 @@ control.switcher.step CONTROL_CYCLE*3
 
 ################ Observers ==============================
 
-control.coordObserver example.update.observation.InetObserver
-control.coordObserver.coord_protocol localisation
-control.coordObserver.step OBERVERS_CYCLE
+#control.coordObserver example.update.observation.InetObserver
+#control.coordObserver.coord_protocol localisation
+#control.coordObserver.step OBERVERS_CYCLE
 
-control.neighobserver example.update.observation.NeighborsObservers
-control.neighobserver.neigbors_protocol announce
-control.neighobserver.step OBERVERS_CYCLE
+#control.neighobserver example.update.observation.NeighborsObservers
+#control.neighobserver.neigbors_protocol neighbor
+#control.neighobserver.step OBERVERS_CYCLE
 
-control.energyobserver example.update.observation.SimpleEnergyObserver
-control.energyobserver.energy_protocol energy
-control.energyobserver.step OBERVERS_CYCLE
+#control.energyobserver example.update.observation.SimpleEnergyObserver
+#control.energyobserver.energy_protocol energy
+#control.energyobserver.step OBERVERS_CYCLE
 
 control.dbObserver example.update.observation.SoftwareDBObserver
 control.dbObserver.database_protocol db
 control.dbObserver.step OBERVERS_CYCLE
 
 ################ Order & timings ==============================
-order.protocol link,tr,energy,localisation,db,announce,gossip,supervisor
-order.control coordObserver,energyobserver,neighobserver,dbObserver,nodemover,switcher
+order.protocol link,tr,energy,localisation,db,neighbor,gossip,supervisor
+#order.control coordObserver,energyobserver,neighobserver,dbObserver,nodemover,switcher
+order.control dbObserver,nodemover,switcher
 
 # Observers should be run once more at the end
-control.neighobserver.FINAL true
-control.energyobserver.FINAL true
-control.coordObserver.FINAL true
-control.dbObserver.FINAL true
+#control.neighobserver.FINAL true
+#control.energyobserver.FINAL true
+#control.coordObserver.FINAL true
+#control.dbObserver.FINAL true
 
 # Observers should not run at first cycle (protocols have not been run yet)
-control.neighobserver.from 2
-control.energyobserver.from 2
-control.coordObserver.from 2
+#control.neighobserver.from 2
+#control.energyobserver.from 2
+#control.coordObserver.from 2
 control.dbObserver.from 2

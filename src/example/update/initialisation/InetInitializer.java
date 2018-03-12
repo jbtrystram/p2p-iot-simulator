@@ -27,6 +27,8 @@ import peersim.core.Node;
 
 import java.util.List;
 
+import example.update.EasyCSV;
+
 /**
  * <p>
  * This initialization class collects the simulation parameters from the config

@@ -3,7 +3,7 @@ VER=1.0.5
 .PHONY: all clean doc release
 
 all:
-	javac -classpath src:jep-2.3.0.jar:djep-1.0.0.jar:univocity-parsers-2.5.9.jar `find src -name "*.java"`
+	javac -classpath src:jep-2.3.0.jar:djep-1.0.0.jar:univocity-parsers-2.5.9.jar:maven-artifact-3.5.3.jar `find src -name "*.java"`
 clean:
 	rm -f `find src -name "*.class"`
 doc:

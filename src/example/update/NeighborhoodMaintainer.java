@@ -4,10 +4,12 @@ import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Network;
 import peersim.core.Node;
+import peersim.edsim.EDProtocol;
+import peersim.edsim.EDSimulator;
 
 import java.util.LinkedList;
 
-public class NeighborhoodMaintainer implements CDProtocol {
+public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
 
     // Fields =================================
 
@@ -55,18 +57,23 @@ public class NeighborhoodMaintainer implements CDProtocol {
     }
 
 
-    public void addAnnounce(Node sender) {
+    // this is invoked when discovering a new neighbor.
+    public void addNeighbor(Node sender) {
         if (! this.neighbors.contains(sender)) {
             this.neighbors.addLast(sender);
-            //System.out.println(myself +" received announce from "+sender.getID());
         }
     }
 
-    public void removeAnnounce(Node sender){
+    public void removeNeighbor(Node sender){
         if (this.neighbors.contains(sender)) {
             this.neighbors.remove(sender);
         }
+    }
 
+    //receive messages
+    public void processEvent(Node localNode, int pid, Object event) {
+        Node neighbor = (Node)event;
+        this.addNeighbor(neighbor);
     }
 
     // Invoked if we are offline
@@ -75,39 +82,28 @@ public class NeighborhoodMaintainer implements CDProtocol {
     }
 
     // This is the method called by the simulator at each cycle
-    public void nextCycle(Node node, int protId) {
+    public void nextCycle(Node localNode, int protId) {
 
         // don't send any annouce if offline and empty neighbors list
-        if ( !(( (SimpleEnergy) (node.getProtocol(energyPid))).getOnlineStatus()) ){
+        if ( !(( (SimpleEnergy) (localNode.getProtocol(energyPid))).getOnlineStatus()) ){
             cleanNeighborsList();
         }
         else {
-           /* ArrayList<Node> toremove = new ArrayList<>();
-            // Firstly, ping old neighbors list to maintain it
-            for (Node neigh : neighbors) {
-                if ( ! ((SimpleEnergy)(neigh.getProtocol(energyPid))).getOnlineStatus() ){
-                    System.out.println("Node "+node.getID()+": "+neigh.getID()+" is offline, i remove it");
-                    toremove.add(neigh);
-                }
-            }
-            for (Node removeNode : toremove){
-                neighbors.remove(removeNode);
-            } */
-
-            // Then go through all the nodes in the network to send announce
+            // go through all the nodes in the network to send announce
             for (int i = 0; i < Network.size(); i++) {
-                int distance = ((NodeCoordinates) node.getProtocol(coordPid))
+                int distance = ((NodeCoordinates) localNode.getProtocol(coordPid))
                         .getDistance((NodeCoordinates) Network.get(i).getProtocol(coordPid));
 
-                if (node.getID() != Network.get(i).getID()
+                if (localNode.getID() != Network.get(i).getID()
                        && distance <= maxDistance
                         && ((SimpleEnergy)(Network.get(i).getProtocol(energyPid))).getOnlineStatus()) {
+
                     // Node is in range and online : send announce to add myself in Node list
-                    ((NeighborhoodMaintainer) Network.get(i).getProtocol(protId)).addAnnounce(node);
+                    EDSimulator.add(0, localNode, Network.get(i), protId);
                 }
                 // Node not in range or offline; remove it from my neighbors list
                 else {
-                    ((NeighborhoodMaintainer) node.getProtocol(protId)).removeAnnounce(Network.get(i));
+                    ((NeighborhoodMaintainer) localNode.getProtocol(protId)).removeNeighbor(Network.get(i));
 
                 }
             }

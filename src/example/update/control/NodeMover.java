@@ -44,8 +44,10 @@ public class NodeMover implements Control {
 
         dataFile = Configuration.getString(prefix + "." + DATA_FILE, null);
 
-        EasyCSV parser = new EasyCSV(dataFile);
-        positions = parser.content;
+        if ( dataFile != null) {
+            EasyCSV parser = new EasyCSV(dataFile);
+            positions = parser.content;
+        }
 
     }
 
@@ -110,7 +112,7 @@ public class NodeMover implements Control {
         for (node=0; node < Network.size(); node++) {
             coordinates = (NodeCoordinates) Network.get(node).getProtocol(coordPid);
 
-            if (dataFile.equals(null)) {
+            if (dataFile == null) {
                 newCoordinates = computeCoordinates(coordinates);
             }else{
                 newCoordinates = readCoordinates(node);
