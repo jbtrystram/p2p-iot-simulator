@@ -65,6 +65,8 @@ init.sch2.protocol supervisor
 protocol.supervisor example.update.Scheduler
 protocol.supervisor.database_protocol db
 protocol.supervisor.gossip_protocol gossip
+protocol.supervisor.bandwidth 1
+protocol.supervisor.disk_space 1000
 protocol.supervisor.transport tr
 protocol.supervisor.step PROTOCOL_CYCLE
 
@@ -100,16 +102,21 @@ control.dbObserver example.update.observation.SoftwareDBObserver
 control.dbObserver.database_protocol db
 control.dbObserver.step OBERVERS_CYCLE*10
 
+control.schedulerCounter example.update.observation.SchedulerJobsCounter
+control.schedulerCounter.protocol supervisor
+control.schedulerCounter.step OBERVERS_CYCLE
+
 ################ Order & timings ==============================
 order.protocol link,tr,energy,localisation,db,neighbor,gossip,supervisor
 #order.control coordObserver,energyobserver,neighobserver,dbObserver,nodemover,switcher
-order.control dbObserver,nodemover,switcher
+order.control schedulerCounter,dbObserver,nodemover,switcher
 
 # Observers should be run once more at the end
 #control.neighobserver.FINAL true
 #control.energyobserver.FINAL true
 #control.coordObserver.FINAL true
 #control.dbObserver.FINAL true
+control.schedulerCounter.FINAL true
 
 # Observers should not run at first cycle (protocols have not been run yet)
 #control.neighobserver.from 2

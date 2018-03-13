@@ -8,11 +8,11 @@ import peersim.core.Node;
  */
 public class NetworkMessage {
 
-    final SoftwarePackage announcedPackage;
+    final SoftwareJob announcedPackage;
     final Node sender;
 
     // Constructor
-    public NetworkMessage(SoftwarePackage announcedPackage, Node sender ) {
+    public NetworkMessage(SoftwareJob announcedPackage, Node sender ) {
         this.announcedPackage = announcedPackage;
         this.sender = sender;
     }

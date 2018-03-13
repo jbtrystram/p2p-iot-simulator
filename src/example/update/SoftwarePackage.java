@@ -7,24 +7,15 @@ import java.util.*;
  * A class representing a software package.
  * Stores completed hashes
  */
-//TODO : store a proper hash as ID.
+//  TODO : store a proper hash as ID.
 public class SoftwarePackage {
 
     private final String name;
     private int size;
     private double version;
-    private final byte[] id;
+    //private final byte[] id;
 
     private HashMap<String, Boolean> hashesStatus;
-
-    public SoftwarePackage(String name, double version){
-        this.name = name;
-        this.version = version;
-        this.size = 0;
-        this.hashesStatus = new HashMap<>();
-
-        this.id = (name+version).getBytes();
-    }
 
     public SoftwarePackage(String name, double version, int size, Set<String> hashes){
         this.name = name;
@@ -33,7 +24,14 @@ public class SoftwarePackage {
         this.hashesStatus = new HashMap<>();
         hashes.forEach((hash) -> this.hashesStatus.put(hash, false));
 
-        this.id = (name+version).getBytes();
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            }catch(Exception e) {
+            System.err.println("exception in message digest creation : " + e.getMessage());
+            System.exit(1);
+        }
+       // this.id = md.digest((name + version).getBytes());
     }
 
     public String getName() {
@@ -53,7 +51,7 @@ public class SoftwarePackage {
         return version;
     }
 
-    public byte[] getId() { return id; }
+    //public byte[] getId() { return id; }
 
     public List<String> getPieces(){return new ArrayList<String>(this.hashesStatus.keySet());}
 

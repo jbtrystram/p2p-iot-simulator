@@ -34,9 +34,9 @@ public class Gossiper implements EDProtocol {
     // Initialization ==========================
 
     // Constructor
-    public Gossiper(String prefix){
+    public Gossiper(String prefix) {
         this.prefix = prefix;
-    //get the node NodeCoordinates protocol pid
+        //get the node NodeCoordinates protocol pid
         this.neighPid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
         this.supervisorPid = Configuration.getPid(prefix + "." + PAR_SUPER_PROT);
         receviedMessages = new HashSet<>();
@@ -51,24 +51,23 @@ public class Gossiper implements EDProtocol {
      * This method define periodic activity.
      * The frequency of execution of this method is defined by a
      * {@link peersim.edsim.CDScheduler} component in the configuration.
-     *
+     * <p>
      * It get the neighbors list from the neighbour protocol and update the available software list accordingly
      */
-    public void gossip(Node sender, Node local, int protocolID, SoftwarePackage soft) {
+    public void gossip(Node sender, Node local, int protocolID, SoftwareJob soft) {
 
-        System.err.println("node "+local.getID()+" is gossiping");
-            // create a announce message
-            NetworkMessage msg = new NetworkMessage(soft, local);
+        // create a announce message
+        NetworkMessage msg = new NetworkMessage(soft, local);
 
-            //get neighbors list
-            ((NeighborhoodMaintainer) local.getProtocol(neighPid)).getNeighbors().
-                    // iterate
-                            forEach(neigh -> {
-                                if (neigh != sender) {
-                                    // send the message to each of them
-                                    EDSimulator.add(25, msg, neigh, protocolID);
-                                }
-                            });
+        //get neighbors list
+        ((NeighborhoodMaintainer) local.getProtocol(neighPid)).getNeighbors().
+                // iterate
+                        forEach(neigh -> {
+                    if (neigh != sender) {
+                        // send the message to each of them
+                        EDSimulator.add(25, msg, neigh, protocolID);
+                    }
+                });
     }
 
     /**
@@ -76,26 +75,21 @@ public class Gossiper implements EDProtocol {
      * It parse the receivied messages from other nodes
      */
     // This method is executed whenever a message is recevied. we forward it if it was never recevied.
-    public void processEvent( Node node, int pid, Object event ) {
+    public void processEvent(Node node, int pid, Object event) {
 
         // recevied message
-        NetworkMessage message = (NetworkMessage)event;
+        NetworkMessage message = (NetworkMessage) event;
 
-        if( message.sender!=null && !receviedMessages.contains(message.announcedPackage.getId()) ){
+        if (message.sender != null && !receviedMessages.contains(message.announcedPackage.getId())) {
             // add it to history
             receviedMessages.add(message.announcedPackage.getId());
 
             // notify local Scheduler of the received message
-            ((Scheduler)node.getProtocol(supervisorPid)).processGossipMessage(message.sender, message.announcedPackage);
+            ((Scheduler) node.getProtocol(supervisorPid)).processGossipMessage(message.sender, message.announcedPackage);
 
             //forward the message to neigbors.
             gossip(message.sender, node, pid, message.announcedPackage);
         }
     }
-
 }
-
-//TODO : gossip TASKS not software packages!!!!!!!!
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 

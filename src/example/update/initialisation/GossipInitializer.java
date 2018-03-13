@@ -1,6 +1,6 @@
 package example.update.initialisation;
 
-import example.update.SoftwarePackage;
+import example.update.SoftwareJob;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
@@ -8,11 +8,10 @@ import peersim.core.Network;
 import peersim.core.Node;
 import peersim.edsim.EDSimulator;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.security.MessageDigest;
-
 import example.update.NetworkMessage;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Initialize node software DB with software
@@ -59,49 +58,30 @@ public class GossipInitializer implements Control {
 
     /**
      * create a random SoftwarePackage with given parametters
-     *
      */
-    private SoftwarePackage randomSoftwarePackage(String name, double version, int hashesNumber){
-        // Inint an empty hashset
-        HashSet<String> hashes = new HashSet<>();
+    private SoftwareJob randomJob(String name, String version){
 
-        // create hashes
-        for (int j =0; j<hashesNumber;j++){
+        int qos = SoftwareJob.QOS_INSTALL_MANDATORY;
+        int priority = SoftwareJob.PRIORITY_STANDARD;
+        int size = 500;
 
-            byte[] hash = new byte[5];
-            //create something to hash
-            for (int k =0 ; k < hash.length; k++){
-                hash[k] = (byte)CommonState.r.nextInt();
-            }
-            // hash with md5
-            try {
-                hash = MessageDigest.getInstance("MD5").digest(hash);
-            }
-            catch (NoSuchAlgorithmException e) {
-                throw new Error("No MD5 support in this VM.");
-            }
+        SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX, priority, qos, size);
 
-            // Add the obtained hash into the array
-            hashes.add(hash.toString());
-        }
-        int size = hashes.size() * 32;
-       return new SoftwarePackage(name, version, size, hashes);
+       return job;
     }
 
-    /**
-     * Initialize the energy state to true in the SimpleEnergy Protocol.
-     * -> "power on"the nodes
-     */
+
     public boolean execute() {
 
-        for (int i = 0; i < Network.size(); i+=(Network.size()/2) ) {
+       for (int i = 0; i < Network.size(); i+=(Network.size()/2) ) {
             Node n = Network.get(i);
 
-            NetworkMessage msg = new NetworkMessage(randomSoftwarePackage("fedora", 27, 15) , n);
+            SoftwareJob job = randomJob("swag", "27");
+            NetworkMessage msg = new NetworkMessage(job,n);
 
             //trigger gossip
             EDSimulator.add(70, msg, n, gossip_pid);
-            //protocol.addLocalSoftware(randomSoftwarePackage("fedora", 27, 15));
+            //protocol.addLocalSoftware(randomJob("fedora", 27, 15));
             //protocol.getLocalSoftwareList().forEach(soft -> {
             //    soft.comleteAllPieces();
             //});

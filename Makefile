@@ -68,7 +68,7 @@ release: clean all docnew
 	cp djep-1.0.0.jar peersim-$(VER)
 
 run:	
-	java -cp jep-2.3.0.jar:djep-1.0.0.jar:univocity-parsers-2.5.9.jar:src peersim.Simulator test.txt
+	java -cp jep-2.3.0.jar:djep-1.0.0.jar:univocity-parsers-2.5.9.jar:maven-artifact-3.5.3.jar:src peersim.Simulator test.txt
 
 order: 
 	rm -rf graphs/

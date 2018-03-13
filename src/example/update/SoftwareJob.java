@@ -2,7 +2,9 @@ package example.update;
 
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
+
 
 /**
  * This is the object recevied by the local manager.
@@ -10,14 +12,14 @@ import java.time.LocalDateTime;
 public class SoftwareJob {
 
     // QoS values
-    static final int QOS_REMOVE = 1;
-    static final int QOS_INSTALL_BEST_EFFORT = 10;
-    static final int QOS_INSTALL_MANDATORY = 100;
+    public static final int QOS_REMOVE = 1;
+    public static final int QOS_INSTALL_BEST_EFFORT = 10;
+    public static final int QOS_INSTALL_MANDATORY = 100;
 
     // Priorities values
-    static final int PRIORITY_HIGH = 1;
-    static final int PRIORITY_STANDARD = 2;
-    static final int PRIORITY_LOW = 3;
+    public static final int PRIORITY_HIGH = 1;
+    public static final int PRIORITY_STANDARD = 2;
+    public static final int PRIORITY_LOW = 3;
 
     // Fields
 
@@ -27,9 +29,12 @@ public class SoftwareJob {
     public LocalDateTime dateExp;
 
     private int priority;
-    int cost;
+    private int cost;
     int expectedQoS;
     int size;
+    private final byte[] id;
+
+    MessageDigest md = null;
 
     public int getPriority() {
         return priority;
@@ -38,6 +43,10 @@ public class SoftwareJob {
     public int getCost() {
         return cost;
     }
+
+    public void setCost(int cost){ this.cost = cost;}
+
+    public byte[] getId(){ return id; };
 
     public LocalDateTime getDateCreated() {
         return dateCreated;
@@ -54,6 +63,15 @@ public class SoftwareJob {
         // cost is -1, as not yet computed
         this.cost = -1;
         this.dateCreated = LocalDateTime.now();
+
+
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        }catch(Exception e) {
+            System.err.println("exception in message digest creation : " + e.getMessage());
+            System.exit(1);
+        }
+        this.id = md.digest( name.concat(version).getBytes());
     }
 
     public boolean isDoable(int bandwitdh){
