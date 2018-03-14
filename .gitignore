@@ -1,3 +1,6 @@
-*.class
-*.jar
+.gradle/
+.idea/
 
+*.iml
+*.iws
+*.ipr

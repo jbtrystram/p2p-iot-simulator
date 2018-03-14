@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dir 'lib'
+    }
+}
+
+group = 'fr.citi-lab.dynamid'
+version = '0.1-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    implementation name: 'djep-1.0.0'
+    implementation name: 'jep-2.3.0'
+    implementation name: 'peersim-1.0.5'
+    implementation 'com.univocity:univocity-parsers:2.6.0'
+    implementation 'org.apache.maven:maven-artifact:3.5.3'
+}
