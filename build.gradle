@@ -21,3 +21,9 @@ dependencies {
     implementation 'com.univocity:univocity-parsers:2.6.0'
     implementation 'org.apache.maven:maven-artifact:3.5.3'
 }
+
+task run(type: JavaExec, dependsOn: build) {
+    main = 'peersim.Simulator'
+    classpath = sourceSets.main.runtimeClasspath
+    args 'test.txt'
+}
