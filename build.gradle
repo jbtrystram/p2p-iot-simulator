@@ -27,3 +27,7 @@ task run(type: JavaExec, dependsOn: build) {
     classpath = sourceSets.main.runtimeClasspath
     args 'test.txt'
 }
+
+wrapper {
+    gradleVersion = '4.6'
+}
