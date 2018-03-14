@@ -83,7 +83,6 @@ public class Scheduler implements EDProtocol, CDProtocol{
             priceIT(newJob);
             jobsList.add(newJob);
             updateTasks();
-            System.out.println("node "+CommonState.getNode().getID()+" adding "+newJob.getId());
         }
     }
 

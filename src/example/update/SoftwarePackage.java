@@ -7,7 +7,6 @@ import java.util.*;
  * A class representing a software package.
  * Stores completed hashes
  */
-//  TODO : store a proper hash as ID.
 public class SoftwarePackage {
 
     private final String name;

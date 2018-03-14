@@ -28,7 +28,7 @@ public class Gossiper implements EDProtocol {
 
     // Variables =========================================
 
-    HashSet<byte[]> receviedMessages;
+    HashSet<String> receviedMessages;
 
 
     // Initialization ==========================
@@ -92,4 +92,3 @@ public class Gossiper implements EDProtocol {
         }
     }
 }
-

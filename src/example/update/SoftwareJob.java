@@ -4,6 +4,7 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 
 /**
@@ -46,7 +47,7 @@ public class SoftwareJob {
 
     public void setCost(int cost){ this.cost = cost;}
 
-    public byte[] getId(){ return id; };
+    public String getId(){ return Arrays.toString(id); };
 
     public LocalDateTime getDateCreated() {
         return dateCreated;

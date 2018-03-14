@@ -76,7 +76,7 @@ public class GossipInitializer implements Control {
        for (int i = 0; i < Network.size(); i+=(Network.size()/2) ) {
             Node n = Network.get(i);
 
-            SoftwareJob job = randomJob("swag", "27");
+            SoftwareJob job = randomJob("swag", "   27");
             NetworkMessage msg = new NetworkMessage(job,n);
 
             //trigger gossip
