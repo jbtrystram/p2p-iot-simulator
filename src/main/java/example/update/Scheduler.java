@@ -104,6 +104,7 @@ public class Scheduler implements EDProtocol, CDProtocol{
     }
 
 
+    // TODO : feedback from DL Agent to take into account network stats
     public void updateTasks(){
         ArrayList<SoftwareJob> prioList = new ArrayList<>(jobsList);
         ArrayList<SoftwareJob> costList = new ArrayList<>(jobsList);
@@ -135,7 +136,4 @@ public class Scheduler implements EDProtocol, CDProtocol{
     public int numberOfJobs(){
         return jobsList.size();
     }
-
-
 }
-
