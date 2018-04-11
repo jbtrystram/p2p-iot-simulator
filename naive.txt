@@ -1,0 +1,94 @@
+################### Settings ======================
+#debug.config false
+MAX_RANGE 300
+
+#simulation.cycles 100
+OBERVERS_CYCLE 50
+PROTOCOL_CYCLE 20
+CONTROL_CYCLE 50
+battery_failure_probability 50
+network.size 35
+map_size 1000
+random.seed 1234567890
+
+simulation.endtime 1000
+simulation.logtime 50
+
+
+################### initialization ======================
+
+init.0 example.update.initialisation.EnergyInitializer
+init.0.protocol energy
+
+init.1 example.update.initialisation.InetInitializer
+init.1.protocol localisation
+init.1.max_node_speed 60
+init.1.min_node_speed 10
+
+init.2 example.update.initialisation.GossipInitializer
+init.2.gossip_protocol gossip
+
+
+################### protocols ===========================
+
+protocol.link IdleProtocol
+
+protocol.energy example.update.SimpleEnergy
+
+protocol.localisation example.update.NodeCoordinates
+
+protocol.neighbor example.update.NeighborhoodMaintainer
+protocol.neighbor.coord_protocol localisation
+protocol.neighbor.energy_protocol energy
+protocol.neighbor.max_distance MAX_RANGE
+protocol.neighbor.transport tr
+protocol.neighbor.step PROTOCOL_CYCLE
+
+init.sch1 CDScheduler
+init.sch1.protocol neighbor
+
+protocol.db example.update.SoftwareDB
+
+protocol.gossip example.update.Gossiper
+protocol.gossip.neighbors_protocol neighbor
+protocol.gossip.supervisor_protocol supervisor
+protocol.gossip.transport tr
+
+protocol.tr UniformRandomTransport
+protocol.tr.mindelay 0
+protocol.tr.maxdelay 1
+
+init.sch2 CDScheduler
+init.sch2.protocol supervisor
+
+protocol.supervisor example.update.Scheduler
+protocol.supervisor.database_protocol db
+protocol.supervisor.gossip_protocol gossip
+protocol.supervisor.bandwidth 1
+protocol.supervisor.disk_space 1000
+protocol.supervisor.transport tr
+protocol.supervisor.step PROTOCOL_CYCLE
+
+################ controls ==============================
+
+
+
+################ Observers ==============================
+
+
+control.schedulerCounter example.update.observation.SchedulerJobsCounter
+control.schedulerCounter.protocol supervisor
+control.schedulerCounter.step OBERVERS_CYCLE
+
+################ Order & timings ==============================
+
+order.protocol link,tr,energy,localisation,neighbor,gossip,supervisor,downloader
+order.control schedulerCounter,coordObserver,neighobserver
+
+
+# Observers should be run once more at the end
+control.coordObserver.FINAL true
+control.schedulerCounter.FINAL true
+
+# Observers should not run at first cycle (protocols have not been run yet)
+control.dbObserver.from 2
