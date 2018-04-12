@@ -1,12 +1,11 @@
 ################### Settings ======================
-#debug.config false
+#debug.config
 MAX_RANGE 300
 
-#simulation.cycles 100
 OBERVERS_CYCLE 50
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
-battery_failure_probability 50
+
 network.size 35
 map_size 1000
 random.seed 1234567890
@@ -47,8 +46,6 @@ protocol.neighbor.step PROTOCOL_CYCLE
 init.sch1 CDScheduler
 init.sch1.protocol neighbor
 
-protocol.db example.update.SoftwareDB
-
 protocol.gossip example.update.Gossiper
 protocol.gossip.neighbors_protocol neighbor
 protocol.gossip.supervisor_protocol supervisor
@@ -62,12 +59,24 @@ init.sch2 CDScheduler
 init.sch2.protocol supervisor
 
 protocol.supervisor example.update.Scheduler
-protocol.supervisor.database_protocol db
+protocol.supervisor.networking_protocol p2p_net_agent
 protocol.supervisor.gossip_protocol gossip
 protocol.supervisor.bandwidth 1
 protocol.supervisor.disk_space 1000
 protocol.supervisor.transport tr
 protocol.supervisor.step PROTOCOL_CYCLE
+
+
+init.sch3 CDScheduler
+init.sch3.protocol p2p_net_agent
+
+protocol.p2p_net_agent example.update.NetworkAgent
+protocol.p2p_net_agent.neighborhood_protocol neighbor
+protocol.p2p_net_agent.bandwidth 1
+protocol.p2p_net_agent.piece_size 50
+protocol.p2p_net_agent.transport tr
+protocol.p2p_net_agent.step PROTOCOL_CYCLE
+
 
 ################ controls ==============================
 
@@ -80,15 +89,20 @@ control.schedulerCounter example.update.observation.SchedulerJobsCounter
 control.schedulerCounter.protocol supervisor
 control.schedulerCounter.step OBERVERS_CYCLE
 
+control.dlProgress example.update.observation.netAgentObserver
+control.dlProgress.protocol p2p_net_agent
+control.dlProgress.step OBERVERS_CYCLE
+
 ################ Order & timings ==============================
 
-order.protocol link,tr,energy,localisation,neighbor,gossip,supervisor,downloader
-order.control schedulerCounter,coordObserver,neighobserver
+order.protocol link,tr,energy,localisation,neighbor,gossip,supervisor,p2p_net_agent
+order.control schedulerCounter,dlProgress
 
 
 # Observers should be run once more at the end
-control.coordObserver.FINAL true
 control.schedulerCounter.FINAL true
+control.dlProgress.FINAL true
 
 # Observers should not run at first cycle (protocols have not been run yet)
 control.dbObserver.from 2
+control.dlProgress.from 2

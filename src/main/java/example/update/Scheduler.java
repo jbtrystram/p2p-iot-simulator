@@ -14,7 +14,7 @@ public class Scheduler implements EDProtocol, CDProtocol{
     // ------------------------------------------------------------------------
 
     // Protocol to interact with : softwareDB and Downloader
-    private static final String DB_PROT = "database_protocol";
+    private static final String NET_PROT = "networking_protocol";
     private static final String GOSSIP_PROT = "gossip_protocol";
 
     private static final String BANDW = "bandwidth";
@@ -26,10 +26,10 @@ public class Scheduler implements EDProtocol, CDProtocol{
     // ------------------------------------------------------------------------
 
     /**
-     * Energy protocol identifier. Obtained from config property
-     * {@link #DB_PROT}, {@link #GOSSIP_PROT}.
+     * protocol identifiers. Obtained from config property
+     * {@link #NET_PROT}, {@link #GOSSIP_PROT}.
      */
-    private final int dbPID;
+    private final int netPID;
     private final int gossipPID;
     private int cycle_counter =0;
 
@@ -41,9 +41,9 @@ public class Scheduler implements EDProtocol, CDProtocol{
     public Scheduler(String prefix) {
         this.prefix = prefix;
 
-        // get PIDs of SoftwareDB and Downloader
-        dbPID = Configuration.getPid(prefix + "." + DB_PROT);
+        // get PIDs of gossiper and Downloader
         gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROT);
+        netPID = Configuration.getPid(prefix + "." + NET_PROT);
 
         jobsList = new ArrayList<>();
         this.space = Configuration.getInt(prefix + "." + DISK_SPACE);
@@ -67,17 +67,6 @@ public class Scheduler implements EDProtocol, CDProtocol{
     //process event received from gossiper
     public void processGossipMessage(Node neigh, SoftwareJob newJob){
 
-        // TODO update downloader agent that will download and interact with DB.
-        // no strategy at this time : simply add the software our neighbour have but empty
-        //SoftwareDB db = (SoftwareDB) CommonState.getNode().getProtocol(this.dbPID);
-        //db.addNeigborSoftware(message, neigh);
-          /*
-     * Once NeighborhoodMaintainer messages have been sent, pass the neighbor list to
-     * the local instance of software DB to remove neighbors that are not around anymore
-     */
-        // db.keepOnly(((NeighborhoodMaintainer) node.getProtocol(neighPid)).getNeighbors());
-
-
         if( ! newJob.isExpired() || newJob.isDoable(bandwidth) ) {
             priceIT(newJob);
             jobsList.add(newJob);
@@ -89,6 +78,9 @@ public class Scheduler implements EDProtocol, CDProtocol{
     public void nextCycle(Node node, int protocolID) {
 
         updateTasks();
+
+        //pass list to the downlader
+        ((NetworkAgent) node.getProtocol(netPID)).update(jobsList);
 
         if (cycle_counter%4 == 0) {
             // TODO : gossip completed jobs ?

@@ -20,9 +20,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     // ------------------------------------------------------------------------
 
     // Protocol to interact with : softwareDB, neighborhood maintainer and Supervisor
-    private static final String DB_PROT = "database_protocol";
-    private static final String GOSSIP_PROT = "gossip_protocol";
-    private static final String NEIGH_PROT = "neighborhood_protocol";
+   private static final String NEIGH_PROT = "neighborhood_protocol";
 
     private static final String BANDW = "bandwidth";
     private static final String PIECE_SIZE = "piece_size";
@@ -32,9 +30,6 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     // Fields
     // ------------------------------------------------------------------------
 
-
-    private final int dbPID;
-    private final int gossipPID;
     private final int neighborhoodPID;
 
     private int bandwidth;
@@ -53,8 +48,6 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
         this.prefix = prefix;
 
         // get PIDs of SoftwareDB and Downloader
-        dbPID = Configuration.getPid(prefix + "." + DB_PROT);
-        gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROT);
         neighborhoodPID = Configuration.getPid(prefix + "." + NEIGH_PROT);
 
         bandwidth = Configuration.getInt(prefix + "." +BANDW);
@@ -200,6 +193,11 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                     // send request message to neighbor with no latency
                     EDSimulator.add(0, msg, neighbor, pid);
                 });
+    }
+
+
+    public ArrayList<Map.Entry<String, boolean[]>> getLocalData() {
+        return localData;
     }
 }
 
