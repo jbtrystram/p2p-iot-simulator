@@ -1,11 +1,18 @@
-VER=1.0.5
+space :=
+space +=
+JARS=$(wildcard lib/*.jar)
+LIBS:=$(subst $(space),:,$(JARS))
+
+print:
+	@echo $(JARS)
+	@echo $(LIBS)
 
 all:
-	javac -classpath src:jep-2.3.0.jar:djep-1.0.0.jar:univocity-parsers-2.5.9.jar:maven-artifact-3.5.3.jar `find src/main/ -name "*.java"`
+	javac -classpath src:$(LIBS) `find src/main/ -name "*.java"`
 clean:
 	rm -f `find src/main -name "*.class"`
 run:
-	java -cp jep-2.3.0.jar:djep-1.0.0.jar:univocity-parsers-2.5.9.jar:maven-artifact-3.5.3.jar:src peersim.Simulator $(CONFIG).txt
+	java -cp $(LIBS):src peersim.Simulator $(CONFIG).txt
 
 order:
 	rm -rf graphs/
