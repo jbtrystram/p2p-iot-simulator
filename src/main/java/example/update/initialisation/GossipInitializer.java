@@ -1,8 +1,8 @@
 package example.update.initialisation;
 
+import example.update.NetworkAgent;
 import example.update.SoftwareJob;
 import peersim.config.Configuration;
-import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
@@ -11,7 +11,6 @@ import peersim.edsim.EDSimulator;
 import example.update.NetworkMessage;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Initialize node software DB with software
@@ -27,13 +26,15 @@ public class GossipInitializer implements Control {
      * @config
      */
     private static final String GOSSIP_PROTOCOL = "gossip_protocol";
+    private static final String NETWORK_PROTOCOL = "network_protocol";
 
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
 
     /** Protocol identifier, obtained from config property {@link #GOSSIP_PROTOCOL}. */
-    private final int gossip_pid;
+    private final int gossipPID;
+    private final int networkPID;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -48,7 +49,8 @@ public class GossipInitializer implements Control {
      */
     public GossipInitializer(String prefix) {
 
-        gossip_pid = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
+        gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
+        networkPID = Configuration.getPid(prefix + "." + NETWORK_PROTOCOL);
 
     }
 
@@ -80,11 +82,10 @@ public class GossipInitializer implements Control {
             NetworkMessage msg = new NetworkMessage(job,n);
 
             //trigger gossip
-            EDSimulator.add(70, msg, n, gossip_pid);
-            //protocol.addLocalSoftware(randomJob("fedora", 27, 15));
-            //protocol.getLocalSoftwareList().forEach(soft -> {
-            //    soft.comleteAllPieces();
-            //});
+            EDSimulator.add(70, msg, n, gossipPID);
+
+            //fill the data on the node
+           ((NetworkAgent) n.getProtocol(networkPID)).completeJob(job);
         }
         return false;
     }

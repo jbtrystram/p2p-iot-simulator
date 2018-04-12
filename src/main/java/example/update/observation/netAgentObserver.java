@@ -79,28 +79,12 @@ public class netAgentObserver implements Control {
 
         for (int i = 0; i < Network.size(); i++) {
 
-            String out = String.valueOf(i);
-            out += print((NetworkAgent) Network.get(i).getProtocol(pid));
+            String out = String.valueOf(i)+" :";
+            out += ((NetworkAgent) Network.get(i).getProtocol(pid)).jobProgress();
 
-            if (! out.isEmpty()) {
-                System.out.println("Node " + i + "\n" + out);
-            }
+            System.out.println("Node "+ out+"%");
+
         }
         return false;
-    }
-
-    private String print(NetworkAgent prot){
-        StringBuilder str = new StringBuilder();
-        ArrayList<Map.Entry<String, boolean[]>> data = prot.getLocalData();
-        for (Map.Entry<String, boolean[]> pack : data) {
-            str.append(pack.getKey() + ";");
-            int progress = 0;
-            for (boolean b : pack.getValue()) {
-                if (b) progress++;
-            }
-            progress = (progress /pack.getValue().length) * 100;
-            str.append(progress).append(";");
-        }
-        return str.toString();
     }
 }

@@ -80,8 +80,9 @@ public class Scheduler implements EDProtocol, CDProtocol{
         updateTasks();
 
         //pass list to the downlader
-        ((NetworkAgent) node.getProtocol(netPID)).update(jobsList);
-
+        if (! jobsList.isEmpty()) {
+            ((NetworkAgent) node.getProtocol(netPID)).update(jobsList);
+        }
         if (cycle_counter%4 == 0) {
             // TODO : gossip completed jobs ?
             // periodically, gossip all the packages once

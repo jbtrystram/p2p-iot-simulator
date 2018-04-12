@@ -9,6 +9,7 @@ import peersim.edsim.EDSimulator;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -67,15 +68,23 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     //TODO : do something cleaner in a softwareDB class
 
     public void update(List<SoftwareJob> packages) {
-        // update the local list.
-        for ( int i=0; i<packages.size() ;i++ ){
-            for (int j=0; j<localData.size() ;j++) {
 
-                if (packages.get(i).getId().equals(localData.get(j).getKey())) {
-                    localData.add(i, localData.remove(j));
-                } else {
-                    localData.add(i, new SimpleEntry(packages.get(i).getId(),
-                            new boolean[packages.get(i).size/pieceSize]));
+        if(localData.isEmpty()) {
+            localData.add(new SimpleEntry(packages.get(0).getId(),
+                    new boolean[packages.get(0).size / pieceSize]));
+            Arrays.fill(localData.get(0).getValue(), Boolean.FALSE);
+        } else {
+            // update the local list.
+            for (int i = 0; i < packages.size(); i++) {
+                for (int j = 0; j < localData.size(); j++) {
+
+                    if (packages.get(i).getId().equals(localData.get(j).getKey())) {
+                        localData.add(i, localData.remove(j));
+                    } else {
+                        localData.add(i, new SimpleEntry(packages.get(i).getId(),
+                                new boolean[packages.get(i).size / pieceSize]));
+                        Arrays.fill(localData.get(i).getValue(), Boolean.FALSE);
+                    }
                 }
             }
         }
@@ -83,7 +92,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
     private Map.Entry<String, Integer> getRandomDownload() {
 
-       for (int i = 1; i <= localData.size(); i++) {
+       for (int i = 0; i < localData.size(); i++) {
 
            int rand = CommonState.r.nextInt(localData.get(i).getValue().length);
 
@@ -104,7 +113,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
 
     public void nextCycle(Node node, int pid) {
-        if (!downloading){
+        if (!downloading && ! localData.isEmpty()){
 
             Map.Entry<String, Integer> toDownload = getRandomDownload();
             if ( toDownload != null) {
@@ -124,27 +133,37 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
         switch (event.type) {
 
             case DataMessage.REQUEST:
-                if ( !downloading && event.sender != localNode && localDataContains(event.hash) ){
+                if (!downloading && event.sender != localNode && localDataContains(event.hash)) {
                     // is this piece complete
-                    if ( localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber] ) {
-                        DataMessage reply = new DataMessage(DataMessage.RESPONSE, event.hash, event.pieceNumber, localNode);
-                        EDSimulator.add(0, reply, event.sender, pid);
-
-                        //send the data
-                        this.downloading = true;
-                        // use the lowest bandwith of the 2 nodes
-                        int bdw = ( bandwidth < ((NetworkAgent)event.sender.getProtocol(pid)).bandwidth ) ?
-                                    bandwidth : ((NetworkAgent)event.sender.getProtocol(pid)).bandwidth ;
-                        reply = new DataMessage(DataMessage.DATA, event.hash, event.pieceNumber, localNode);
-                        EDSimulator.add(pieceSize/bdw, reply, event.sender, pid);
-
+                    if (localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber]) {
+                        DataMessage reply = new DataMessage(DataMessage.OFFER, event.hash, event.pieceNumber, localNode);
+                        EDSimulator.add(1, reply, event.sender, pid);
                     }
                 }
                 break;
 
-            case DataMessage.RESPONSE:
+            case DataMessage.OFFER:
                 //downloading data
-                this.downloading = true;
+                if (!downloading) {
+                    this.downloading = true;
+                    //send ACCEPT
+                    DataMessage accept = new DataMessage(DataMessage.ACCEPT, event.hash, event.pieceNumber, localNode);
+                    EDSimulator.add(1, accept, event.sender, pid);
+                }
+                break;
+
+            case DataMessage.ACCEPT:
+                if (!downloading) {
+                    //upload the data
+                    this.downloading = true;
+                    DataMessage dataMsg;
+
+                    // use the lowest bandwith of the 2 nodes
+                    int bdw = (bandwidth < ((NetworkAgent) event.sender.getProtocol(pid)).bandwidth) ?
+                            bandwidth : ((NetworkAgent) event.sender.getProtocol(pid)).bandwidth;
+                    dataMsg = new DataMessage(DataMessage.DATA, event.hash, event.pieceNumber, localNode);
+                    EDSimulator.add(pieceSize / bdw, dataMsg, event.sender, pid);
+                }
                 break;
 
             case DataMessage.DATA:
@@ -152,14 +171,16 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber] = true;
 
                 this.downloading = false;
+                System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " downloaded from node "+event.sender.getID());
 
                 //send ack
                 DataMessage msg = new DataMessage(DataMessage.DATAACK, event.hash, event.pieceNumber, localNode);
-                EDSimulator.add(0, msg, event.sender, pid);
+                EDSimulator.add(1, msg, event.sender, pid);
                 break;
 
                 //TODO : what if energy cuts during a trasnfer? seeder is locked.
             case DataMessage.DATAACK:
+                System.out.println("node "+ localNode.getID() +" ack message from node" + event.sender.getID());
                 //we can stop uploading
                 this.downloading = false;
                 break;
@@ -199,14 +220,52 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     public ArrayList<Map.Entry<String, boolean[]>> getLocalData() {
         return localData;
     }
+
+    public String jobProgress(String hash){
+        boolean[] tab = localData.get(getLocalIndex(hash)).getValue();
+        int perc=0;
+        for (boolean b : tab) {
+            if (b) perc++;
+        }
+        return String.valueOf((int)(((double)perc/(double)tab.length)*100));
+    }
+
+    //TODO : better looking hashes
+    public String jobProgress(){
+        StringBuilder str =new StringBuilder();
+        for (Map.Entry<String, boolean[]> entry : localData) {
+
+            boolean[] tab = entry.getValue();
+            int perc = 0;
+            for (boolean b : tab) {
+                if (b) perc++;
+            }
+            //str.append(entry.getKey()).append(":").append(String.valueOf((int)(((double)perc/(double)tab.length)*100))).append(";");
+            str.append(String.valueOf((int)(((double)perc/(double)tab.length)*100))).append(";");
+        }
+        return str.toString();
+    }
+
+    //complete a job : hook for the initializer
+    public void completeJob(SoftwareJob job){
+        if ( ! localDataContains(job.getId()) ){
+            boolean[] data = new boolean[job.size / pieceSize];
+            Arrays.fill(data, Boolean.TRUE);
+
+            localData.add(new SimpleEntry(job.getId(), data));
+        } else {
+            Arrays.fill(localData.get(getLocalIndex(job.getId())).getValue(), Boolean.TRUE);
+        }
+    }
 }
 
 class DataMessage{
 
     final static int REQUEST = 0;
-    final static int RESPONSE = 1;
-    final static int DATA = 2;
-    final static int DATAACK = 3;
+    final static int OFFER = 1;
+    final static int ACCEPT = 2;
+    final static int DATA = 3;
+    final static int DATAACK = 4;
      // ? //enum type1 {REQUEST, RESPONSE}
 
     int type;
