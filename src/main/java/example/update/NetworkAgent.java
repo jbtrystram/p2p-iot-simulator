@@ -7,11 +7,8 @@ import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 import peersim.edsim.EDSimulator;
 
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 
 public class NetworkAgent implements EDProtocol, CDProtocol{
@@ -40,7 +37,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
 
     // my local list <SoftwarePackage.ID, array>
-    ArrayList<Map.Entry<String, boolean[]>> localData;
+    List<Map.Entry<String, boolean[]>> localData;
 
 
     // constructor
@@ -79,7 +76,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 for (int j = 0; j < localData.size(); j++) {
 
                     if (packages.get(i).getId().equals(localData.get(j).getKey())) {
-                        localData.add(i, localData.remove(j));
+                            localData.add(i, localData.remove(j));
                     } else {
                         localData.add(i, new SimpleEntry(packages.get(i).getId(),
                                 new boolean[packages.get(i).size / pieceSize]));
@@ -117,7 +114,6 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
             Map.Entry<String, Integer> toDownload = getRandomDownload();
             if ( toDownload != null) {
-
                 //craft a new message
                 DataMessage msg = new DataMessage(DataMessage.REQUEST, toDownload.getKey(), toDownload.getValue(), node);
                 requestNeighbors(node, msg, pid);
@@ -139,21 +135,18 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                     if (localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber]) {
                         DataMessage reply = new DataMessage(DataMessage.OFFER, event.hash, event.pieceNumber, localNode);
                         EDSimulator.add(1, reply, event.sender, pid);
-                        System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " processing REQUEST from "+event.sender.getID());
-                    } //else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored2 REQUEST from "+event.sender.getID());
+                    }
 
-                } //else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored1 REQUEST from "+event.sender.getID());
-                break;
+                }
 
             case DataMessage.OFFER:
                 //downloading data
                 if (!downloading) {
                     this.downloading = true;
-                    //System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " accepted OFFER from "+event.sender.getID());
                     //send ACCEPT
                     DataMessage accept = new DataMessage(DataMessage.ACCEPT, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(1, accept, event.sender, pid);
-                } else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored OFFER from "+event.sender.getID());
+                }
                 break;
 
             case DataMessage.ACCEPT: //TODO : cancel message
@@ -169,15 +162,19 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                     dataMsg = new DataMessage(DataMessage.DATA, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(pieceSize / bdw, dataMsg, event.sender, pid);
 
-                } else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored ACCEPT from node "+event.sender.getID());
+                } else { // send a cancel message
+                    DataMessage dataMsg;
+
+                    dataMsg = new DataMessage(DataMessage.CANCEL, event.hash, event.pieceNumber, localNode);
+                    EDSimulator.add(1, dataMsg, event.sender, pid);
+                }
                 break;
 
             case DataMessage.DATA:
                 //mark piece as completed into DB
+                if (getLocalIndex(event.hash) == -1 && localData.isEmpty()) {System.out.println(localNode.getID()+ " have no hash dude");}
                 localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber] = true;
-
                 this.downloading = false;
-                System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " DATA from node "+event.sender.getID());
 
                 //send ack
                 DataMessage msg = new DataMessage(DataMessage.DATAACK, event.hash, event.pieceNumber, localNode);
@@ -189,6 +186,12 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 //System.out.println("node "+ localNode.getID() +" piece "+event.pieceNumber +" DATAACK message from node" + event.sender.getID());
                 //we can stop uploading
                 this.downloading = false;
+                break;
+
+            case DataMessage.CANCEL:
+                this.downloading = false;
+                // try again
+                this.nextCycle(localNode, pid);
                 break;
         }
     }
@@ -223,7 +226,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     }
 
 
-    public ArrayList<Map.Entry<String, boolean[]>> getLocalData() {
+    public List<Map.Entry<String, boolean[]>> getLocalData() {
         return localData;
     }
 
@@ -272,6 +275,7 @@ class DataMessage{
     final static int ACCEPT = 2;
     final static int DATA = 3;
     final static int DATAACK = 4;
+    final static int CANCEL = 5;
      // ? //enum type1 {REQUEST, RESPONSE}
 
     int type;

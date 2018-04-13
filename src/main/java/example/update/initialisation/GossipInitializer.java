@@ -28,6 +28,8 @@ public class GossipInitializer implements Control {
     private static final String GOSSIP_PROTOCOL = "gossip_protocol";
     private static final String NETWORK_PROTOCOL = "network_protocol";
 
+    private static final String FILE_SIZE = "file_size";
+
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
@@ -35,6 +37,8 @@ public class GossipInitializer implements Control {
     /** Protocol identifier, obtained from config property {@link #GOSSIP_PROTOCOL}. */
     private final int gossipPID;
     private final int networkPID;
+
+    private final int fileSize;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -51,7 +55,7 @@ public class GossipInitializer implements Control {
 
         gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
         networkPID = Configuration.getPid(prefix + "." + NETWORK_PROTOCOL);
-
+        fileSize = Configuration.getInt(prefix + "." + FILE_SIZE);
     }
 
     // ------------------------------------------------------------------------
@@ -65,7 +69,7 @@ public class GossipInitializer implements Control {
 
         int qos = SoftwareJob.QOS_INSTALL_MANDATORY;
         int priority = SoftwareJob.PRIORITY_STANDARD;
-        int size = 150;
+        int size = fileSize;
 
         SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX, priority, qos, size);
 
