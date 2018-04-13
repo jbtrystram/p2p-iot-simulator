@@ -8,7 +8,7 @@ print:
 	@echo $(LIBS)
 
 all:
-	javac -source 1.8 -target 1.8 -classpath src:$(LIBS) `find src/main/ -name "*.java"`
+	javac -source 1.8 -target 1.8 -classpath $(LIBS) `find src/main/ -name "*.java"`
 clean:
 	rm -f `find src/main -name "*.class"`
 run:

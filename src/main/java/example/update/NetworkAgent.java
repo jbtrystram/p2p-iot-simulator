@@ -134,26 +134,31 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
             case DataMessage.REQUEST:
                 if (!downloading && event.sender != localNode && localDataContains(event.hash)) {
+
                     // is this piece complete
                     if (localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber]) {
                         DataMessage reply = new DataMessage(DataMessage.OFFER, event.hash, event.pieceNumber, localNode);
                         EDSimulator.add(1, reply, event.sender, pid);
-                    }
-                }
+                        System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " processing REQUEST from "+event.sender.getID());
+                    } //else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored2 REQUEST from "+event.sender.getID());
+
+                } //else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored1 REQUEST from "+event.sender.getID());
                 break;
 
             case DataMessage.OFFER:
                 //downloading data
                 if (!downloading) {
                     this.downloading = true;
+                    //System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " accepted OFFER from "+event.sender.getID());
                     //send ACCEPT
                     DataMessage accept = new DataMessage(DataMessage.ACCEPT, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(1, accept, event.sender, pid);
-                }
+                } else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored OFFER from "+event.sender.getID());
                 break;
 
-            case DataMessage.ACCEPT:
+            case DataMessage.ACCEPT: //TODO : cancel message
                 if (!downloading) {
+                    //System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ "receivied ACCEPT from node "+event.sender.getID());
                     //upload the data
                     this.downloading = true;
                     DataMessage dataMsg;
@@ -163,7 +168,8 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                             bandwidth : ((NetworkAgent) event.sender.getProtocol(pid)).bandwidth;
                     dataMsg = new DataMessage(DataMessage.DATA, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(pieceSize / bdw, dataMsg, event.sender, pid);
-                }
+
+                } else System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " ignored ACCEPT from node "+event.sender.getID());
                 break;
 
             case DataMessage.DATA:
@@ -171,7 +177,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber] = true;
 
                 this.downloading = false;
-                System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " downloaded from node "+event.sender.getID());
+                System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ " DATA from node "+event.sender.getID());
 
                 //send ack
                 DataMessage msg = new DataMessage(DataMessage.DATAACK, event.hash, event.pieceNumber, localNode);
@@ -180,7 +186,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
                 //TODO : what if energy cuts during a trasnfer? seeder is locked.
             case DataMessage.DATAACK:
-                System.out.println("node "+ localNode.getID() +" ack message from node" + event.sender.getID());
+                //System.out.println("node "+ localNode.getID() +" piece "+event.pieceNumber +" DATAACK message from node" + event.sender.getID());
                 //we can stop uploading
                 this.downloading = false;
                 break;

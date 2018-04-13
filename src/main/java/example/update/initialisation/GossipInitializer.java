@@ -65,7 +65,7 @@ public class GossipInitializer implements Control {
 
         int qos = SoftwareJob.QOS_INSTALL_MANDATORY;
         int priority = SoftwareJob.PRIORITY_STANDARD;
-        int size = 500;
+        int size = 150;
 
         SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX, priority, qos, size);
 
@@ -86,6 +86,7 @@ public class GossipInitializer implements Control {
 
             //fill the data on the node
            ((NetworkAgent) n.getProtocol(networkPID)).completeJob(job);
+           System.out.println("node "+ n.getID() +"is the seed");
         }
         return false;
     }

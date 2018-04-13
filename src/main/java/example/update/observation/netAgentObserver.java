@@ -82,7 +82,7 @@ public class netAgentObserver implements Control {
             String out = String.valueOf(i)+" :";
             out += ((NetworkAgent) Network.get(i).getProtocol(pid)).jobProgress();
 
-            System.out.println("Node "+ out+"%");
+            //System.out.println("Node "+ out+"%");
 
         }
         return false;

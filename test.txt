@@ -11,7 +11,7 @@ network.size 35
 map_size 1000
 random.seed 1234567890
 
-simulation.endtime 1000
+simulation.endtime 100000
 simulation.logtime 50
 
 

@@ -1,12 +1,12 @@
 ################### Settings ======================
 #debug.config
-MAX_RANGE 200
+MAX_RANGE 400
 
 OBERVERS_CYCLE 50
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 
-network.size 50
+network.size 7
 map_size 1000
 random.seed 1234567890
 
@@ -62,7 +62,7 @@ init.sch2.protocol supervisor
 protocol.supervisor example.update.Scheduler
 protocol.supervisor.networking_protocol p2p_net_agent
 protocol.supervisor.gossip_protocol gossip
-protocol.supervisor.bandwidth 1
+protocol.supervisor.bandwidth 25
 protocol.supervisor.disk_space 1000
 protocol.supervisor.transport tr
 protocol.supervisor.step PROTOCOL_CYCLE
@@ -73,7 +73,7 @@ init.sch3.protocol p2p_net_agent
 
 protocol.p2p_net_agent example.update.NetworkAgent
 protocol.p2p_net_agent.neighborhood_protocol neighbor
-protocol.p2p_net_agent.bandwidth 25
+protocol.p2p_net_agent.bandwidth 2
 protocol.p2p_net_agent.piece_size 50
 protocol.p2p_net_agent.transport tr
 protocol.p2p_net_agent.step PROTOCOL_CYCLE
