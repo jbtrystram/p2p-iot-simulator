@@ -77,14 +77,32 @@ public class netAgentObserver implements Control {
     // Control interface method. does the file handling
     public boolean execute() {
 
-        for (int i = 0; i < Network.size(); i++) {
+        try {
+            // initialize output streams
+            String fname = fng.nextCounterName();
+            FileOutputStream outStream = new FileOutputStream(fname);
+            System.out.println("NetAgentObserver : Writing to file " + fname);
+            PrintStream pstr = new PrintStream(outStream);
 
-            String out = ((NetworkAgent) Network.get(i).getProtocol(pid)).jobProgress();
 
-            if (! out.isEmpty() ) {
-                System.out.println("Node "+i+": " + out + "%");
+
+            for (int i = 0; i < Network.size(); i++) {
+
+                String out = ((NetworkAgent) Network.get(i).getProtocol(pid)).jobProgress();
+
+                if (! out.isEmpty() ) {
+                    pstr.println(i+";"+out);
+                }
+                else {
+                    pstr.println(i+";"+0);
+                }
             }
+
+            outStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
         return false;
     }
 }
