@@ -94,7 +94,7 @@ public class netAgentObserver implements Control {
                     pstr.println(i+";"+out);
                 }
                 else {
-                    pstr.println(i+";"+0);
+                    pstr.println(i+";"+0+";");
                 }
             }
 

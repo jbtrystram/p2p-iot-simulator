@@ -6,7 +6,7 @@ OBERVERS_CYCLE 50
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 
-network.size 6
+network.size 5
 map_size 1000
 random.seed 1234567890
 
@@ -87,18 +87,22 @@ protocol.p2p_net_agent.step PROTOCOL_CYCLE
 ################ Observers ==============================
 
 
-control.schedulerCounter example.update.observation.SchedulerJobsCounter
-control.schedulerCounter.protocol supervisor
-control.schedulerCounter.step OBERVERS_CYCLE
-
 control.dlProgress example.update.observation.netAgentObserver
 control.dlProgress.protocol p2p_net_agent
 control.dlProgress.step OBERVERS_CYCLE
 
+control.coordObserver example.update.observation.InetObserver
+control.coordObserver.coord_protocol localisation
+control.coordObserver.step OBERVERS_CYCLE
+
+control.neighobserver example.update.observation.NeighborsObservers
+control.neighobserver.neigbors_protocol neighbor
+control.neighobserver.step OBERVERS_CYCLE
+
 ################ Order & timings ==============================
 
 order.protocol link,tr,energy,localisation,neighbor,gossip,supervisor,p2p_net_agent
-order.control schedulerCounter,dlProgress
+order.control coordObserver,neighobserver,dlProgress
 
 
 # Observers should be run once more at the end

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
@@ -11,7 +9,9 @@ def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
-        energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
+        #energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
+        print("using "+"/data_pieces_dump"+file_seq+".dat")
+        progress = np.genfromtxt(path+"/data_pieces_dump"+file_seq+".dat", delimiter=';')
 
         #more awesomeness
         #plt.xkcd()
@@ -35,7 +35,7 @@ def plotter(file_seq, path):
         		plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.5, zorder=-1)
 
         # Plot nodes
-        plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1, c=energy[:,1])
+        plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1, c=progress[:,1])
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')

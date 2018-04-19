@@ -136,8 +136,8 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                         DataMessage reply = new DataMessage(DataMessage.OFFER, event.hash, event.pieceNumber, localNode);
                         EDSimulator.add(1, reply, event.sender, pid);
                     }
-
                 }
+                break;
 
             case DataMessage.OFFER:
                 //downloading data
@@ -149,7 +149,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 }
                 break;
 
-            case DataMessage.ACCEPT: //TODO : cancel message
+            case DataMessage.ACCEPT:
                 if (!downloading) {
                     //System.out.println("Node "+ localNode.getID() +" piece "+event.pieceNumber+ "receivied ACCEPT from node "+event.sender.getID());
                     //upload the data
