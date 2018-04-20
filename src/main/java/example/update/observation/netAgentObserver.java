@@ -81,7 +81,6 @@ public class netAgentObserver implements Control {
             // initialize output streams
             String fname = fng.nextCounterName();
             FileOutputStream outStream = new FileOutputStream(fname);
-            System.out.println("NetAgentObserver : Writing to file " + fname);
             PrintStream pstr = new PrintStream(outStream);
 
 
@@ -94,7 +93,7 @@ public class netAgentObserver implements Control {
                     pstr.println(i+";"+out);
                 }
                 else {
-                    pstr.println(i+";"+0+";");
+                    pstr.println(i+";");
                 }
             }
 

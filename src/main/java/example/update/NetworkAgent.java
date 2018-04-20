@@ -74,10 +74,9 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
             // update the local list.
             for (int i = 0; i < packages.size(); i++) {
                 for (int j = 0; j < localData.size(); j++) {
-
                     if (packages.get(i).getId().equals(localData.get(j).getKey())) {
                             localData.add(i, localData.remove(j));
-                    } else {
+                    } else if (! localDataContains(packages.get(i).getId())) {
                         localData.add(i, new SimpleEntry(packages.get(i).getId(),
                                 new boolean[packages.get(i).size / pieceSize]));
                         Arrays.fill(localData.get(i).getValue(), Boolean.FALSE);
@@ -241,6 +240,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
     //TODO : better looking hashes
     public String jobProgress(){
+
         StringBuilder str =new StringBuilder();
         for (Map.Entry<String, boolean[]> entry : localData) {
 
@@ -249,7 +249,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
             for (boolean b : tab) {
                 if (b) perc++;
             }
-            //str.append(entry.getKey()).append(":").append(String.valueOf((int)(((double)perc/(double)tab.length)*100))).append(";");
+            str.append(entry.getKey()).append(":");
             str.append(String.valueOf((int)(((double)perc/(double)tab.length)*100))).append(";");
         }
         return str.toString();

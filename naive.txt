@@ -6,11 +6,12 @@ OBERVERS_CYCLE 50
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 
-network.size 5
+network.size 3
 map_size 1000
-random.seed 1234567890
+#random.seed 1234567890
+random.seed 22222222748
 
-simulation.endtime 1000
+simulation.endtime 2000
 simulation.logtime 50
 
 
@@ -75,13 +76,18 @@ init.sch3.protocol p2p_net_agent
 protocol.p2p_net_agent example.update.NetworkAgent
 protocol.p2p_net_agent.neighborhood_protocol neighbor
 protocol.p2p_net_agent.bandwidth 4
-protocol.p2p_net_agent.piece_size 50
+protocol.p2p_net_agent.piece_size 20
 protocol.p2p_net_agent.transport tr
 protocol.p2p_net_agent.step PROTOCOL_CYCLE
 
 
 ################ controls ==============================
 
+control.inserter example.update.control.GossipInsert
+control.inserter.gossip_protocol gossip
+control.inserter.network_protocol p2p_net_agent
+control.inserter.file_size 180
+control.inserter.step CONTROL_CYCLE
 
 
 ################ Observers ==============================
@@ -112,3 +118,7 @@ control.dlProgress.FINAL true
 # Observers should not run at first cycle (protocols have not been run yet)
 control.dbObserver.from 2
 control.dlProgress.from 2
+
+#inserter should run once
+control.inserter.from 150
+#control.inserter.until 520

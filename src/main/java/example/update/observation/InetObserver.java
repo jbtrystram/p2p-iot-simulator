@@ -102,7 +102,6 @@ public class InetObserver implements Control {
              // initialize output streams
             String fname = fng.nextCounterName();
             FileOutputStream outStream = new FileOutputStream(fname);
-            System.out.println("InetObserver : Writing to file " + fname);
             PrintStream pstr = new PrintStream(outStream);
 
             // dump topology:

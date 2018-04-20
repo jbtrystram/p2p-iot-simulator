@@ -24,7 +24,7 @@ public class SoftwareJob {
 
     // Fields
 
-    public final String Name;
+    public final String name;
     public final ComparableVersion version;
     public final LocalDateTime dateCreated ;
     public LocalDateTime dateExp;
@@ -47,14 +47,14 @@ public class SoftwareJob {
 
     public void setCost(int cost){ this.cost = cost;}
 
-    public String getId(){ return Arrays.toString(id); };
+    public String getId(){ return name+" "+version;} //Arrays.toString(id); }
 
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
     public SoftwareJob(String name, String version, LocalDateTime dateExp, int priority, int expectedQoS, int size) {
-        this.Name = name;
+        this.name = name;
         this.version = new ComparableVersion(version);
         this.dateExp = dateExp;
         this.priority = priority;

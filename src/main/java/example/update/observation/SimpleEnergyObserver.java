@@ -77,7 +77,6 @@ public class SimpleEnergyObserver implements Control {
             // initialize output streams
             String fname = fng.nextCounterName();
             FileOutputStream outStream = new FileOutputStream(fname);
-            System.out.println("EnergyObserver : Writing to file " + fname);
             PrintStream pstr = new PrintStream(outStream);
 
             // dump energy states

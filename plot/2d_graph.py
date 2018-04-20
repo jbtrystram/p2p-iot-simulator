@@ -32,10 +32,11 @@ def plotter(file_seq, path):
         	for node in range(1, neighbors.size):
         		A = neighbors[0]
         		B = neighbors[node]
-        		plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.5, zorder=-1)
+        		plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
 
         # Plot nodes
-        plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1, c=progress[:,1])
+        plt.scatter(coord[:,1], coord[:,2], s=7, zorder=1, c=progress[:,1], vmin=0, vmax=100)
+        plt.colorbar()
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')

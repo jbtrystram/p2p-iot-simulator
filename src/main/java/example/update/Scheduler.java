@@ -82,15 +82,16 @@ public class Scheduler implements EDProtocol, CDProtocol{
         //pass list to the downlader
         if (! jobsList.isEmpty()) {
             ((NetworkAgent) node.getProtocol(netPID)).update(jobsList);
-        }
-        if (cycle_counter%4 == 0) {
-            // TODO : gossip completed jobs ?
-            // periodically, gossip all the packages once
-            Gossiper localGossiper = (Gossiper) node.getProtocol(gossipPID);
 
-            jobsList.forEach(soft -> {
-                localGossiper.gossip(node, node, gossipPID, soft);
-            });
+            if (cycle_counter % 4 == 0) {
+                // TODO : gossip completed jobs ?
+                // periodically, gossip all the packages once
+                Gossiper localGossiper = (Gossiper) node.getProtocol(gossipPID);
+
+                jobsList.forEach(soft -> {
+                    localGossiper.gossip(node, node, gossipPID, soft);
+                });
+            }
         }
         cycle_counter += 1;
     }
