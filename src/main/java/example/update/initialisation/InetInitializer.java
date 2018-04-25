@@ -18,7 +18,7 @@
 
 package example.update.initialisation;
 
-import example.update.NodeCoordinates;
+import example.update.constraints.NodeCoordinates;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
@@ -107,7 +107,7 @@ public class InetInitializer implements Control {
 
     private void setupNode(int nodeIndex, int xCoord, int yCoord, int speed, int angle){
         Node n = Network.get(nodeIndex);
-        NodeCoordinates protocol = protocol = (NodeCoordinates) n.getProtocol(pid);
+        NodeCoordinates protocol = (NodeCoordinates) n.getProtocol(pid);
 
         // Set coordinates x,y
         protocol.setX(xCoord);

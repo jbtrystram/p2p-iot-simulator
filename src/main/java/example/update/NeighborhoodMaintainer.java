@@ -1,5 +1,7 @@
 package example.update;
 
+import example.update.constraints.NodeCoordinates;
+import example.update.constraints.SimpleEnergy;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Network;

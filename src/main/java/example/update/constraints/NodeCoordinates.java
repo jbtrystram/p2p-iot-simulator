@@ -1,4 +1,4 @@
-package example.update;
+package example.update.constraints;
 
 import example.update.initialisation.InetInitializer;
 import peersim.core.Protocol;

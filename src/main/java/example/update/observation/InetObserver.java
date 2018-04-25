@@ -18,7 +18,7 @@
 
 package example.update.observation;
 
-import example.update.NodeCoordinates;
+import example.update.constraints.NodeCoordinates;
 import peersim.config.Configuration;
 import peersim.core.Node;
 import peersim.core.*;

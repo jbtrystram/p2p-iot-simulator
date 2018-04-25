@@ -1,6 +1,6 @@
 package example.update.observation;
 
-import example.update.SimpleEnergy;
+import example.update.constraints.SimpleEnergy;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
