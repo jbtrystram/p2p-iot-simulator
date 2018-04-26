@@ -75,7 +75,7 @@ public class Gossiper implements EDProtocol {
      * It parse the receivied messages from other nodes
      */
     // This method is executed whenever a message is recevied. we forward it if it was never recevied.
-    public void processEvent(Node node, int pid, Object event) {
+    public void processEvent(Node localNode, int pid, Object event) {
 
         // recevied message
         NetworkMessage message = (NetworkMessage) event;
@@ -85,10 +85,10 @@ public class Gossiper implements EDProtocol {
             receviedMessages.add(message.announcedPackage.getId());
 
             // notify local Scheduler of the received message
-            ((Scheduler) node.getProtocol(supervisorPid)).processGossipMessage(message.sender, message.announcedPackage);
+            ((Scheduler) localNode.getProtocol(supervisorPid)).processGossipMessage(localNode, message.announcedPackage);
 
             //forward the message to neigbors.
-            gossip(message.sender, node, pid, message.announcedPackage);
+            gossip(message.sender, localNode, pid, message.announcedPackage);
         }
     }
 }

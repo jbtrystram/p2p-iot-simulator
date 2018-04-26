@@ -1,5 +1,6 @@
 package example.update;
 
+import example.update.constraints.Bandwidth;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Node;
@@ -17,8 +18,8 @@ public class Scheduler implements EDProtocol, CDProtocol{
     private static final String NET_PROT = "networking_protocol";
     private static final String GOSSIP_PROT = "gossip_protocol";
 
-    private static final String BANDW = "bandwidth";
-    private static final String DISK_SPACE = "disk_space";
+    private static final String BANDW_PROT = "bandwidth_ protocol";
+    private static final String DISK_SPACE_PROT = "disk_space_protocol";
 
 
     // ------------------------------------------------------------------------
@@ -34,8 +35,8 @@ public class Scheduler implements EDProtocol, CDProtocol{
     private int cycle_counter =0;
 
     private ArrayList<SoftwareJob> jobsList;
-    int space;
-    final int bandwidth;
+    int spaceProtocol;
+    int bandwidthProtocol;
 
     String prefix;
     public Scheduler(String prefix) {
@@ -46,8 +47,8 @@ public class Scheduler implements EDProtocol, CDProtocol{
         netPID = Configuration.getPid(prefix + "." + NET_PROT);
 
         jobsList = new ArrayList<>();
-        this.space = Configuration.getInt(prefix + "." + DISK_SPACE);
-        this.bandwidth = Configuration.getInt(prefix + "." + BANDW);
+        this.spaceProtocol = Configuration.getPid(prefix + "." + DISK_SPACE_PROT);
+        this.bandwidthProtocol = Configuration.getPid(prefix + "." + BANDW_PROT);
     }
 
     public Scheduler clone(){
@@ -65,9 +66,9 @@ public class Scheduler implements EDProtocol, CDProtocol{
     }
 
     //process event received from gossiper
-    public void processGossipMessage(Node neigh, SoftwareJob newJob){
+    public void processGossipMessage(Node localNode, SoftwareJob newJob){
 
-        if( ! newJob.isExpired() || newJob.isDoable(bandwidth) ) {
+        if( ! newJob.isExpired() || newJob.isDoable( ((Bandwidth) localNode.getProtocol(bandwidthProtocol)).getDownlinkCapacity() ) ) {
             priceIT(newJob);
             jobsList.add(newJob);
             updateTasks();

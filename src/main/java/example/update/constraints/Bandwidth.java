@@ -76,4 +76,8 @@ public class Bandwidth implements Protocol {
     public int getDownlinkUsage(){
         return ( (int) ((float)downlinkUsed/ (float)downlinkCapacity)*100);
     }
+
+    public int getDownlinkCapacity() {
+        return downlinkCapacity;
+    }
 }

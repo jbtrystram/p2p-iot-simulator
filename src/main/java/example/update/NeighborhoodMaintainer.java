@@ -1,5 +1,6 @@
 package example.update;
 
+import example.update.constraints.NetworkRange;
 import example.update.constraints.NodeCoordinates;
 import example.update.constraints.SimpleEnergy;
 import peersim.cdsim.CDProtocol;
@@ -25,9 +26,9 @@ public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
     private final int energyPid;
     private static final String PAR_ENERGY_PROT = "energy_protocol";
 
-    // Maximum distance allowed to reach neigbors
-    private final int maxDistance;
-    private static final String PAR_NEIGH_DISTANCE = "max_distance";
+    // protocol containing the range of the node
+    private final int rangeProtcol;
+    private static final String PAR_RANGE_PROT = "range_protocol";
 
     private LinkedList<Node> neighbors = new LinkedList();
 
@@ -41,7 +42,7 @@ public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
         //get the node NodeCoordinates protocol pid
         this.prefix = prefix;
         this.coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
-        this.maxDistance = Configuration.getInt(prefix + "." + PAR_NEIGH_DISTANCE);
+        this.rangeProtcol = Configuration.getPid(prefix + "." + PAR_RANGE_PROT);
         this.energyPid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
     }
 
@@ -91,6 +92,10 @@ public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
             cleanNeighborsList();
         }
         else {
+
+            // get range of the node
+            int maxDistance = ((NetworkRange) localNode.getProtocol(rangeProtcol)).range;
+
             // go through all the nodes in the network to send announce
             for (int i = 0; i < Network.size(); i++) {
                 int distance = ((NodeCoordinates) localNode.getProtocol(coordPid))
