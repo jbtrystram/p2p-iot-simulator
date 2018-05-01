@@ -1,6 +1,6 @@
 package example.update.constraints;
 
-public class Battery extends SimpleEnergy {
+public class Battery implements EnergySource {
 
     // ------------------------------------------------------------------------
     // Fields
@@ -17,10 +17,10 @@ public class Battery extends SimpleEnergy {
     // ------------------------------------------------------------------------
 
     public Battery(String prefix) {
-        super(null);
         battery = 100;
     }
 
+    @Override
     public Object clone() {
         return new Battery(null);
     }
@@ -30,19 +30,30 @@ public class Battery extends SimpleEnergy {
     // ------------------------------------------------------------------------
 
 
+    @Override
     public void consume() {
         battery -= (1 / this.capacityMultiplier);
     }
 
+    @Override
     public void charge(int amount) {
         this.battery += amount;
     }
 
+    @Override
     public void setCapacityMultiplier(float capacityMultiplier) {
         this.capacityMultiplier = capacityMultiplier;
     }
 
+    @Override
     public int getLevel(){
         return ( (int) battery);
+    }
+
+    @Override
+    public boolean getOnlineStatus() {
+        if (battery > 0) {
+            return true;
+        } else return false;
     }
 }
