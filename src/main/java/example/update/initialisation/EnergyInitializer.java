@@ -1,6 +1,8 @@
 package example.update.initialisation;
 
-import example.update.constraints.SimpleEnergy;
+import example.update.constraints.energy.Battery;
+import example.update.strategies.Energy;
+import example.update.constraints.energy.SimpleEnergy;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
@@ -55,12 +57,19 @@ public class EnergyInitializer implements Control {
     public boolean execute() {
 
         Node n ;
-        SimpleEnergy protocol;
+        Energy protocol;
 
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
-            protocol = (SimpleEnergy) n.getProtocol(pid);
-            protocol.setOnlineStatus(true);
+            protocol = (Energy) n.getProtocol(pid);
+
+            //50% on battery, 50% on AC power.
+            if (i%2 == 0 ) {
+                protocol.setPowerSource( new Battery() );
+            } else {
+                protocol.setPowerSource( new SimpleEnergy("") );
+                protocol.getPowerSource().charge(100);
+            }
         }
         return false;
     }

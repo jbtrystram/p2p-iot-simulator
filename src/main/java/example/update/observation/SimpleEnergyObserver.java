@@ -1,6 +1,7 @@
 package example.update.observation;
 
-import example.update.constraints.SimpleEnergy;
+import example.update.strategies.Energy;
+import example.update.constraints.energy.EnergySource;
 import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
@@ -68,9 +69,11 @@ public class SimpleEnergyObserver implements Control {
         for (int i = 0; i < Network.size(); i++) {
 
             Node current = Network.get(i);
+            EnergySource energy = ((Energy) current.getProtocol(pid)).getPowerSource();
 
-            if (((SimpleEnergy)current.getProtocol(pid)).getOnlineStatus()) {
-                log.append(i +  ";" + 1).append(System.lineSeparator());
+
+            if (energy.getOnlineStatus() ) {
+                log.append(i +  ";" + energy.getLevel()).append(System.lineSeparator());
 
             }else log.append(i +  ";" + 0).append(System.lineSeparator());
         }

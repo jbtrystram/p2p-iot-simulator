@@ -1,6 +1,4 @@
-package example.update.constraints;
-
-import peersim.core.Protocol;
+package example.update.constraints.energy;
 
 /**
  * <p>
@@ -36,7 +34,9 @@ public class SimpleEnergy implements EnergySource {
     // unlimited energy !
     public void consume() {}
 
-    public void charge(int amount){}
+    public void charge(int amount){
+        this.setOnlineStatus(true);
+    }
 
     public void setCapacityMultiplier(float capacityMultiplier){}
 

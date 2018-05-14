@@ -1,30 +1,24 @@
 package example.update.strategies;
 
-import example.update.constraints.EnergySource;
+import example.update.constraints.energy.EnergySource;
 import peersim.core.Protocol;
 
-import peersim.config.Configuration;
-
-
+// placeholder class containing a reference to the
+// node's energy sources
 public class Energy implements Protocol {
 
-    // config parameters
-    String ENERGY_SOURCE = "energy_source";
-    String prefix;
-    EnergySource source;
-
-
-    // fields
-    int energySourcePID;
-
-    public Energy(String prefix) {
-        this.prefix = prefix;
-        energySourcePID = Configuration.getPid(prefix + "." + ENERGY_SOURCE);
+    public Object clone(){
+        return new Energy(null);
     }
 
-    public Object clone() {
-        return new Energy(prefix);
+    private EnergySource powerSource;
+
+    public Energy(String prefix){
     }
 
+    public EnergySource getPowerSource() {return powerSource;}
 
+    public void setPowerSource(EnergySource powerSource) {
+        this.powerSource = powerSource;
+    }
 }

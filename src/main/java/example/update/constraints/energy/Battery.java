@@ -1,4 +1,4 @@
-package example.update.constraints;
+package example.update.constraints.energy;
 
 public class Battery implements EnergySource {
 
@@ -12,18 +12,16 @@ public class Battery implements EnergySource {
     // value of 1 percent. This way we can simulate various batteries capacity.
     float capacityMultiplier;
 
+    boolean online;
+
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
 
-    public Battery(String prefix) {
+    public Battery() {
         battery = 100;
     }
 
-    @Override
-    public Object clone() {
-        return new Battery(null);
-    }
 
     // ------------------------------------------------------------------------
     // Methods
@@ -52,8 +50,12 @@ public class Battery implements EnergySource {
 
     @Override
     public boolean getOnlineStatus() {
-        if (battery > 0) {
+        if (battery > 0 && online) {
             return true;
         } else return false;
+    }
+
+    public void setOnlineStatus(boolean online) {
+        this.online = online;
     }
 }

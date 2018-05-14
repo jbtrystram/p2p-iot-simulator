@@ -1,9 +1,7 @@
-package example.update.constraints;
+package example.update.constraints.energy;
 
-import peersim.core.Protocol;
 
-public interface EnergySource extends Protocol {
-    Object clone();
+public interface EnergySource {
 
     void consume();
 
@@ -14,4 +12,6 @@ public interface EnergySource extends Protocol {
     int getLevel();
 
     boolean getOnlineStatus();
+
+    void setOnlineStatus(boolean status);
 }

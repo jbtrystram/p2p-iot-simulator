@@ -2,7 +2,8 @@ package example.update;
 
 import example.update.constraints.NetworkRange;
 import example.update.constraints.NodeCoordinates;
-import example.update.constraints.SimpleEnergy;
+import example.update.strategies.Energy;
+import example.update.constraints.energy.EnergySource;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Network;
@@ -87,8 +88,10 @@ public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
     // This is the method called by the simulator at each cycle
     public void nextCycle(Node localNode, int protId) {
 
+        EnergySource power = ((Energy) localNode.getProtocol(energyPid)).getPowerSource();
+
         // don't send any annouce if offline and empty neighbors list
-        if ( !(( (SimpleEnergy) (localNode.getProtocol(energyPid))).getOnlineStatus()) ){
+        if ( ! power.getOnlineStatus() ){
             cleanNeighborsList();
         }
         else {
@@ -103,7 +106,7 @@ public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
 
                 if (localNode.getID() != Network.get(i).getID()
                        && distance <= maxDistance
-                        && ((SimpleEnergy)(Network.get(i).getProtocol(energyPid))).getOnlineStatus()) {
+                        && (power.getOnlineStatus())) {
 
                     // Node is in range and online : send announce to add myself in Node list
                     EDSimulator.add(0, localNode, Network.get(i), protId);

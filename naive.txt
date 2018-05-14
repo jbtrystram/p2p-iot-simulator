@@ -35,7 +35,7 @@ init.2.file_size 250
 
 protocol.link IdleProtocol
 
-protocol.energy example.update.constraints.SimpleEnergy
+protocol.energy example.update.constraints.energy.EnergyProxy
 
 protocol.localisation example.update.constraints.NodeCoordinates
 
