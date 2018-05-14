@@ -1,6 +1,7 @@
 package example.update;
 
 import example.update.constraints.Bandwidth;
+import example.update.strategies.Storage;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.Node;
@@ -68,7 +69,8 @@ public class Scheduler implements EDProtocol, CDProtocol{
     //process event received from gossiper
     public void processGossipMessage(Node localNode, SoftwareJob newJob){
 
-        if( ! newJob.isExpired() || newJob.isDoable( ((Bandwidth) localNode.getProtocol(bandwidthProtocol)).getDownlinkCapacity() ) ) {
+        if( ! newJob.isExpired() && newJob.isDoable( ((Bandwidth) localNode.getProtocol(bandwidthProtocol)).getDownlinkCapacity() )
+                && ((Storage)localNode.getProtocol(spaceProtocol)).allocateStorage(newJob.size) ) {
             priceIT(newJob);
             jobsList.add(newJob);
             updateTasks();

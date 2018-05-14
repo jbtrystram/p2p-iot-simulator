@@ -30,18 +30,21 @@ init.2.gossip_protocol gossip
 init.2.network_protocol p2p_net_agent
 init.2.file_size 250
 
+init.3 example.update.initialisation.BandwidthInitializer
+init.3.protocol bandwidth
+init.3.max_bandwidth 1000
 
 ################### protocols ===========================
 
 protocol.link IdleProtocol
 
-protocol.energy example.update.constraints.energy.EnergyProxy
+protocol.energy example.update.strategies.Energy
 
 protocol.localisation example.update.constraints.NodeCoordinates
 
 protocol.range example.update.constraints.NetworkRange
 
-protocol.disk_space example.update.constraints.Storage
+protocol.disk_space example.update.strategies.Storage
 
 protocol.bandwidth example.update.constraints.Bandwidth
 
