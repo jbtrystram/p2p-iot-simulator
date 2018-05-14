@@ -5,11 +5,7 @@ import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
-import peersim.util.FileNameGenerator;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 
 public class SimpleEnergyObserver implements Control {
 
@@ -41,16 +37,11 @@ public class SimpleEnergyObserver implements Control {
      */
     private final int pid;
 
-    /* logfile to print data. Name obtained from config
+    /* writer handling file output. Name obtained from config
     * {@link #PAR_FILENAME_BASE}.
     */
-    private final String filename;
+    private final Writer writer;
 
-    /**
-     * Utility class to generate incremental indexed filenames from a common
-     * base given by {@link #filename}.
-     */
-    private final FileNameGenerator fng;
 
 
     // ------------------------------------------------------------------------
@@ -66,45 +57,27 @@ public class SimpleEnergyObserver implements Control {
     public SimpleEnergyObserver (String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_ENERGY_PROT);
-        filename = "raw_dat/" +Configuration.getString(prefix + "."
-                + PAR_FILENAME_BASE, "energy_dump");
-        fng = new FileNameGenerator(filename, ".dat");
+        writer = new Writer("raw_dat/"+Configuration.getString(prefix + "."
+                + PAR_FILENAME_BASE, "energy_dump"));
     }
 
     // Control interface method. does the file handling
     public boolean execute() {
-        try {
-            // initialize output streams
-            String fname = fng.nextCounterName();
-            FileOutputStream outStream = new FileOutputStream(fname);
-            PrintStream pstr = new PrintStream(outStream);
 
-            // dump energy states
-            writeData(pstr);
-
-            outStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return false;
-    }
-
-
-    // do the actual work
-    private void writeData(PrintStream file) {
-
-        String offline = "";
+        StringBuilder log = new StringBuilder();
         for (int i = 0; i < Network.size(); i++) {
 
             Node current = Network.get(i);
 
             if (((SimpleEnergy)current.getProtocol(pid)).getOnlineStatus()) {
-                file.println(i + ";" + 1);
+                log.append(i +  ";" + 1).append(System.lineSeparator());
 
-            }else file.println(i + ";" + 0);
+            }else log.append(i +  ";" + 0).append(System.lineSeparator());
         }
-    }
+        writer.write(log.toString());
 
+
+        return false;
+    }
 
 }
