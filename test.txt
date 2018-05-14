@@ -34,9 +34,9 @@ init.2.gossip_protocol gossip
 
 protocol.link IdleProtocol
 
-protocol.energy example.update.SimpleEnergy
+protocol.energy example.update.constraints.SimpleEnergy
 
-protocol.localisation example.update.NodeCoordinates
+protocol.localisation example.update.constraints.NodeCoordinates
 
 protocol.neighbor example.update.NeighborhoodMaintainer
 protocol.neighbor.coord_protocol localisation

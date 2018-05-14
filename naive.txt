@@ -35,12 +35,19 @@ init.2.file_size 250
 
 protocol.link IdleProtocol
 
-protocol.energy example.update.SimpleEnergy
+protocol.energy example.update.constraints.SimpleEnergy
 
-protocol.localisation example.update.NodeCoordinates
+protocol.localisation example.update.constraints.NodeCoordinates
+
+protocol.range example.update.constraints.NetworkRange
+
+protocol.disk_space example.update.constraints.Storage
+
+protocol.bandwidth example.update.constraints.Bandwidth
 
 protocol.neighbor example.update.NeighborhoodMaintainer
 protocol.neighbor.coord_protocol localisation
+protocol.neighbor.range_protocol range
 protocol.neighbor.energy_protocol energy
 protocol.neighbor.max_distance MAX_RANGE
 protocol.neighbor.transport tr
@@ -64,8 +71,8 @@ init.sch2.protocol supervisor
 protocol.supervisor example.update.NaiveScheduler
 protocol.supervisor.networking_protocol p2p_net_agent
 protocol.supervisor.gossip_protocol gossip
-protocol.supervisor.bandwidth 25
-protocol.supervisor.disk_space 1000
+protocol.supervisor.bandwidth_protocol bandwidth
+protocol.supervisor.disk_space_protocol disk_space
 protocol.supervisor.transport tr
 protocol.supervisor.step PROTOCOL_CYCLE
 
@@ -105,10 +112,15 @@ control.neighobserver example.update.observation.NeighborsObservers
 control.neighobserver.neigbors_protocol neighbor
 control.neighobserver.step OBERVERS_CYCLE
 
+control.energyObs example.update.observation.SimpleEnergyObserver
+control.energyObs.energy_protocol energy
+control.energyObs.step OBERVERS_CYCLE
+
+
 ################ Order & timings ==============================
 
 order.protocol link,tr,energy,localisation,neighbor,gossip,supervisor,p2p_net_agent
-order.control coordObserver,neighobserver,dlProgress
+order.control coordObserver,neighobserver,dlProgress,energyObs
 
 
 # Observers should be run once more at the end
