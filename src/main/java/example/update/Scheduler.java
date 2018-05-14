@@ -18,7 +18,7 @@ public class Scheduler implements EDProtocol, CDProtocol{
     private static final String NET_PROT = "networking_protocol";
     private static final String GOSSIP_PROT = "gossip_protocol";
 
-    private static final String BANDW_PROT = "bandwidth_ protocol";
+    private static final String BANDW_PROT = "bandwidth_protocol";
     private static final String DISK_SPACE_PROT = "disk_space_protocol";
 
 
