@@ -42,6 +42,7 @@ public class SimpleEnergy implements EnergySource {
 
     //always on
     public int getLevel(){
-     return 100;
+     if (online) return 100;
+     else return 0;
     }
 }

@@ -66,6 +66,7 @@ public class EnergyInitializer implements Control {
             //50% on battery, 50% on AC power.
             if (i%2 == 0 ) {
                 protocol.setPowerSource( new Battery() );
+                protocol.getPowerSource().setOnlineStatus(true);
             } else {
                 protocol.setPowerSource( new SimpleEnergy("") );
                 protocol.getPowerSource().charge(100);

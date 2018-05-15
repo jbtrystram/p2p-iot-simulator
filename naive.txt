@@ -6,7 +6,7 @@ OBERVERS_CYCLE 50
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 
-network.size 3
+network.size 9
 map_size 1000
 #random.seed 1234567890
 random.seed 22222222748
