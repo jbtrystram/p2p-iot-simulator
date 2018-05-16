@@ -11,6 +11,7 @@ import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 import peersim.edsim.EDSimulator;
 
+import java.lang.Math;
 import java.util.LinkedList;
 
 public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
@@ -96,16 +97,18 @@ public class NeighborhoodMaintainer implements CDProtocol, EDProtocol {
         }
         else {
 
-            // get range of the node
-            int maxDistance = ((NetworkRange) localNode.getProtocol(rangeProtcol)).range;
+            // get range of the local node
+            int localRange = ((NetworkRange) localNode.getProtocol(rangeProtcol)).range;
 
             // go through all the nodes in the network to send announce
             for (int i = 0; i < Network.size(); i++) {
+
+                int peerRange = ((NetworkRange) Network.get(i).getProtocol(rangeProtcol)).range;
                 int distance = ((NodeCoordinates) localNode.getProtocol(coordPid))
                         .getDistance((NodeCoordinates) Network.get(i).getProtocol(coordPid));
 
                 if (localNode.getID() != Network.get(i).getID()
-                       && distance <= maxDistance
+                       && distance <= Math.min(localRange, peerRange)
                         && (power.getOnlineStatus())) {
 
                     // Node is in range and online : send announce to add myself in Node list
