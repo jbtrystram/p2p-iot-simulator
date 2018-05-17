@@ -7,9 +7,6 @@ import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 
 /**
  * Created by jibou on 15/11/17.
@@ -41,6 +38,7 @@ public class SchedulerJobsCounter implements Control {
     * {@link #PAR_FILENAME_BASE}.
     */
     private final String filename;
+    Writer output;
 
 
     // ------------------------------------------------------------------------
@@ -57,27 +55,18 @@ public class SchedulerJobsCounter implements Control {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         filename = "raw_dat/" + "schedulerCount.txt";
+        output = new Writer(filename);
     }
 
         // Control interface method. does the file handling
         public boolean execute() {
-            try {
-                // initialize output streams
-                FileOutputStream outStream = new FileOutputStream(filename, true);
-                PrintStream pstr = new PrintStream(outStream);
-
                 int count = 0;
                 for (int i = 0; i < Network.size(); i++) {
 
                     Node current = Network.get(i);
                     count += ((Scheduler) current.getProtocol(pid)).numberOfJobs();
                 }
-                pstr.println(count);
-
-                outStream.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                output.write(count+System.lineSeparator());
 
             return false;
         }

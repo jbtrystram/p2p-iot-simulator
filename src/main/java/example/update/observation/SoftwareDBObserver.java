@@ -7,13 +7,7 @@ import peersim.core.Network;
 import peersim.core.Node;
 import peersim.util.FileNameGenerator;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 
-/**
- * Created by jibou on 15/11/17.
- */
 public class SoftwareDBObserver implements Control {
 
     // ------------------------------------------------------------------------
@@ -49,11 +43,6 @@ public class SoftwareDBObserver implements Control {
     */
     private final String filename;
 
-    /**
-     * Utility class to generate incremental indexed filenames from a common
-     * base given by {@link #filename}.
-     */
-    private final FileNameGenerator fng;
 
 
     // ------------------------------------------------------------------------
@@ -71,7 +60,6 @@ public class SoftwareDBObserver implements Control {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "energy_dump");
-        fng = new FileNameGenerator(filename, ".dat");
     }
 
     // Control interface method. does the file handling

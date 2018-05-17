@@ -5,11 +5,6 @@ import peersim.config.Configuration;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
-import peersim.util.FileNameGenerator;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 
 /**
  * Observe the list of neighbors maintained by the NeighborhoodMaintainer protocol
@@ -49,13 +44,7 @@ public class NeighborsObservers  implements Control {
     */
     private final String graph_filename;
 
-        /**
-     * Utility class to generate incremental indexed filenames from a common
-     * base given by {@link #graph_filename}.
-     */
-    private final FileNameGenerator fng;
-
-
+    Writer output;
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -72,32 +61,12 @@ public class NeighborsObservers  implements Control {
         pid = Configuration.getPid(prefix + "." + PAR_NEIGHBORS_PROT);
         graph_filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "neighbors_dump");
-        fng = new FileNameGenerator(graph_filename, ".dat");
+
+        output = new Writer(graph_filename);
     }
 
     // Control interface method.
     public boolean execute() {
-
-
-        try {
-            // initialize output streams
-            String fname = fng.nextCounterName();
-            FileOutputStream outStream = new FileOutputStream(fname);
-            PrintStream pstr = new PrintStream(outStream);
-
-            // dump neigbors relations:
-            writeNeigbors(pstr);
-
-            outStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return false;
-    }
-
-    private void writeNeigbors(PrintStream file) {
-
 
         for (int i = 0; i < Network.size(); i++) {
 
@@ -107,9 +76,8 @@ public class NeighborsObservers  implements Control {
             for (int j = 0; j < ((NeighborhoodMaintainer)current.getProtocol(pid)).getNeighbors().size(); j++) {
                 neighbors += ((NeighborhoodMaintainer) current.getProtocol(pid)).getNeighbors().get(j).getID() + ";";
             }
-            file.println(i+";"+neighbors);
+            output.write(i+";"+neighbors+ System.lineSeparator());
         }
-
-
+        return false;
     }
 }

@@ -24,12 +24,6 @@ import peersim.core.Node;
 import peersim.core.*;
 
 import peersim.graph.Graph;
-import peersim.util.FileNameGenerator;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
 /**
  * This class prints to files the topology wiring using a Matplotlib friendly
  * syntax. Uses the {@link Graph} interface to visit the topology.
@@ -68,55 +62,32 @@ public class InetObserver implements Control {
     /* logfile to print data. Name obrtained from config
      * {@link #PAR_FILENAME_BASE}.
      */
-     private final String graph_filename;
+    private final String graph_filename;
 
-    /**
-     * Utility class to generate incremental indexed filenames from a common
-     * base given by {@link #graph_filename}.
-     */
-    private final FileNameGenerator fng;
+    Writer output;
 
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
+
     /**
      * Standard constructor that reads the configuration parameters. Invoked by
      * the simulation engine.
      *
-     * @param prefix
-     *            the configuration prefix for this class.
+     * @param prefix the configuration prefix for this class.
      */
     public InetObserver(String prefix) {
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
-        graph_filename = "raw_dat/" +Configuration.getString(prefix + "."
+        graph_filename = "raw_dat/" + Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "graph_dump");
-        fng = new FileNameGenerator(graph_filename, ".dat");
-    }
 
+        // initialize writer
+        output = new Writer(graph_filename);
+    }
 
 
     // Control interface method.
     public boolean execute() {
-
-        try {
-             // initialize output streams
-            String fname = fng.nextCounterName();
-            FileOutputStream outStream = new FileOutputStream(fname);
-            PrintStream pstr = new PrintStream(outStream);
-
-            // dump topology:
-            writeGraph(pstr);
-
-            outStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return false;
-    }
-
-
-    private void writeGraph(PrintStream file) {
 
         for (int i = 0; i < Network.size(); i++) {
 
@@ -127,7 +98,8 @@ public class InetObserver implements Control {
             int y = ((NodeCoordinates) current
                     .getProtocol(coordPid)).getY();
 
-            file.println(i + ";" + x + ";" + y);
+            output.write(i + ";" + x + ";" + y + System.lineSeparator() );
         }
+        return false;
     }
 }
