@@ -4,15 +4,11 @@ import argparse
 import os
 
 
-
 def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
-        energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
-
-        #more awesomeness
-        #plt.xkcd()
+        storage = np.genfromtxt(path+"/storage_dump"+file_seq+".dat", delimiter=';')
 
         plt.figure()
         #plt.ylabel('X')
@@ -22,7 +18,7 @@ def plotter(file_seq, path):
 
         #axes.set_xlim([0,1000])
         #axes.set_ylim([0,1000])
-        plt.title('battery level')
+        plt.title('Storage left')
 
         #plot neigbors relationships
         for line in open(neigh_file):
@@ -30,13 +26,13 @@ def plotter(file_seq, path):
                 for node in range(1, neighbors.size):
                         A = neighbors[0]
                         B = neighbors[node]
-                        print("yolo")
                         plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
 
         # Plot nodes
         plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1)
-
-        for label, x, y in zip(energy[:,1], coord[:,1], coord[:,2]):
+	
+	#plot debugs labels  
+        for label, x, y in zip(storage[:,1], coord[:,1], coord[:,2]):
 
                 plt.annotate( label, xy=(x, y), xytext=(-20, 20),
                         textcoords='offset points', ha='right', va='bottom',
@@ -46,7 +42,7 @@ def plotter(file_seq, path):
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
-        plt.savefig("figs/energy"+file_seq+'.png', dpi = (200))
+        plt.savefig("figs/storage"+file_seq+'.png', dpi = (200))
         plt.close()
 
 

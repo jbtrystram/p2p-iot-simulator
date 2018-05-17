@@ -9,7 +9,7 @@ def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
-        energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
+        distance = np.genfromtxt(path+"/range_dump"+file_seq+".dat", delimiter=';')
 
         #more awesomeness
         #plt.xkcd()
@@ -33,20 +33,13 @@ def plotter(file_seq, path):
                         print("yolo")
                         plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
 
-        # Plot nodes
-        plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1)
-
-        for label, x, y in zip(energy[:,1], coord[:,1], coord[:,2]):
-
-                plt.annotate( label, xy=(x, y), xytext=(-20, 20),
-                        textcoords='offset points', ha='right', va='bottom',
-                        bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-                        arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0'))
-        
+        # Plot nodes + range 
+        plt.scatter(coord[:,1], coord[:,2], s=distance[:,1], zorder=1, facecolors='none', edgecolors='k',
+            linestyle='--')     
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
-        plt.savefig("figs/energy"+file_seq+'.png', dpi = (200))
+        plt.savefig("figs/"+file_seq+'.png', dpi = (200))
         plt.close()
 
 
