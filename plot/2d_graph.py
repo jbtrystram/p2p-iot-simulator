@@ -3,45 +3,38 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 
-
-
 def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
         print("using "+"/data_pieces_dump"+file_seq+".dat")
-        progress = np.genfromtxt(path+"/data_pieces_dump"+file_seq+".dat", delimiter=';')
-
-        #more awesomeness
-        #plt.xkcd()
+        progress = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', skip_header=1)
+        names = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', names=True)
 
         plt.figure()
-        #plt.ylabel('X')
-        #plt.xlabel('Y')
-        #plt.axis('off')  #remove axises
-        axes = plt.gca() # auto-set ticks
+        for item in range(1, progress.shape[1]-1):
 
-        #axes.set_xlim([0,1000])
-        #axes.set_ylim([0,1000])
-        plt.title('Node positions & discovered links')
+                plt.subplot(1, progress.shape[1]-2, item)
+                axes = plt.gca() # auto-set ticks
+                plt.title(names.dtype.names[item])
 
-        #plot neigbors relationships
-        for line in open(neigh_file):
-        	neighbors = np.fromstring( (line.rstrip('\n')), sep=';', dtype=int)
-        	for node in range(1, neighbors.size):
-        		A = neighbors[0]
-        		B = neighbors[node]
-        		plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
+                #plot neigbors relationships
+                for line in open(neigh_file):
+                        neighbors = np.fromstring( (line.rstrip('\n')), sep=';', dtype=int)
+                        for node in range(1, neighbors.size):
+                                A = neighbors[0]
+                                B = neighbors[node]
+                                plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
 
-        # Plot nodes
-        plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1, c=progress[:,1], vmin=0, vmax=100)
-        plt.colorbar()
+                # Plot nodes
+                plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1, c=progress[:,item], vmin=0, vmax=100)
+                plt.colorbar()
+
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
         plt.savefig("figs/"+seq+'.png', dpi = (200))
         plt.close()
-
 
 
 if __name__ == '__main__':
