@@ -132,4 +132,12 @@ public class Scheduler implements EDProtocol, CDProtocol{
     public int numberOfJobs(){
         return jobsList.size();
     }
+
+    public ArrayList<String> getJobList(){
+
+        ArrayList jobs = new ArrayList<String>();
+
+        jobsList.forEach(item -> jobs.add( item.getId() ));
+        return jobs;
+    }
 }

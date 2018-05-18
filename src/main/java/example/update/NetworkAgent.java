@@ -230,12 +230,14 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     }
 
     public String jobProgress(String hash){
-        boolean[] tab = localData.get(getLocalIndex(hash)).getValue();
-        int perc=0;
-        for (boolean b : tab) {
-            if (b) perc++;
-        }
-        return String.valueOf((int)(((double)perc/(double)tab.length)*100));
+        if (localDataContains(hash)) {
+            boolean[] tab = localData.get(getLocalIndex(hash)).getValue();
+            int perc = 0;
+            for (boolean b : tab) {
+                if (b) perc++;
+            }
+            return String.valueOf((int) (((double) perc / (double) tab.length) * 100));
+        } else return "";
     }
 
     //TODO : better looking hashes
