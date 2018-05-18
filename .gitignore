@@ -5,3 +5,7 @@
 *.iws
 *.ipr
 *.class
+build.xml
+
+figs/
+raw_dat/

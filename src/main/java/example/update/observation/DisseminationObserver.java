@@ -94,6 +94,7 @@ public class DisseminationObserver implements Control {
 
         //create the header of the file
         StringBuilder out = new StringBuilder();
+        out.append("id;");
         sortedList.forEach(item -> {
             out.append(item).append(";");
         });
