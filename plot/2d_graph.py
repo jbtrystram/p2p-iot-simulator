@@ -14,8 +14,7 @@ def plotter(file_seq, path):
         plt.figure()
         for item in range(1, progress.shape[1]-1):
 
-                plt.subplot(1, progress.shape[1]-2, item)
-                axes = plt.gca() # auto-set ticks
+                plt.subplot(1, progress.shape[1]-2, item, aspect='equal')
                 plt.title(names.dtype.names[item])
 
                 #plot neigbors relationships
@@ -29,6 +28,8 @@ def plotter(file_seq, path):
                 # Plot nodes
                 plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1, c=progress[:,item], vmin=0, vmax=100)
                 plt.colorbar()
+                plt.xticks([], [])
+                plt.yticks([], [])
 
 
         plt.tight_layout()
