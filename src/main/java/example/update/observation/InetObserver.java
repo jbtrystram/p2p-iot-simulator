@@ -88,7 +88,7 @@ public class InetObserver implements Control {
 
     // Control interface method.
     public boolean execute() {
-
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < Network.size(); i++) {
 
             Node current = Network.get(i);
@@ -98,8 +98,9 @@ public class InetObserver implements Control {
             int y = ((NodeCoordinates) current
                     .getProtocol(coordPid)).getY();
 
-            output.write(i + ";" + x + ";" + y + System.lineSeparator() );
+            str.append(i + ";" + x + ";" + y + System.lineSeparator() );
         }
+        output.write(str.toString());
         return false;
     }
 }

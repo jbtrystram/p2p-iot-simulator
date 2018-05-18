@@ -68,6 +68,7 @@ public class NeighborsObservers  implements Control {
     // Control interface method.
     public boolean execute() {
 
+        StringBuilder out = new StringBuilder();
         for (int i = 0; i < Network.size(); i++) {
 
             Node current = Network.get(i);
@@ -76,8 +77,9 @@ public class NeighborsObservers  implements Control {
             for (int j = 0; j < ((NeighborhoodMaintainer)current.getProtocol(pid)).getNeighbors().size(); j++) {
                 neighbors += ((NeighborhoodMaintainer) current.getProtocol(pid)).getNeighbors().get(j).getID() + ";";
             }
-            output.write(i+";"+neighbors+ System.lineSeparator());
+            out.append(i+";"+neighbors+ System.lineSeparator());
         }
+        output.write(out.toString());
         return false;
     }
 }
