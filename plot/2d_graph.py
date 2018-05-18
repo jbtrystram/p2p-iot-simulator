@@ -9,7 +9,6 @@ def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
-        #energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
         print("using "+"/data_pieces_dump"+file_seq+".dat")
         progress = np.genfromtxt(path+"/data_pieces_dump"+file_seq+".dat", delimiter=';')
 

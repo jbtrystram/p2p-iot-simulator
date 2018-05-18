@@ -58,4 +58,3 @@ public class Writer {
         fileStream.close();
     }
 }
-

@@ -34,6 +34,14 @@ init.3 example.update.initialisation.BandwidthInitializer
 init.3.protocol bandwidth
 init.3.max_bandwidth 1000
 
+init.4 example.update.initialisation.RangeInitializer
+init.4.protocol range
+init.4.gaussian_mean 500
+
+init.5 example.update.initialisation.StorageInitializer
+init.5.protocol disk_space
+init.5.gaussian_mean 800
+
 ################### protocols ===========================
 
 protocol.link IdleProtocol
@@ -103,8 +111,9 @@ control.inserter.step CONTROL_CYCLE
 ################ Observers ==============================
 
 
-control.dlProgress example.update.observation.netAgentObserver
-control.dlProgress.protocol p2p_net_agent
+control.dlProgress example.update.observation.DisseminationObserver
+control.dlProgress.transfer_protocol p2p_net_agent
+control.dlProgress.sched_protocol supervisor
 control.dlProgress.step OBERVERS_CYCLE
 
 control.coordObserver example.update.observation.InetObserver

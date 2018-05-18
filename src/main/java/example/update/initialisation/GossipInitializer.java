@@ -86,7 +86,7 @@ public class GossipInitializer implements Control {
             NetworkMessage msg = new NetworkMessage(job,n);
 
             //trigger gossip
-            EDSimulator.add(70, msg, n, gossipPID);
+            EDSimulator.add(i*10, msg, n, gossipPID);
 
             //fill the data on the node
            ((NetworkAgent) n.getProtocol(networkPID)).completeJob(job);

@@ -45,7 +45,7 @@ public class RangeInitializer implements Control {
     public RangeInitializer(String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
-        mean = Configuration.getInt(prefix + "." + PAR_MEAN, 300);
+        mean = Configuration.getInt(prefix + "." + PAR_MEAN, 500);
         deviation = Configuration.getInt(prefix + "." + PAR_DEV, 100);
 
     }
@@ -65,7 +65,9 @@ public class RangeInitializer implements Control {
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
             protocol = (NetworkRange) n.getProtocol(pid);
-            protocol.setRange((int)(CommonState.r.nextGaussian()*deviation+mean));
+
+            int range =  Math.abs((int)((CommonState.r.nextGaussian()*deviation)+mean));
+            protocol.setRange(range);
         }
         return false;
     }

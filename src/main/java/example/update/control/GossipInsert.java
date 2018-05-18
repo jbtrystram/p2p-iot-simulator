@@ -73,7 +73,7 @@ public class GossipInsert implements Control {
 
         int qos = SoftwareJob.QOS_INSTALL_MANDATORY;
         int priority = SoftwareJob.PRIORITY_STANDARD;
-        int size = fileSize;
+        int size = fileSize*1000;
 
         SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX, priority, qos, size);
 
