@@ -1,6 +1,6 @@
 package example.update.initialisation;
 
-import example.update.constraints.Storage;
+import example.update.strategies.Storage;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
@@ -66,7 +66,7 @@ public class StorageInitializer implements Control {
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
             protocol = (Storage) n.getProtocol(pid);
-            protocol.setTotalSpace((int)(CommonState.r.nextGaussian()*deviation+mean)*1000);
+            protocol.init((int)(CommonState.r.nextGaussian()*deviation+mean));
         }
         return false;
     }

@@ -39,4 +39,9 @@ public class Storage implements Protocol {
         return (consumeStorage(size));
     }
 
+    // initializer method
+    public void init(int size){
+        disk.setTotalSpace(size*1000);
+    }
+
 }
