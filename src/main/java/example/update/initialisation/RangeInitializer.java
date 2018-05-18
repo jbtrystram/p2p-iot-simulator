@@ -7,8 +7,6 @@ import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
-import java.io.ObjectInputFilter;
-
 public class RangeInitializer implements Control {
 
     // ------------------------------------------------------------------------
