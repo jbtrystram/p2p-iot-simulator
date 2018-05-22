@@ -128,6 +128,10 @@ control.energyObs example.update.observation.SimpleEnergyObserver
 control.energyObs.energy_protocol energy
 control.energyObs.step OBERVERS_CYCLE
 
+control.rangeObs example.update.observation.RangeObserver
+control.rangeObs.protocol range
+control.rangeObs.step OBERVERS_CYCLE
+
 
 ################ Order & timings ==============================
 
