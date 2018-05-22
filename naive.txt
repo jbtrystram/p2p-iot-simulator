@@ -107,6 +107,10 @@ control.inserter.network_protocol p2p_net_agent
 control.inserter.file_size 180
 control.inserter.step CONTROL_CYCLE
 
+control.mover example.update.control.NodeMover
+control.mover.coord_protocol localisation
+control.mover.map_size map_size
+control.mover.step CONTROL_CYCLE
 
 ################ Observers ==============================
 
@@ -148,5 +152,5 @@ control.dbObserver.from 2
 control.dlProgress.from 2
 
 #inserter should run once
-control.inserter.from 150
+control.inserter.from 9000
 #control.inserter.until 520

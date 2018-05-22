@@ -16,6 +16,7 @@ def plotter(file_seq, path):
 
                 plt.subplot(1, progress.shape[1]-2, item, aspect='equal')
                 plt.title(names.dtype.names[item])
+                plt.axis('square')
 
                 #plot neigbors relationships
                 for line in open(neigh_file):
@@ -30,7 +31,8 @@ def plotter(file_seq, path):
                 plt.colorbar()
                 plt.xticks([], [])
                 plt.yticks([], [])
-
+                plt.xlim(0,1000)
+                plt.ylim(0,1000)
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')

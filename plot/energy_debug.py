@@ -11,17 +11,8 @@ def plotter(file_seq, path):
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
         energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
 
-        #more awesomeness
-        #plt.xkcd()
-
         plt.figure()
-        #plt.ylabel('X')
-        #plt.xlabel('Y')
-        #plt.axis('off')  #remove axises
-        axes = plt.gca() # auto-set ticks
 
-        #axes.set_xlim([0,1000])
-        #axes.set_ylim([0,1000])
         plt.title('battery level')
 
         #plot neigbors relationships
@@ -45,6 +36,10 @@ def plotter(file_seq, path):
         
 
         plt.tight_layout()
+        plt.xticks([], [])
+        plt.yticks([], [])
+        plt.xlim(0,1000)
+        plt.ylim(0,1000)
         #plt.savefig("figs/"+seq+'.pdf')
         plt.savefig("figs/energy"+file_seq+'.png', dpi = (200))
         plt.close()

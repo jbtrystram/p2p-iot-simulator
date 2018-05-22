@@ -16,8 +16,8 @@ def plotter(file_seq, path):
         #plt.axis('off')  #remove axises
         axes = plt.gca() # auto-set ticks
 
-        #axes.set_xlim([0,1000])
-        #axes.set_ylim([0,1000])
+        axes.set_xlim([0,1000])
+        axes.set_ylim([0,1000])
         plt.title('Storage left')
 
         #plot neigbors relationships
