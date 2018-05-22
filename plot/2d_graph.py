@@ -34,7 +34,7 @@ def plotter(file_seq, path):
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
-        plt.savefig("figs/"+seq+'.png', dpi = (200))
+        plt.savefig("figs/progress"+seq+'.png', dpi = (200))
         plt.close()
 
 

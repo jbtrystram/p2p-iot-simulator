@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
 import argparse
 import os
 
@@ -11,18 +12,14 @@ def plotter(file_seq, path):
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
         distance = np.genfromtxt(path+"/range_dump"+file_seq+".dat", delimiter=';')
 
-        #more awesomeness
-        #plt.xkcd()
-
-        plt.figure()
-        #plt.ylabel('X')
-        #plt.xlabel('Y')
-        #plt.axis('off')  #remove axises
+        w,h = plt.figaspect(1)
+        plt.figure(figsize=(w,h))
+        ax = plt.gcf().gca()
         axes = plt.gca() # auto-set ticks
 
-        #axes.set_xlim([0,1000])
-        #axes.set_ylim([0,1000])
-        plt.title('battery level')
+        axes.set_xlim([0,1000])
+        axes.set_ylim([0,1000])
+        plt.title('Range')
 
         #plot neigbors relationships
         for line in open(neigh_file):
@@ -32,13 +29,25 @@ def plotter(file_seq, path):
                         B = neighbors[node]
                         plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
 
-        # Plot nodes + range 
-        plt.scatter(coord[:,1], coord[:,2], s=distance[:,1], zorder=1, facecolors='none', edgecolors='k',
-            linestyle='--')     
+        # Plot nodes 
+        plt.scatter(coord[:,1], coord[:,2], s=20, zorder=1, facecolors='none', edgecolors='b') 
+
+        # data label
+        for label, x, y in zip(distance[:,1], coord[:,1], coord[:,2]):
+
+                plt.annotate( label, xy=(x, y), xytext=(-20, 20),
+                        textcoords='offset points', ha='right', va='bottom',
+                        bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                        arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0'))
+
+        #plot range
+        for i in range(0, distance.shape[0]-1):
+                circle = Circle((coord[i,1], coord[i,2]), radius=distance[i,1], edgecolor='k', linestyle='--', fill=False)
+                ax.add_artist(circle)
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
-        plt.savefig("figs/"+file_seq+'.png', dpi = (200))
+        plt.savefig("figs/range"+file_seq+'.png', dpi = (200))
         plt.close()
 
 
