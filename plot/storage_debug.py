@@ -11,14 +11,7 @@ def plotter(file_seq, path):
         storage = np.genfromtxt(path+"/storage_dump"+file_seq+".dat", delimiter=';')
 
         plt.figure()
-        #plt.ylabel('X')
-        #plt.xlabel('Y')
-        #plt.axis('off')  #remove axises
-        axes = plt.gca() # auto-set ticks
-
-        axes.set_xlim([0,1000])
-        axes.set_ylim([0,1000])
-        plt.title('Storage left')
+        plt.title('Storage space left')
 
         #plot neigbors relationships
         for line in open(neigh_file):
@@ -32,7 +25,7 @@ def plotter(file_seq, path):
         plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1)
 	
 	#plot debugs labels  
-        for label, x, y in zip(storage[:,1], coord[:,1], coord[:,2]):
+        for label, x, y in zip(storage[:,1]/1000, coord[:,1], coord[:,2]):
 
                 plt.annotate( label, xy=(x, y), xytext=(-20, 20),
                         textcoords='offset points', ha='right', va='bottom',
@@ -41,6 +34,10 @@ def plotter(file_seq, path):
         
 
         plt.tight_layout()
+        plt.xticks([], [])
+        plt.yticks([], [])
+        plt.xlim(0,1000)
+        plt.ylim(0,1000)
         #plt.savefig("figs/"+seq+'.pdf')
         plt.savefig("figs/storage"+file_seq+'.png', dpi = (200))
         plt.close()

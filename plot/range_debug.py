@@ -17,8 +17,6 @@ def plotter(file_seq, path):
         ax = plt.gcf().gca()
         axes = plt.gca() # auto-set ticks
 
-        axes.set_xlim([0,1000])
-        axes.set_ylim([0,1000])
         plt.title('Range')
 
         #plot neigbors relationships
@@ -46,6 +44,8 @@ def plotter(file_seq, path):
                 ax.add_artist(circle)
 
         plt.tight_layout()
+        plt.xlim(0,1000)
+        plt.ylim(0,1000)
         #plt.savefig("figs/"+seq+'.pdf')
         plt.savefig("figs/range"+file_seq+'.png', dpi = (200))
         plt.close()

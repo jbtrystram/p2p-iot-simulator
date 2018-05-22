@@ -136,6 +136,9 @@ control.rangeObs example.update.observation.RangeObserver
 control.rangeObs.protocol range
 control.rangeObs.step OBERVERS_CYCLE
 
+control.StorageObs example.update.observation.StorageObserver
+control.StorageObs.protocol disk_space
+control.StorageObs.step OBERVERS_CYCLE
 
 ################ Order & timings ==============================
 

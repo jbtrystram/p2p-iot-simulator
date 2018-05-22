@@ -44,4 +44,9 @@ public class Storage implements Protocol {
         disk.setTotalSpace(size*1000);
     }
 
+    // For observer Use
+    public int getFreeSpace(){
+        return disk.getFreeSpace();
+    }
+
 }
