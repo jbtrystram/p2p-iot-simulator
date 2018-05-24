@@ -1,5 +1,6 @@
 package example.update;
 
+import example.update.constraints.Bandwidth;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
@@ -20,7 +21,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     // Protocol to interact with : softwareDB, neighborhood maintainer and Supervisor
    private static final String NEIGH_PROT = "neighborhood_protocol";
 
-    private static final String BANDW = "bandwidth";
+    private static final String BANDW = "bandwidth_protocol";
     private static final String PIECE_SIZE = "piece_size";
 
 
@@ -30,7 +31,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
     private final int neighborhoodPID;
 
-    private int bandwidth;
+    private int bandwidthPid;
     private final int pieceSize;
 
     private boolean downloading = false;
@@ -48,7 +49,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
         // get PIDs of SoftwareDB and Downloader
         neighborhoodPID = Configuration.getPid(prefix + "." + NEIGH_PROT);
 
-        bandwidth = Configuration.getInt(prefix + "." +BANDW);
+        bandwidthPid = Configuration.getPid(prefix + "." +BANDW);
         pieceSize = Configuration.getInt(prefix + "." +PIECE_SIZE);
 
         localData = new ArrayList<>();
@@ -156,8 +157,11 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                     DataMessage dataMsg;
 
                     // use the lowest bandwith of the 2 nodes
-                    int bdw = (bandwidth < ((NetworkAgent) event.sender.getProtocol(pid)).bandwidth) ?
-                            bandwidth : ((NetworkAgent) event.sender.getProtocol(pid)).bandwidth;
+                    long localUplink = ((Bandwidth) localNode.getProtocol(bandwidthPid)).getUplinkCapacity();
+                    long remoteDownlink = ((Bandwidth) event.sender.getProtocol(bandwidthPid)).getDownlinkCapacity();
+
+                    long bdw = localUplink <= remoteDownlink ? localUplink : remoteDownlink;
+
                     dataMsg = new DataMessage(DataMessage.DATA, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(pieceSize / bdw, dataMsg, event.sender, pid);
 

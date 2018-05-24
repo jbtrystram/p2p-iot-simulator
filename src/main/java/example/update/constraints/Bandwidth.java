@@ -80,4 +80,8 @@ public class Bandwidth implements Protocol {
     public int getDownlinkCapacity() {
         return downlinkCapacity;
     }
+
+    public int getUplinkCapacity() {
+        return uplinkCapacity;
+    }
 }
