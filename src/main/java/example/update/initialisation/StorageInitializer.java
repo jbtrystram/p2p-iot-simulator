@@ -66,7 +66,7 @@ public class StorageInitializer implements Control {
         for (int i = 0; i < Network.size(); i++) {
             n = Network.get(i);
             protocol = (Storage) n.getProtocol(pid);
-            protocol.init((int) Math.abs(CommonState.r.nextGaussian()*deviation+mean));
+            protocol.init((int) Math.abs(1000* (CommonState.r.nextGaussian()*deviation+mean)));
         }
         return false;
     }

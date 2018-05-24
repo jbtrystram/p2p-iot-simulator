@@ -41,7 +41,7 @@ public class Storage implements Protocol {
 
     // initializer method
     public void init(int size){
-        disk.setTotalSpace(size*1000);
+        disk.setTotalSpace(size);
     }
 
     // For observer Use
