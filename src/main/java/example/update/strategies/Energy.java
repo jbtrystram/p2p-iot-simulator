@@ -16,6 +16,10 @@ public class Energy implements Protocol {
     public Energy(String prefix){
     }
 
+    public boolean getOnlineStatus(){
+        return powerSource.getOnlineStatus();
+    }
+
     public EnergySource getPowerSource() {return powerSource;}
 
     public void setPowerSource(EnergySource powerSource) {

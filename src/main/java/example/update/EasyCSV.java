@@ -7,6 +7,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+/*
+* Parse a CSV file into content.
+* For each line, each value is stored into cells in a String[]
+ */
+
 public class EasyCSV {
 
     public List<String[]> content;
@@ -21,6 +26,7 @@ public class EasyCSV {
         // CSV parser settings (newline character, separator..)
         CsvParserSettings settings = new CsvParserSettings();
         settings.getFormat().setLineSeparator("\n");
+        settings.getFormat().setDelimiter(';');
 
         // creates a CSV parser
         CsvParser parser = new CsvParser(settings);

@@ -1,0 +1,130 @@
+#################### Settings ======================
+#debug.config
+
+OBERVERS_CYCLE 50
+PROTOCOL_CYCLE 20
+CONTROL_CYCLE 50
+
+network.size 41
+map_size 1000
+#random.seed 1234567890
+random.seed 22222222748
+
+simulation.endtime 6000
+simulation.logtime 50
+
+
+################### initialization ======================
+
+init.0 example.update.initialisation.EnergyInitializer
+init.0.protocol energy
+
+init.2 example.update.initialisation.GossipInitializer
+init.2.gossip_protocol gossip
+init.2.network_protocol p2p_net_agent
+init.2.file_size 250
+
+init.3 example.update.initialisation.BandwidthInitializer
+init.3.protocol bandwidth
+init.3.max_bandwidth 1000
+
+init.5 example.update.initialisation.StorageInitializer
+init.5.protocol disk_space
+init.5.gaussian_mean 800
+
+################### protocols ===========================
+
+protocol.link IdleProtocol
+
+protocol.energy example.update.strategies.Energy
+
+protocol.disk_space example.update.strategies.Storage
+
+protocol.bandwidth example.update.constraints.Bandwidth
+
+protocol.neighbor example.update.TopologyNeighborhoodMaintainer
+protocol.neighbor.topology_file topo2.csv
+protocol.neighbor.energy_protocol energy
+protocol.neighbor.transport tr
+protocol.neighbor.step PROTOCOL_CYCLE
+
+init.sch1 CDScheduler
+init.sch1.protocol neighbor
+
+protocol.gossip example.update.Gossiper
+protocol.gossip.neighbors_protocol neighbor
+protocol.gossip.supervisor_protocol supervisor
+protocol.gossip.transport tr
+
+protocol.tr UniformRandomTransport
+protocol.tr.mindelay 0
+protocol.tr.maxdelay 1
+
+init.sch2 CDScheduler
+init.sch2.protocol supervisor
+
+protocol.supervisor example.update.NaiveScheduler
+protocol.supervisor.networking_protocol p2p_net_agent
+protocol.supervisor.gossip_protocol gossip
+protocol.supervisor.bandwidth_protocol bandwidth
+protocol.supervisor.disk_space_protocol disk_space
+protocol.supervisor.transport tr
+protocol.supervisor.step PROTOCOL_CYCLE
+
+
+init.sch3 CDScheduler
+init.sch3.protocol p2p_net_agent
+
+protocol.p2p_net_agent example.update.NetworkAgent
+protocol.p2p_net_agent.neighborhood_protocol neighbor
+protocol.p2p_net_agent.bandwidth_protocol bandwidth
+protocol.p2p_net_agent.piece_size 200
+protocol.p2p_net_agent.transport tr
+protocol.p2p_net_agent.step PROTOCOL_CYCLE
+
+
+################ controls ==============================
+
+control.inserter example.update.control.GossipInsert
+control.inserter.gossip_protocol gossip
+control.inserter.network_protocol p2p_net_agent
+control.inserter.file_size 600
+control.inserter.step CONTROL_CYCLE
+
+################ Observers ==============================
+
+
+control.dlProgress example.update.observation.DisseminationObserver
+control.dlProgress.transfer_protocol p2p_net_agent
+control.dlProgress.sched_protocol supervisor
+control.dlProgress.step OBERVERS_CYCLE
+
+control.neighobserver example.update.observation.NeighborsObservers
+control.neighobserver.neigbors_protocol neighbor
+control.neighobserver.step OBERVERS_CYCLE
+
+control.energyObs example.update.observation.SimpleEnergyObserver
+control.energyObs.energy_protocol energy
+control.energyObs.step OBERVERS_CYCLE
+
+control.StorageObs example.update.observation.StorageObserver
+control.StorageObs.protocol disk_space
+control.StorageObs.step OBERVERS_CYCLE
+
+################ Order & timings ==============================
+
+order.protocol link,tr,energy,neighbor,gossip,supervisor,p2p_net_agent
+order.control neighobserver,dlProgress,energyObs
+
+
+# Observers should be run once more at the end
+control.schedulerCounter.FINAL true
+control.dlProgress.FINAL true
+
+# Observers should not run at first cycle (protocols have not been run yet)
+
+control.dlProgress.from 2
+
+#inserter should run once
+control.inserter.from 900
+#control.inserter.until 520
