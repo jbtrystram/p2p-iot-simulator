@@ -71,7 +71,7 @@ public class GossipInitializer implements Control {
         int priority = SoftwareJob.PRIORITY_STANDARD;
         int size = fileSize*1000;
 
-        SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX, priority, qos, size);
+        SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX.toString(), priority, qos, size);
 
        return job;
     }

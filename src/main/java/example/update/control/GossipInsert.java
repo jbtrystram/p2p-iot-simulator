@@ -1,8 +1,10 @@
 package example.update.control;
 
+import example.update.EasyCSV;
 import example.update.NetworkAgent;
 import example.update.NetworkMessage;
 import example.update.SoftwareJob;
+import org.nfunk.jep.function.Str;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
@@ -11,6 +13,8 @@ import peersim.core.Node;
 import peersim.edsim.EDSimulator;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Initialize node software DB with software
@@ -28,7 +32,7 @@ public class GossipInsert implements Control {
     private static final String GOSSIP_PROTOCOL = "gossip_protocol";
     private static final String NETWORK_PROTOCOL = "network_protocol";
 
-    private static final String FILE_SIZE = "file_size";
+    private static final String FILE = "filename";
 
     // ------------------------------------------------------------------------
     // Fields
@@ -39,9 +43,10 @@ public class GossipInsert implements Control {
      */
     private final int gossipPID;
     private final int networkPID;
+    private final String file;
 
-    private final int fileSize;
-    private boolean done;
+    //the list of jobs to insert.
+    private LinkedHashMap<Long, SoftwareJob> jobs = new LinkedHashMap();
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -57,47 +62,45 @@ public class GossipInsert implements Control {
 
         gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
         networkPID = Configuration.getPid(prefix + "." + NETWORK_PROTOCOL);
-        fileSize = Configuration.getInt(prefix + "." + FILE_SIZE);
+        file = Configuration.getString(prefix + "." + FILE);
 
-        done = false;
+        // Parse the CSV into the hashmap
+        EasyCSV csv = new EasyCSV(file);
+        for (int i=1; i<csv.content.size() ;i++){
+
+            SoftwareJob job = new SoftwareJob(csv.content.get(i)[1], csv.content.get(i)[2],
+                    csv.content.get(i)[3], Integer.parseInt(csv.content.get(i)[4]),
+                    Integer.parseInt(csv.content.get(i)[4]),
+                    Integer.parseInt(csv.content.get(i)[5]));
+
+            jobs.put( Long.getLong(csv.content.get(i)[0]) , job);
+        }
     }
 
     // ------------------------------------------------------------------------
     // Methods
     // ------------------------------------------------------------------------
 
-    /**
-     * create a random SoftwarePackage with given parametters
-     */
-    private SoftwareJob randomJob(String name, String version) {
-
-        int qos = SoftwareJob.QOS_INSTALL_MANDATORY;
-        int priority = SoftwareJob.PRIORITY_STANDARD;
-        int size = fileSize*1000;
-
-        SoftwareJob job = new SoftwareJob(name, version, LocalDateTime.MAX, priority, qos, size);
-
-        return job;
-    }
-
 
     public boolean execute() {
 
-        if (! done) {
-            Node n = Network.get(CommonState.r.nextInt(Network.size()));
+        jobs.keySet().forEach( time -> {
 
-            SoftwareJob job = randomJob("linux", "4.15");
-            NetworkMessage msg = new NetworkMessage(job, n);
+            if (CommonState.getTime() >= time) {
+                Node n = Network.get(CommonState.r.nextInt(Network.size()));
 
-            //trigger gossip
-            EDSimulator.add(70, msg, n, gossipPID);
+                NetworkMessage msg = new NetworkMessage(jobs.get(time), n);
 
-            //fill the data on the node
-            ((NetworkAgent) n.getProtocol(networkPID)).completeJob(job);
-            System.out.println("node " + n.getID() + "is the seed");
-            done = true;
-        }
+                //trigger gossip
+                EDSimulator.add(70, msg, n, gossipPID);
+
+                //fill the data on the node
+                ((NetworkAgent) n.getProtocol(networkPID)).completeJob(jobs.get(time));
+                System.out.println("node " + n.getID() + "is the seed for" + jobs.get(time).name+"-"+jobs.get(time).version);
+
+                jobs.remove(time);
+            }
+        });
         return false;
     }
-
 }

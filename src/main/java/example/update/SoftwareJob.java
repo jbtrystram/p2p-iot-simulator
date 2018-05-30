@@ -53,10 +53,10 @@ public class SoftwareJob {
         return dateCreated;
     }
 
-    public SoftwareJob(String name, String version, LocalDateTime dateExp, int priority, int expectedQoS, int size) {
+    public SoftwareJob(String name, String version, String dateExp, int priority, int expectedQoS, int size) {
         this.name = name;
         this.version = new ComparableVersion(version);
-        this.dateExp = dateExp;
+        this.dateExp = LocalDateTime.parse(dateExp);
         this.priority = priority;
         this.expectedQoS = expectedQoS;
         this.size = size;
