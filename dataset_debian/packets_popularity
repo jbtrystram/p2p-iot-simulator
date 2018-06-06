@@ -1,0 +1,41 @@
+while read pkg; do
+  echo -n "$pkg;" && apt-cache show $pkg | grep ^Size | cut -d ' ' -f 2
+done <packets
+apt-cache show hostname | grep ^Size | cut -d ' ' -f 2
+
+libpam-modules;307582
+dpkg;2106696
+sed;279738
+tar;759354
+coreutils;2870090
+libattr1;18356
+libpam-runtime;211970
+ncurses-bin;365758
+zlib1g;87522
+debianutils;100104
+base-passwd;57656
+hostname;14872
+libacl1;28110
+libbz2-1.0;43516
+libpam0g;125132
+gzip;113836
+libblkid1;168408
+168358
+libuuid1;70088
+69956
+util-linux;981214
+980644
+base-files;67294
+67244
+grep;381572
+bsdutils;111602
+111580
+debconf;159498
+findutils;622068
+ncurses-base;238070
+passwd;995998
+e2fsprogs;946326
+login;789926
+perl-base;1344270
+1343988
+apt;1231676
