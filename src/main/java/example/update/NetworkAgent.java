@@ -69,7 +69,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
         if(localData.isEmpty()) {
             localData.add(new SimpleEntry(packages.get(0).getId(),
-                    new boolean[packages.get(0).size / pieceSize]));
+                    new boolean[(int) Math.ceil( (double)packages.get(0).size / (double)pieceSize)]));
             Arrays.fill(localData.get(0).getValue(), Boolean.FALSE);
         } else {
             // update the local list.
@@ -79,7 +79,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                             localData.add(i, localData.remove(j));
                     } else if (! localDataContains(packages.get(i).getId())) {
                         localData.add(i, new SimpleEntry(packages.get(i).getId(),
-                                new boolean[packages.get(i).size / pieceSize]));
+                                new boolean[(int) Math.ceil( (double)packages.get(i).size / (double)pieceSize)]));
                         Arrays.fill(localData.get(i).getValue(), Boolean.FALSE);
                     }
                 }
@@ -90,7 +90,6 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     private Map.Entry<String, Integer> getRandomDownload() {
 
        for (int i = 0; i < localData.size(); i++) {
-
            int rand = CommonState.r.nextInt(localData.get(i).getValue().length);
 
            for (int j = rand; j < localData.get(i).getValue().length; j++) {
@@ -264,7 +263,8 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     //complete a job : hook for the initializer
     public void completeJob(SoftwareJob job){
         if ( ! localDataContains(job.getId()) ){
-            boolean[] data = new boolean[job.size / pieceSize];
+
+            boolean[] data = new boolean[(int) Math.ceil( (double)job.size / (double)pieceSize)];
             Arrays.fill(data, Boolean.TRUE);
 
             localData.add(new SimpleEntry(job.getId(), data));

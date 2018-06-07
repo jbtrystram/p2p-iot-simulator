@@ -4,7 +4,6 @@ import example.update.EasyCSV;
 import example.update.NetworkAgent;
 import example.update.NetworkMessage;
 import example.update.SoftwareJob;
-import org.nfunk.jep.function.Str;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
@@ -69,11 +68,11 @@ public class GossipInsert implements Control {
         for (int i=1; i<csv.content.size() ;i++){
 
             SoftwareJob job = new SoftwareJob(csv.content.get(i)[1], csv.content.get(i)[2],
-                    csv.content.get(i)[3], Integer.parseInt(csv.content.get(i)[4]),
-                    Integer.parseInt(csv.content.get(i)[4]),
-                    Integer.parseInt(csv.content.get(i)[5]));
+                    LocalDateTime.MAX.toString(), SoftwareJob.PRIORITY_STANDARD,
+                    SoftwareJob.QOS_INSTALL_BEST_EFFORT,
+                    Integer.parseInt(csv.content.get(i)[3])/1000);
 
-            jobs.put( Long.getLong(csv.content.get(i)[0]) , job);
+            jobs.put( Long.parseLong(csv.content.get(i)[0]) , job);
         }
     }
 
@@ -84,23 +83,25 @@ public class GossipInsert implements Control {
 
     public boolean execute() {
 
-        jobs.keySet().forEach( time -> {
+        for (int i=0; i < jobs.keySet().size(); i++){
 
-            if (CommonState.getTime() >= time) {
-                Node n = Network.get(CommonState.r.nextInt(Network.size()));
+            long scheduledTime = (long) jobs.keySet().toArray()[i];
 
-                NetworkMessage msg = new NetworkMessage(jobs.get(time), n);
+            if (CommonState.getTime() >= scheduledTime) {
+                Node n = Network.get(1);
+
+                NetworkMessage msg = new NetworkMessage(jobs.get(scheduledTime), n);
 
                 //trigger gossip
                 EDSimulator.add(70, msg, n, gossipPID);
 
                 //fill the data on the node
-                ((NetworkAgent) n.getProtocol(networkPID)).completeJob(jobs.get(time));
-                System.out.println("node " + n.getID() + "is the seed for" + jobs.get(time).name+"-"+jobs.get(time).version);
+                ((NetworkAgent) n.getProtocol(networkPID)).completeJob(jobs.get(scheduledTime));
+                System.out.println("node " + n.getID() + " is the seed for" + jobs.get(scheduledTime).name+"-"+jobs.get(scheduledTime).version);
 
-                jobs.remove(time);
+                jobs.remove(scheduledTime);
             }
-        });
+        }
         return false;
     }
 }
