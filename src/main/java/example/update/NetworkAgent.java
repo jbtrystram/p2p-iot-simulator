@@ -244,9 +244,8 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     }
 
     //TODO : better looking hashes
-    public String jobProgress(){
-
-        StringBuilder str =new StringBuilder();
+    public ArrayList jobProgress(){
+        ArrayList<Integer> progress = new ArrayList<>();
         for (Map.Entry<String, boolean[]> entry : localData) {
 
             boolean[] tab = entry.getValue();
@@ -254,10 +253,9 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
             for (boolean b : tab) {
                 if (b) perc++;
             }
-            str.append(entry.getKey()).append(":");
-            str.append(String.valueOf((int)(((double)perc/(double)tab.length)*100))).append(";");
+            progress.add( (int)(((double)perc/(double)tab.length)*100));
         }
-        return str.toString();
+        return progress;
     }
 
     //complete a job : hook for the initializer

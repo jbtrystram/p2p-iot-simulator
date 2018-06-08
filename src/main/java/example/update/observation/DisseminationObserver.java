@@ -3,6 +3,7 @@ package example.update.observation;
 import example.update.NetworkAgent;
 
 import example.update.Scheduler;
+import example.update.constraints.NetworkRange;
 import org.nfunk.jep.function.Str;
 import peersim.config.Configuration;
 import peersim.core.Control;
@@ -21,12 +22,15 @@ public class DisseminationObserver implements Control {
     // ------------------------------------------------------------------------
 
     /**
-     * The protocol to look at.
+     * The protocols to look at.
      *
      * @config
      */
     private static final String PAR_NET = "transfer_protocol";
     private static final String PAR_SCHED = "sched_protocol";
+
+    //The total number of jobs to be disseminated. Used to stop the simulation if everything is done
+    private static  final String PAR_TOTAL = "jobs_total_count";
 
     /**
      * Output logfile name base.
@@ -53,6 +57,8 @@ public class DisseminationObserver implements Control {
 
     Writer progressOutput;
 
+    private final int totalJobsNumber;
+
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
@@ -71,7 +77,28 @@ public class DisseminationObserver implements Control {
         filename = "raw_dat/" +Configuration.getString(prefix + "."
                 + PAR_FILENAME_BASE, "progress_dump");
         progressOutput = new Writer(filename);
+
+        totalJobsNumber = Configuration.getInt(prefix + "."
+                + PAR_TOTAL);
     }
+
+    /* checks if the simulation should stop
+    i.e. all jobs are 100% on all nodes
+     */
+    private boolean fullCompletionCheck(){
+
+        for (int i = 0; i < Network.size(); i++) {
+                ArrayList<Integer> values = ((NetworkAgent) Network.get(i).getProtocol(netPid)).jobProgress();
+                for (int j=0; j < values.size(); j++){
+                    if (values.get(j) != 100) return false;
+                }
+            }
+        System.out.println("Stopping simulation : the given number of jobs are done.");
+        System.out.println("If this should not happen, adjust 'jobs_total_count' setting in the configuration file. ");
+            return true;
+    }
+
+
 
     // Control interface method. does the file handling
     public boolean execute() {
@@ -88,7 +115,7 @@ public class DisseminationObserver implements Control {
             });
         }
 
-        // we need sorting consistency
+        // we need consistency in the list
         List<String> sortedList = new ArrayList(createdTasks);
         Collections.sort(sortedList);
 
@@ -119,6 +146,8 @@ public class DisseminationObserver implements Control {
             out.append(System.lineSeparator());
         }
         progressOutput.write(out.toString());
-    return false;
+
+        if (sortedList.size() == totalJobsNumber) return fullCompletionCheck();
+        else return false;
     }
 }

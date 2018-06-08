@@ -90,14 +90,16 @@ public class GossipInsert implements Control {
             if (CommonState.getTime() >= scheduledTime) {
                 Node n = Network.get(1);
 
-                NetworkMessage msg = new NetworkMessage(jobs.get(scheduledTime), n);
+                SoftwareJob toInsert = jobs.get(scheduledTime);
+
+                NetworkMessage msg = new NetworkMessage(toInsert, n);
 
                 //trigger gossip
                 EDSimulator.add(70, msg, n, gossipPID);
 
                 //fill the data on the node
-                ((NetworkAgent) n.getProtocol(networkPID)).completeJob(jobs.get(scheduledTime));
-                System.out.println("node " + n.getID() + " is the seed for" + jobs.get(scheduledTime).name+"-"+jobs.get(scheduledTime).version);
+                ((NetworkAgent) n.getProtocol(networkPID)).completeJob(toInsert);
+                System.out.println("node " + n.getID() + " is the seed for " + toInsert.name+"  "+toInsert.version);
 
                 jobs.remove(scheduledTime);
             }

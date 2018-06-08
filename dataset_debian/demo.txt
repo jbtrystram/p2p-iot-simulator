@@ -31,7 +31,7 @@ init.3.max_bandwidth 1000
 
 init.5 example.update.initialisation.StorageInitializer
 init.5.protocol disk_space
-init.5.gaussian_mean 5000
+init.5.gaussian_mean 8000
 
 ################### protocols ===========================
 
@@ -100,6 +100,7 @@ control.inserter.step 500
 control.dlProgress example.update.observation.DisseminationObserver
 control.dlProgress.transfer_protocol p2p_net_agent
 control.dlProgress.sched_protocol supervisor
+control.dlProgress.jobs_total_count 30
 control.dlProgress.step OBERVERS_CYCLE
 
 control.neighobserver example.update.observation.NeighborsObservers
@@ -126,7 +127,6 @@ order.control neighobserver,dlProgress,energyObs,StorageObs,coordObs
 
 # Observers should be run once more at the end
 control.neighobserver.FINAL true
-control.dlProgress.FINAL true
 
 # Observers should not run at first cycle (protocols have not been run yet)
 
