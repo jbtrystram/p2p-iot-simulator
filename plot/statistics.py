@@ -2,15 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 import os
+import pandas
 
 def plotter(data1, data2):
     
         hauteur = 6
         largeur = 5
 
-        keys = []
-        for key in data1.keys():
-                keys.append(key)
         key_index=0
         for haut in  range(0,hauteur):
                 for large in range(1,largeur+1):
@@ -50,10 +48,8 @@ def stat_hoarder(file_seq, path):
 
 def normalize_duration(data1):
 
-        keys = []
         sizes = []
-        for key in data1.keys():
-                keys.append(key)
+        for key in keys:
                 sizes.append(len(data1[key]))
 
         longest = max(sizes)
@@ -63,6 +59,41 @@ def normalize_duration(data1):
                 sizes.append(len(data1[key]))
 
         return data1
+
+def keys_indexer(data1):
+        keys = []
+        for key in data1.keys():
+                keys.append(key)
+        return  keys
+
+def duration_collection():
+        # number of ticks to complete each package
+        for key in keys:
+                duration.append(sum(i < 100 for i in progress[key]))
+        
+        # collect sizes
+        sizes = pandas.read_csv("dataset_debian/source.csv", usecols=[1,2,3], delimiter=';')
+        
+
+        for dur_key in keys:
+                for name, size in zip(sizes['name'], sizes['size']) :
+                        if dur_key.startswith (''.join(e for e in name if e.isalnum())):                    
+                                sizes_data.append(size)
+
+
+def plot_time_to_size(size, time):
+        
+        print(len(size))
+        print(len(time))
+
+        plt.scatter(size,time)
+
+        # add labels/titles and such here
+        plt.title("time over file size")
+        plt.show()
+        plt.close()
+
+
 
 if __name__ == '__main__':
     
@@ -79,13 +110,21 @@ if __name__ == '__main__':
 
     progress = {}
     complete_nodes = {}
+    duration = []
+    sizes_data = []
     
     print("Parsing data files")
     for seq in sorted(files):
         stat_hoarder(seq,args.path)
-    
+
+    keys = keys_indexer(progress)    
+    duration_collection()
+
     print("normalizing datasets length")
     progress = normalize_duration(progress)
     complete_nodes = normalize_duration(complete_nodes)
 
+    print("drawing plot")    
     plotter(progress, complete_nodes)
+
+    plot_time_to_size(sizes_data, duration)
