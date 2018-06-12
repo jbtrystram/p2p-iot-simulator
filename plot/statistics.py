@@ -23,7 +23,8 @@ def plotter(data1, data2):
                         plt.subplots_adjust(hspace = 0.4)
                         plt.title(keys[key_index])
                         key_index+=1
-        plt.savefig("figs/stats.png", dpi = (400))
+        plt.show()        
+	#plt.savefig("figs/stats.png", dpi = (400))
         plt.close()
 
 def stat_hoarder(file_seq, path):
@@ -83,9 +84,6 @@ def duration_collection():
 
 def plot_time_to_size(size, time):
         
-        print(len(size))
-        print(len(time))
-
         plt.scatter(size,time)
 
         # add labels/titles and such here
@@ -104,8 +102,8 @@ if __name__ == '__main__':
     # get list of files
     files = []
     for dat in os.listdir(args.path):
-        if dat.startswith("graph") and dat.endswith(".dat"):
-                files.append(dat.lstrip("graph_dump").rstrip(".dat")) 
+        if dat.startswith("progress") and dat.endswith(".dat"):
+                files.append(dat.lstrip("progress_dump").rstrip(".dat")) 
 
 
     progress = {}

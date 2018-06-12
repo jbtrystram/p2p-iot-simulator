@@ -28,7 +28,6 @@ def plotter(file_seq, path):
 
                 # Plot nodes
                 plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1, c=progress[:,item], vmin=0, vmax=100)
-                plt.colorbar()
                 plt.xticks([], [])
                 plt.yticks([], [])
                 plt.xlim(0,1000)
@@ -54,5 +53,6 @@ if __name__ == '__main__':
                 files.append(dat.lstrip("graph_dump").rstrip(".dat"))               
 
     # plot each file
-    for seq in files:
+    
+    for seq in sorted(files):
         plotter(seq,args.path)
