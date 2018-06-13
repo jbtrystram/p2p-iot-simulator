@@ -1,8 +1,8 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 import os
 import pandas
+import numpy as np
 
 def plotter(data1, data2):
     
@@ -23,26 +23,27 @@ def plotter(data1, data2):
                         plt.subplots_adjust(hspace = 0.4)
                         plt.title(keys[key_index])
                         key_index+=1
-        plt.show()        
+        plt.show()
 	#plt.savefig("figs/stats.png", dpi = (400))
         plt.close()
 
 def stat_hoarder(file_seq, path):
         
-        current_progress = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', skip_header=1)
-        current_names = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', names=True)
+        current_progress = pandas.read_csv(path+"/progress_dump"+file_seq+".dat", delimiter=';')
+	# drop first and last column
+	#df.drop(df.columns[len(df.columns)-1], axis=1, inplace=True)
 
-        for item in range(1, current_progress.shape[1]-1):
+        for item in range(1, len(current_progress.columns)-1):
 
                 # avg progress
-                name = current_names.dtype.names[item]
-                avg_progress = np.average(current_progress[:,item])
+                name = current_progress.columns[item]
+                avg_progress = current_progress.iloc[:,item].mean()
                 
                 try:progress[name].append(avg_progress)
                 except KeyError: progress[name] = [avg_progress]
 
                 # absolute number of nodes to 100%
-                complete = sum(i == 100 for i in current_progress[:,item])
+                complete = sum(i == 100 for i in current_progress.iloc[:,item])
 
                 try: complete_nodes[name].append(complete)
                 except KeyError: complete_nodes[name] = [complete]
@@ -68,30 +69,25 @@ def keys_indexer(data1):
         return  keys
 
 def duration_collection():
+
+        sizes = pandas.read_csv("dataset_debian/source.csv", usecols=[1,2,3], delimiter=';')
         # number of ticks to complete each package
         for key in keys:
                 duration.append(sum(i < 100 for i in progress[key]))
         
         # collect sizes
-        sizes = pandas.read_csv("dataset_debian/source.csv", usecols=[1,2,3], delimiter=';')
-        
-
-        for dur_key in keys:
-                for name, size in zip(sizes['name'], sizes['size']) :
-                        if dur_key.startswith (''.join(e for e in name if e.isalnum())):                    
+                for name, size in zip(sizes['name'], sizes['size']):
+                        if key.startswith(name):
                                 sizes_data.append(size)
 
-
 def plot_time_to_size(size, time):
-        
+
         plt.scatter(size,time)
 
         # add labels/titles and such here
         plt.title("time over file size")
         plt.show()
         plt.close()
-
-
 
 if __name__ == '__main__':
     
