@@ -34,6 +34,9 @@ public class SimpleEnergy implements EnergySource {
     // unlimited energy !
     public void consume() {}
 
+    @Override
+    public void consume(int amount) {}
+
     public void charge(int amount){
         this.setOnlineStatus(true);
     }

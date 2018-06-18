@@ -38,6 +38,7 @@ init.5.gaussian_mean 8000
 protocol.link IdleProtocol
 
 protocol.energy example.update.strategies.Energy
+protocol.energy.step PROTOCOL_CYCLE/5
 
 protocol.disk_space example.update.strategies.Storage
 
@@ -81,6 +82,7 @@ init.sch3.protocol p2p_net_agent
 protocol.p2p_net_agent example.update.NetworkAgent
 protocol.p2p_net_agent.neighborhood_protocol neighbor
 protocol.p2p_net_agent.bandwidth_protocol bandwidth
+protocol.p2p_net_agent.energy_protocol energy
 protocol.p2p_net_agent.piece_size 50
 protocol.p2p_net_agent.transport tr
 protocol.p2p_net_agent.step PROTOCOL_CYCLE

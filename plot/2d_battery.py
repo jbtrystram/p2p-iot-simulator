@@ -9,9 +9,9 @@ def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
-        #energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
-        print("using "+"/data_pieces_dump"+file_seq+".dat")
-        progress = np.genfromtxt(path+"/data_pieces_dump"+file_seq+".dat", delimiter=';')
+        energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
+        print("using "+"/progress_dump"+file_seq+".dat")
+        #progress = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', skip_header=1)
 
         #more awesomeness
         #plt.xkcd()
@@ -35,12 +35,12 @@ def plotter(file_seq, path):
         		plt.plot([coord[A,1], coord[B,1]], [coord[A,2], coord[B,2]],  linewidth=0.2, zorder=-1, c='0.5')
 
         # Plot nodes
-        plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1, c=progress[:,1], vmin=0, vmax=100)
+        plt.scatter(coord[:,1], coord[:,2], s=9, zorder=1, c=energy[:,1], vmin=0, vmax=100)
         plt.colorbar()
 
         plt.tight_layout()
         #plt.savefig("figs/"+seq+'.pdf')
-        plt.savefig("figs/"+seq+'.png', dpi = (200))
+        plt.savefig("figs/energy"+seq+'.png', dpi = (200))
         plt.close()
 
 
@@ -58,5 +58,5 @@ if __name__ == '__main__':
                 files.append(dat.lstrip("graph_dump").rstrip(".dat"))               
 
     # plot each file
-    for seq in files:
+    for seq in sorted(files):
         plotter(seq,args.path)

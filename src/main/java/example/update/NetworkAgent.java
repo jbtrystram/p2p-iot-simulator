@@ -1,9 +1,12 @@
 package example.update;
 
 import example.update.constraints.Bandwidth;
+import example.update.constraints.NetworkRange;
+import example.update.strategies.Energy;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
+import peersim.core.Network;
 import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 import peersim.edsim.EDSimulator;
@@ -19,8 +22,8 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     // ------------------------------------------------------------------------
 
     // Protocol to interact with : softwareDB, neighborhood maintainer and Supervisor
-   private static final String NEIGH_PROT = "neighborhood_protocol";
-
+    private static final String NEIGH_PROT = "neighborhood_protocol";
+    private static final String ENERGY_PROT = "energy_protocol";
     private static final String BANDW = "bandwidth_protocol";
     private static final String PIECE_SIZE = "piece_size";
 
@@ -30,6 +33,8 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     // ------------------------------------------------------------------------
 
     private final int neighborhoodPID;
+    private final int powerSourcePID;
+
 
     private int bandwidthPid;
     private final int pieceSize;
@@ -48,7 +53,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
         // get PIDs of SoftwareDB and Downloader
         neighborhoodPID = Configuration.getPid(prefix + "." + NEIGH_PROT);
-
+        powerSourcePID = Configuration.getPid(prefix + "." + ENERGY_PROT);
         bandwidthPid = Configuration.getPid(prefix + "." +BANDW);
         pieceSize = Configuration.getInt(prefix + "." +PIECE_SIZE);
 
@@ -106,6 +111,9 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
        return null;
     }
 
+    private void usePower(int multiplier, Node node){
+        ((Energy) node.getProtocol(powerSourcePID)).consume(multiplier);
+    }
 
 
     public void nextCycle(Node node, int pid) {
@@ -134,6 +142,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                     if (localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber]) {
                         DataMessage reply = new DataMessage(DataMessage.OFFER, event.hash, event.pieceNumber, localNode);
                         EDSimulator.add(1, reply, event.sender, pid);
+                        usePower(1, localNode);
                     }
                 }
                 break;
@@ -145,6 +154,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                     //send ACCEPT
                     DataMessage accept = new DataMessage(DataMessage.ACCEPT, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(1, accept, event.sender, pid);
+                    usePower(1, localNode);
                 }
                 break;
 
@@ -163,12 +173,15 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
                     dataMsg = new DataMessage(DataMessage.DATA, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(pieceSize / bdw, dataMsg, event.sender, pid);
+                    //consume energy
+                    usePower((int)(pieceSize/bdw), localNode);
 
                 } else { // send a cancel message
                     DataMessage dataMsg;
 
                     dataMsg = new DataMessage(DataMessage.CANCEL, event.hash, event.pieceNumber, localNode);
                     EDSimulator.add(1, dataMsg, event.sender, pid);
+                    usePower(1, localNode);
                 }
                 break;
 
@@ -181,6 +194,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 //send ack
                 DataMessage msg = new DataMessage(DataMessage.DATAACK, event.hash, event.pieceNumber, localNode);
                 EDSimulator.add(1, msg, event.sender, pid);
+                usePower(1, localNode);
                 break;
 
                 //TODO : what if energy cuts during a trasnfer? seeder is locked.
@@ -224,6 +238,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
                 .forEach(neighbor -> {
                     // send request message to neighbor with no latency
                     EDSimulator.add(0, msg, neighbor, pid);
+                    usePower(1, localNode);
                 });
     }
 

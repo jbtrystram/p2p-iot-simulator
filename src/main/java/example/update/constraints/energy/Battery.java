@@ -30,7 +30,12 @@ public class Battery implements EnergySource {
 
     @Override
     public void consume() {
-        battery -= (1 / this.capacityMultiplier);
+        this.consume(1);
+    }
+
+    @Override
+    public void consume(int amount) {
+        battery -= (amount / this.capacityMultiplier);
     }
 
     @Override
