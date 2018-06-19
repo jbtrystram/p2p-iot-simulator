@@ -20,9 +20,9 @@ public class Energy implements CDProtocol {
     }
 
     public void consume(int amount){
-        powerDraws +=1;
+        powerDraws +=amount;
         // drain battery every 100 battery-hungry action are done (we would not consume 1% of the battery for 1 msg)
-        if (powerDraws % 100 == 0) {
+        if (powerDraws % 1000 == 0) {
             powerSource.consume(amount);
         }
     }
@@ -39,6 +39,6 @@ public class Energy implements CDProtocol {
 
     // this decrease battery level linearly over time (tunable rate with the scheduler step.)
     public void nextCycle(Node node, int pid) {
-        powerSource.consume();
+       // powerSource.consume();
     }
 }

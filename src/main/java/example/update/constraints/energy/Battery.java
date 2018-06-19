@@ -35,7 +35,10 @@ public class Battery implements EnergySource {
 
     @Override
     public void consume(int amount) {
-        battery -= (amount / this.capacityMultiplier);
+        if (battery> 0 && battery - (amount / this.capacityMultiplier) < 0){
+            battery = 0;
+            System.out.println("1 dead node");
+        }
     }
 
     @Override
