@@ -20,6 +20,7 @@ public class Battery implements EnergySource {
 
     public Battery() {
         battery = 100;
+        capacityMultiplier = 1;
     }
 
 
@@ -30,14 +31,10 @@ public class Battery implements EnergySource {
 
     @Override
     public void consume() {
-        this.consume(1);
-    }
-
-    @Override
-    public void consume(int amount) {
-        if (battery> 0 && battery - (amount / this.capacityMultiplier) < 0){
+        if (battery > 0 && battery - (1 / this.capacityMultiplier) < 0){
             battery = 0;
-            System.out.println("1 dead node");
+        }else if( battery > 0 ){
+            battery -= 1;
         }
     }
 

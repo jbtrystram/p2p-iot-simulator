@@ -5,8 +5,6 @@ public interface EnergySource {
 
     void consume();
 
-    void consume(int amount);
-
     void charge(int amount);
 
     void setCapacityMultiplier(float capacityMultiplier);

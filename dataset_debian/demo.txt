@@ -38,7 +38,6 @@ init.5.gaussian_mean 8000
 protocol.link IdleProtocol
 
 protocol.energy example.update.strategies.Energy
-protocol.energy.step PROTOCOL_CYCLE/5
 
 protocol.disk_space example.update.strategies.Storage
 
@@ -95,6 +94,10 @@ control.inserter.gossip_protocol gossip
 control.inserter.network_protocol p2p_net_agent
 control.inserter.filename dataset_debian/source.csv
 control.inserter.step 500
+
+control.batteryDrainer example.update.control.BatteryDecreaser
+control.batteryDrainer.energy_protocol energy
+control.batteryDrainer.step 200
 
 ################ Observers ==============================
 

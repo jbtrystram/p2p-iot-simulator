@@ -10,7 +10,7 @@ def plotter(file_seq, path):
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
         energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
-        print("using "+"/progress_dump"+file_seq+".dat")
+        print("using "+"/energy_dump"+file_seq+".dat")
         #progress = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', skip_header=1)
 
         #more awesomeness
@@ -24,7 +24,7 @@ def plotter(file_seq, path):
 
         #axes.set_xlim([0,1000])
         #axes.set_ylim([0,1000])
-        plt.title('Node positions & discovered links')
+        plt.title('Node battery level & neigbors')
 
         #plot neigbors relationships
         for line in open(neigh_file):

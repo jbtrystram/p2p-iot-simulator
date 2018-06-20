@@ -1,19 +1,18 @@
 package example.update.strategies;
 
 import example.update.constraints.energy.EnergySource;
-import peersim.cdsim.CDProtocol;
-import peersim.core.Node;
+import peersim.core.Protocol;
 
 // placeholder class containing a reference to the
 // node's energy sources
-public class Energy implements CDProtocol {
+public class Energy implements Protocol {
 
     public Object clone(){
         return new Energy(null);
     }
 
     private EnergySource powerSource;
-    private int powerDraws;
+    private long powerDraws;
 
     public Energy(String prefix){
         powerDraws = 0;
@@ -23,7 +22,7 @@ public class Energy implements CDProtocol {
         powerDraws +=amount;
         // drain battery every 100 battery-hungry action are done (we would not consume 1% of the battery for 1 msg)
         if (powerDraws % 1000 == 0) {
-            powerSource.consume(amount);
+            powerSource.consume();
         }
     }
 
@@ -35,10 +34,5 @@ public class Energy implements CDProtocol {
 
     public void setPowerSource(EnergySource powerSource) {
         this.powerSource = powerSource;
-    }
-
-    // this decrease battery level linearly over time (tunable rate with the scheduler step.)
-    public void nextCycle(Node node, int pid) {
-       // powerSource.consume();
     }
 }
