@@ -11,7 +11,7 @@ map_size 1000
 random.seed 22222222748
 
 simulation.endtime 50000
-simulation.logtime 50
+simulation.logtime 200
 
 
 ################### initialization ======================

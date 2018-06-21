@@ -21,7 +21,7 @@ public class Energy implements Protocol {
     public void consume(int amount){
         powerDraws +=amount;
         // drain battery every 100 battery-hungry action are done (we would not consume 1% of the battery for 1 msg)
-        if (powerDraws % 1000 == 0) {
+        if (powerDraws % 300 == 0) {
             powerSource.consume();
         }
     }

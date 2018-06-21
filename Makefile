@@ -15,9 +15,8 @@ run:
 	java -cp $(LIBS):src peersim.Simulator $(CONFIG).txt
 
 order:
-	rm -rf graphs/
-	mkdir -p graphs
-	mv *.dat graphs/
+	rm -rf raw_dat/ figs/
+	mkdir -p raw_dat figs
 
 graph:
 	rm -rf figs
