@@ -95,7 +95,12 @@ public class DisseminationObserver implements Control {
             }
         System.out.println("Stopping simulation : the given number of jobs are done.");
         System.out.println("If this should not happen, adjust 'jobs_total_count' setting in the configuration file. ");
-            return true;
+        System.out.println();
+        System.out.println("Total exchanged data");
+        for (int i = 0; i < Network.size(); i++) {
+            System.out.println(i+": "+((NetworkAgent) Network.get(i).getProtocol(netPid)).overhead);
+        }
+        return true;
     }
 
 

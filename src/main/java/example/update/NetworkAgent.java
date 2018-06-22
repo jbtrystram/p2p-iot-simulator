@@ -45,6 +45,7 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
     // my local list <SoftwarePackage.ID, array>
     List<Map.Entry<String, boolean[]>> localData;
 
+    public long overhead =0;
 
     // constructor
     String prefix;
@@ -113,6 +114,11 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
     private void usePower(int multiplier, Node node){
         ((Energy) node.getProtocol(powerSourcePID)).consume(multiplier);
+        overhead += multiplier;
+    }
+
+    private boolean isStillAround(Node neighbor, Node local){
+       return  ((NeighborhoodMaintainer)local.getProtocol(neighborhoodPID)).getNeighbors().contains(neighbor);
     }
 
 
@@ -187,8 +193,9 @@ public class NetworkAgent implements EDProtocol, CDProtocol{
 
             case DataMessage.DATA:
                 //mark piece as completed into DB
-                if (getLocalIndex(event.hash) == -1 && localData.isEmpty()) {System.out.println(localNode.getID()+ " have no hash dude");}
-                localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber] = true;
+                if (isStillAround(event.sender, localNode)) {
+                    localData.get(getLocalIndex(event.hash)).getValue()[event.pieceNumber] = true;
+                }
                 this.downloading = false;
 
                 //send ack
