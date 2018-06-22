@@ -30,7 +30,7 @@ init.3.max_bandwidth 1000
 
 init.4 example.update.initialisation.RangeInitializer
 init.4.protocol range
-init.4.gaussian_mean 100
+init.4.gaussian_mean 150
 
 init.5 example.update.initialisation.StorageInitializer
 init.5.protocol disk_space

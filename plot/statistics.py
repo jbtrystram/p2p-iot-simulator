@@ -17,7 +17,7 @@ def plotter(data1, data2):
                         n = len(y)
                         x = np.linspace(0,n,n)
                         plt.subplot(hauteur, largeur, (largeur*haut)+(large))
-                        plt.plot(x,y,'b', x,yy,'r')
+                        plt.plot(x,y,'b')#, x,yy,'r')
 
                         # add labels/titles and such here
                         plt.subplots_adjust(hspace = 0.4)
