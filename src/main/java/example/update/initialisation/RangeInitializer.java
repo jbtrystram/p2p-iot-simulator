@@ -20,6 +20,7 @@ public class RangeInitializer implements Control {
     private static final String PAR_PROT = "protocol";
     private static final String PAR_MEAN = "gaussian_mean";
     private static final String PAR_DEV = "gaussian_deviation";
+    private static final String PAR_MINI = "minimum";
 
 
     // ------------------------------------------------------------------------
@@ -30,6 +31,8 @@ public class RangeInitializer implements Control {
     private final int pid;
     private final int mean;
     private final int deviation;
+    private final int mini;
+
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -47,6 +50,7 @@ public class RangeInitializer implements Control {
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         mean = Configuration.getInt(prefix + "." + PAR_MEAN, 500);
         deviation = Configuration.getInt(prefix + "." + PAR_DEV, 100);
+        mini = Configuration.getInt(prefix + "." + PAR_MINI, 50);
 
     }
 
@@ -67,6 +71,7 @@ public class RangeInitializer implements Control {
             protocol = (NetworkRange) n.getProtocol(pid);
 
             int range =  Math.abs((int)((CommonState.r.nextGaussian()*deviation)+mean));
+            if (range < mini) { range = mini;}
             protocol.setRange(range);
         }
         return false;
