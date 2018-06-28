@@ -54,17 +54,16 @@ public class BandwidthInitializer implements Control {
         //TODO : try another approach (gaussian distribution ?)
         public boolean execute() {
 
-        Node n ;
-        Bandwidth protocol;
-
         for (int i = 0; i < Network.size(); i++) {
-            n = Network.get(i);
-            protocol = (Bandwidth) n.getProtocol(pid);
-
-            protocol.setDownlink(CommonState.r.nextInt(maxBandwidth));
-            protocol.setUplink(CommonState.r.nextInt(maxBandwidth));
+            init(Network.get(i));
         }
         return false;
     }
 
+    public void init (Node n){
+        Bandwidth protocol = (Bandwidth) n.getProtocol(pid);
+
+        protocol.setDownlink(CommonState.r.nextInt(maxBandwidth));
+        protocol.setUplink(CommonState.r.nextInt(maxBandwidth));
+    }
 }

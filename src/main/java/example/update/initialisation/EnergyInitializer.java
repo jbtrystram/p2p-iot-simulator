@@ -56,23 +56,23 @@ public class EnergyInitializer implements Control {
      */
     public boolean execute() {
 
-        Node n ;
-        Energy protocol;
-
         for (int i = 0; i < Network.size(); i++) {
-            n = Network.get(i);
-            protocol = (Energy) n.getProtocol(pid);
-
-            //50% on battery, 50% on AC power.
-            if (i%2 == 0 ) {
-                protocol.setPowerSource( new Battery() );
-                protocol.getPowerSource().setOnlineStatus(true);
-            } else {
-                protocol.setPowerSource( new SimpleEnergy("") );
-                protocol.getPowerSource().charge(100);
-            }
+            init(Network.get(i),i%2 == 0 );
         }
         return false;
+    }
+
+    public void init(Node n, boolean AC){
+        Energy protocol = (Energy) n.getProtocol(pid);
+
+        //50% on battery, 50% on AC power.
+        if (AC) {
+            protocol.setPowerSource( new Battery() );
+            protocol.getPowerSource().setOnlineStatus(true);
+        } else {
+            protocol.setPowerSource( new SimpleEnergy("") );
+            protocol.getPowerSource().charge(100);
+        }
     }
 
 }

@@ -2,11 +2,17 @@ package example.update.control;
 
 import example.update.EasyCSV;
 import example.update.constraints.NodeCoordinates;
+import example.update.constraints.Storage;
+import example.update.initialisation.BandwidthInitializer;
+import example.update.initialisation.EnergyInitializer;
+import example.update.initialisation.RangeInitializer;
+import example.update.initialisation.StorageInitializer;
 import peersim.Simulator;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
+import peersim.core.Node;
 
 import java.util.List;
 
@@ -28,6 +34,13 @@ public class DatasetNodeMover implements Control {
 
     private List<String[]> positions;
 
+    int[] cache;
+
+    RangeInitializer rangeInit;
+    BandwidthInitializer bdwInit;
+    StorageInitializer storageInit;
+    EnergyInitializer energyInit;
+
     // Constructor
     public DatasetNodeMover(String prefix){
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
@@ -36,6 +49,14 @@ public class DatasetNodeMover implements Control {
 
         EasyCSV parser = new EasyCSV(dataFile);
         positions = parser.content;
+
+
+        //get instancees of initializers for the new nodes
+        // ugly as hell.
+        rangeInit = new RangeInitializer("init.4");
+        bdwInit = new BandwidthInitializer("init.3");
+        storageInit = new StorageInitializer("init.5");
+        energyInit = new EnergyInitializer("init.0" );
     }
     // dataset should be : timestamp;id_node;x;y;id_node;x;y;...
 
@@ -43,19 +64,31 @@ public class DatasetNodeMover implements Control {
     // This fonction read datafile given in parameter to update nodes position.
     private NodeCoordinates getCoordinatesProtocol(int nodeID) {
 
-        if (Network.
-        (NodeCoordinates) Network.get(nodeId).getProtocol(coordPid);
+        if (cache.length - 1 < nodeID) {
+            // create a new node
+            Node newNode = (Node) Network.prototype.clone();
+            Network.add(newNode);
 
-        if (node >= positions.size() || TICK > positions.get(0).length){
-            System.err.println(dataFile + " doesn't contain enough data to move nodes. Quiting");
-            System.exit(1);
+            rangeInit.init(newNode);
+            bdwInit.init(newNode);
+            storageInit.init(newNode);
+            energyInit.init(newNode, CommonState.r.nextBoolean());
+
+            return (NodeCoordinates) newNode.getProtocol(coordPid);
+        } else {
+            return (NodeCoordinates) Network.get(cache[nodeID]).getProtocol(coordPid);
         }
-
-        return new int[] {Integer.parseInt(positions.get(node)[TICK]) , Integer.parseInt(positions.get(node)[TICK+1]) };
     }
 
     //Move the nodes
     public boolean execute() {
+
+        // cache a list with real nodes IDs
+        cache = new int[Network.size()]  ;
+        for (int i=0; i<Network.size(); i++){
+            cache[(int) Network.get(i).getID()] = i;
+        }
+
         long time = CommonState.getTime();
 
         while (Long.parseLong(positions.get(cursor)[0]) <= time){
@@ -72,6 +105,7 @@ public class DatasetNodeMover implements Control {
             }
             cursor+=1;
         }
+        //TODO : supprimer les noeuds qui sortent du dataset.
         return false;
     }
 }
