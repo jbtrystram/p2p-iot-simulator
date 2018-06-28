@@ -115,7 +115,7 @@ public class NodeMover implements Control {
             if (dataFile == null) {
                 newCoordinates = computeCoordinates(coordinates);
             }else{
-                newCoordinates = readCoordinates(node);
+                newCoordinates = readCoordinates((int)(Network.get(node).getID()));
             }
             coordinates.setX(newCoordinates[0]);
             coordinates.setY(newCoordinates[1]);
