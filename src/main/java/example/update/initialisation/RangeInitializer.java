@@ -63,18 +63,18 @@ public class RangeInitializer implements Control {
      */
     public boolean execute() {
 
-        Node n ;
-        NetworkRange protocol;
-
         for (int i = 0; i < Network.size(); i++) {
-            n = Network.get(i);
-            protocol = (NetworkRange) n.getProtocol(pid);
-
-            int range =  Math.abs((int)((CommonState.r.nextGaussian()*deviation)+mean));
-            if (range < mini) { range = mini;}
-            protocol.setRange(range);
+            init(Network.get(i));
         }
         return false;
+    }
+
+    public void init(Node n){
+        NetworkRange protocol = (NetworkRange) n.getProtocol(pid);
+
+        int range =  Math.abs((int)((CommonState.r.nextGaussian()*deviation)+mean));
+        if (range < mini) { range = mini;}
+        protocol.setRange(range);
     }
 
 }
