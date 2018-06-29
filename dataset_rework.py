@@ -16,9 +16,6 @@ data_in = "highway_101.csv"
 print("importing file : "+data_in)
 df = pandas.read_csv(data_in, usecols=cols_to_get, na_filter=False)
 
-#max_vID = df['Vehicle_ID'].max()
-#max_vID +=1
-
 print("Processing duplicates")
 uniques = df.drop_duplicates(subset=['Vehicle_ID', 'Total_Frames'])
 
