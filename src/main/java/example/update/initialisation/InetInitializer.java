@@ -76,6 +76,9 @@ public class InetInitializer implements Control {
 
     private List<String[]> positions;
 
+    // cache a list with real nodes IDs
+    int[] cache = new int[Network.size()]  ;
+
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
@@ -130,7 +133,7 @@ public class InetInitializer implements Control {
         int speed = CommonState.r.nextInt(maxSpeed);
         int angle = CommonState.r.nextInt(360);
 
-        this.setupNode(i, x, y, speed,angle);
+        this.setupNode(cache[i], x, y, speed,angle);
         }
     }
 
@@ -142,12 +145,17 @@ public class InetInitializer implements Control {
      */
     public boolean execute() {
 
+
+        for (int i=0; i<Network.size(); i++){
+            cache[(int) Network.get(i).getID()] = i;
+        }
+
         if (nodeLocationFile != null) {
                 int i = 0;
                 while (i < Network.size() && i < positions.size() ) {
 
                     if (positions.get(i).length > 0) {
-                        setupNode(i, Integer.parseInt(positions.get(i)[0]), Integer.parseInt(positions.get(i)[1]), 0, 0);
+                        setupNode(cache[i], Integer.parseInt(positions.get(i)[0]), Integer.parseInt(positions.get(i)[1]), 0, 0);
                     }
                     i++;
                 }

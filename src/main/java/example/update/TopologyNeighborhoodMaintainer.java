@@ -52,6 +52,13 @@ public class TopologyNeighborhoodMaintainer implements NeighborhoodMaintainer{
     @Override
     public void nextCycle(Node localNode, int protId) {
 
+        // cache a list with real nodes IDs
+        int[] cache = new int[Network.size()]  ;
+        for (int i=0; i<Network.size(); i++){
+            cache[(int) Network.get(i).getID()] = i;
+        }
+
+
         Energy power = ((Energy) localNode.getProtocol(energyPid));
 
         // don't send any annouce if offline and empty neighbors list
@@ -62,7 +69,7 @@ public class TopologyNeighborhoodMaintainer implements NeighborhoodMaintainer{
             String[] givenNeighbors = csv.content.get(localNode.getIndex());
 
             for(int i=1; i <givenNeighbors.length-1; i++) {
-                Node current = Network.get( Integer.parseInt(givenNeighbors[i]));
+                Node current = Network.get( cache[Integer.parseInt(givenNeighbors[i])]);
                 if (! neighbors.contains(current)) {
                     neighbors.add(current);
                 }
