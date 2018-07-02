@@ -14,6 +14,7 @@ import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatasetNodeMover implements Control {
@@ -35,6 +36,7 @@ public class DatasetNodeMover implements Control {
     private List<String[]> positions;
 
     int[] cache;
+    ArrayList<Integer> activity;
 
     RangeInitializer rangeInit;
     BandwidthInitializer bdwInit;
@@ -76,36 +78,65 @@ public class DatasetNodeMover implements Control {
 
             return (NodeCoordinates) newNode.getProtocol(coordPid);
         } else {
-            return (NodeCoordinates) Network.get(cache[nodeID]).getProtocol(coordPid);
+            return (NodeCoordinates) Network.get(cacheLookup(nodeID)).getProtocol(coordPid);
         }
+    }
+
+    private void refreshCache(){
+        // cache a list with real nodes IDs
+        cache = new int[Network.size()];
+        for (int i = 0; i < Network.size(); i++) {
+            cache[i] = (int) Network.get(i).getID();
+        }
+    }
+
+    private int cacheLookup(int id){
+        for (int i = 0; i < cache.length; i++) {
+            if (cache[i] == id)
+                return i;
+        }
+        return -1;
     }
 
     //Move the nodes
     public boolean execute() {
 
-        // cache a list with real nodes IDs
-        cache = new int[Network.size()]  ;
-        for (int i=0; i<Network.size(); i++){
-            cache[(int) Network.get(i).getID()] = i;
-        }
-
+        //inits as false.
+        activity = new ArrayList<>();
         long time = CommonState.getTime();
 
-        while (Long.parseLong(positions.get(cursor)[0]) <= time){
+        refreshCache();
+        /*for (int i = 0; i < Network.size(); i++) {
+            activity.add(i, false);
+        }*/
 
-            String[] row = positions.get(cursor);
-            for (int i=1 ; i < row.length; i+=3){
+        if (cursor < positions.size()) {
+            while (cursor < positions.size() && Long.parseLong(positions.get(cursor)[0]) <= time) {
 
-                int nodeId = Integer.parseInt(row[i]);
-                NodeCoordinates coordinates = getCoordinatesProtocol(nodeId);
+                String[] row = positions.get(cursor);
+                for (int i = 1; i < row.length-1; i += 3) {
+                    System.out.println(cursor);
+                    int nodeId = Integer.parseInt(row[i]);
+                    NodeCoordinates coordinates = getCoordinatesProtocol(nodeId);
 
-                coordinates.setX(Integer.parseInt(row[i+1]));
-                coordinates.setY(Integer.parseInt(row[i+2]));
+                    coordinates.setX(Integer.parseInt(row[i + 1]));
+                    coordinates.setY(Integer.parseInt(row[i + 2]));
 
+                   activity.add(nodeId);
+
+                }
+                cursor += 1;
             }
-            cursor+=1;
-        }
-        //TODO : supprimer les noeuds qui sortent du dataset.
+        }else return true;
+
+        /* remove unmoved nodes
+        for (int i = 0; i < cache.length; i++) {
+            if (! activity.contains(cache[i])){
+                System.out.println("removing "+cache[i]);
+                Network.remove(cacheLookup(i));
+                refreshCache();
+            }
+        }*/
         return false;
     }
 }
