@@ -24,16 +24,15 @@ public class DatasetNodeMover implements Control {
     private String dataFile;
     private static final String DATA_FILE = "data_file";
 
-    // ==========================
-
     // ======= Variables
 
     private int cursor = 0;
 
     private List<String[]> positions;
 
-    int[] cache;
-    ArrayList<Integer> activity;
+    HashMap<Long, Integer> IDtoIndex;
+    ArrayList<Long> activity;
+    HashMap<Long, Long> dataIDtoID = new HashMap<>();
 
     RangeInitializer rangeInit;
     BandwidthInitializer bdwInit;
@@ -61,38 +60,32 @@ public class DatasetNodeMover implements Control {
 
 
     // This fonction read datafile given in parameter to update nodes position.
-    private NodeCoordinates getCoordinatesProtocol(int nodeID) {
+    private NodeCoordinates getCoordinatesProtocol(long nodeID) {
 
-        if (cache.length - 1 < nodeID) {
+        if (! dataIDtoID.containsKey(nodeID) ) {
             // create a new node
             Node newNode = (Node) Network.prototype.clone();
             Network.add(newNode);
+
 
             rangeInit.init(newNode);
             bdwInit.init(newNode);
             storageInit.init(newNode);
             energyInit.init(newNode, CommonState.r.nextBoolean());
 
+            dataIDtoID.put(nodeID, newNode.getID());//Network.get(Network.size()-1).getID());
             return (NodeCoordinates) newNode.getProtocol(coordPid);
         } else {
-            return (NodeCoordinates) Network.get(cacheLookup(nodeID)).getProtocol(coordPid);
+            return (NodeCoordinates) Network.get(IDtoIndex.get(dataIDtoID.get(nodeID))).getProtocol(coordPid);
         }
     }
 
     private void refreshCache(){
         // cache a list with real nodes IDs
-        cache = new int[Network.size()];
+        IDtoIndex = new HashMap<>();
         for (int i = 0; i < Network.size(); i++) {
-            cache[i] = (int) Network.get(i).getID();
+            IDtoIndex.put(Network.get(i).getID(), i);
         }
-    }
-
-    private int cacheLookup(int id){
-        for (int i = 0; i < cache.length; i++) {
-            if (cache[i] == id)
-                return i;
-        }
-        return -1;
     }
 
     //Move the nodes
@@ -103,37 +96,40 @@ public class DatasetNodeMover implements Control {
         long time = CommonState.getTime();
 
         refreshCache();
-        /*for (int i = 0; i < Network.size(); i++) {
-            activity.add(i, false);
-        }*/
 
         if (cursor < positions.size()) {
             while (cursor < positions.size() && Long.parseLong(positions.get(cursor)[0]) <= time) {
 
                 String[] row = positions.get(cursor);
-                for (int i = 1; i < row.length-1; i += 3) {
-                    System.out.println(cursor);
-                    int nodeId = Integer.parseInt(row[i]);
+                for (int i = 1; i < row.length - 1; i += 3) {
+                    long nodeId = Long.parseLong(row[i]);
                     NodeCoordinates coordinates = getCoordinatesProtocol(nodeId);
 
                     coordinates.setX(Integer.parseInt(row[i + 1]));
                     coordinates.setY(Integer.parseInt(row[i + 2]));
 
-                   activity.add(nodeId);
+                    refreshCache();
+                    activity.add(dataIDtoID.get(nodeId));
 
                 }
                 cursor += 1;
             }
-        }else return true;
+        } else return true;
 
-        /* remove unmoved nodes
-        for (int i = 0; i < cache.length; i++) {
-            if (! activity.contains(cache[i])){
-                System.out.println("removing "+cache[i]);
-                Network.remove(cacheLookup(i));
-                refreshCache();
+        // remove unmoved nodes
+        boolean removed;
+        do {
+            removed = false;
+            for (Long fixId : IDtoIndex.keySet()) {
+                if (! activity.contains(fixId)) {
+                    Network.remove(IDtoIndex.get(fixId));
+                    refreshCache();
+                    dataIDtoID.values().removeIf(val -> fixId.equals(val));
+                    removed = true;
+                    break;
+                }
             }
-        }*/
+        }while(removed);
         return false;
     }
 }
