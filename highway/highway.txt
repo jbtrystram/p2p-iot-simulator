@@ -5,7 +5,7 @@ OBERVERS_CYCLE 100
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 
-network.size 0
+network.size 4
 map_size 1000
 #random.seed 1234567890
 random.seed 22222222748
@@ -105,16 +105,10 @@ control.batteryDrainer example.update.control.BatteryDecreaser
 control.batteryDrainer.energy_protocol energy
 control.batteryDrainer.step 200
 
-<<<<<<< HEAD
-control.mover example.update.control.NodeMover
-control.mover.coord_protocol coordinates
-control.mover.map_size map_size
-=======
 control.mover example.update.control.DatasetNodeMover
 control.mover.coord_protocol coordinates
 control.mover.data_file highway/poc.csv
->>>>>>> f1b2323... dedicated config file for highway dataset
-control.mover.step CONTROL_CYCLE
+control.mover.step 1000
 
 ################ Observers ==============================
 
