@@ -27,7 +27,7 @@ public class DatasetNodeMover implements Control {
 
     // ======= Variables
 
-    private int cursor = 0;
+    private int cursor = 1;
 
     private List<String[]> positions;
 
@@ -126,8 +126,10 @@ public class DatasetNodeMover implements Control {
                 }
                 cursor += 1;
             }
-        } else return true;
-
+        } else {
+            System.out.println("Reached end of movement dataset. Stopping simulation");
+            return true;
+        }
         // remove unmoved nodes
         boolean removed;
         do {
