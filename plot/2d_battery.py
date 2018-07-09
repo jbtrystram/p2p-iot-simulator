@@ -3,27 +3,22 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 
-
-
 def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
         neigh_file = path+"/neighbors_dump"+file_seq+".dat"
         energy = np.genfromtxt(path+"/energy_dump"+file_seq+".dat", delimiter=';')
         print("using "+"/energy_dump"+file_seq+".dat")
-        #progress = np.genfromtxt(path+"/progress_dump"+file_seq+".dat", delimiter=';', skip_header=1)
-
-        #more awesomeness
-        #plt.xkcd()
 
         plt.figure()
-        #plt.ylabel('X')
-        #plt.xlabel('Y')
-        #plt.axis('off')  #remove axises
         axes = plt.gca() # auto-set ticks
+        
+        #Values used for the highway dataset
+        #plt.xlim(0, 4222530)
+        #plt.ylim(0, 759313)
+        #plt.xlim(0, 5000)
+        #plt.ylim(0, 2000)
 
-        #axes.set_xlim([0,1000])
-        #axes.set_ylim([0,1000])
         plt.title('Node battery level & neigbors')
 
         #plot neigbors relationships
@@ -39,7 +34,6 @@ def plotter(file_seq, path):
         plt.colorbar()
 
         plt.tight_layout()
-        #plt.savefig("figs/"+seq+'.pdf')
         plt.savefig("figs/energy"+seq+'.png', dpi = (200))
         plt.close()
 
