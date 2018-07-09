@@ -87,8 +87,8 @@ public class GossipInsert implements Control {
 
             long scheduledTime = (long) jobs.keySet().toArray()[i];
 
-            if (CommonState.getTime() >= scheduledTime) {
-                Node n = Network.get(1);
+            if (CommonState.getTime() >= scheduledTime && Network.size() > 0) {
+                Node n = Network.get(0);
 
                 SoftwareJob toInsert = jobs.get(scheduledTime);
 
