@@ -9,6 +9,7 @@ import example.update.initialisation.StorageInitializer;
 import peersim.Simulator;
 import peersim.config.Configuration;
 import peersim.core.*;
+import peersim.edsim.CDScheduler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ public class DatasetNodeMover implements Control {
     StorageInitializer storageInit;
     EnergyInitializer energyInit;
 
+    CDScheduler cycleScheduler;
+
     // Constructor
     public DatasetNodeMover(String prefix){
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
@@ -50,11 +53,17 @@ public class DatasetNodeMover implements Control {
 
 
         //get instancees of initializers for the new nodes
-        // ugly as hell.
+        // TODO : get inits from the config file, with Configuration.getInstanceArray
+        // see https://github.com/jbtrystram/peersim/blob/master/src/peersim/dynamics/DynamicNetwork.java#L163
         rangeInit = new RangeInitializer("init.4");
         bdwInit = new BandwidthInitializer("init.3");
         storageInit = new StorageInitializer("init.5");
         energyInit = new EnergyInitializer("init.0" );
+
+
+        cycleScheduler= new CDScheduler( "init.sch1" );
+
+
     }
     // dataset should be : timestamp;id_node;x;y;id_node;x;y;...
 
@@ -68,12 +77,15 @@ public class DatasetNodeMover implements Control {
             Network.add(newNode);
 
 
-            rangeInit.init(newNode);
-            bdwInit.init(newNode);
-            storageInit.init(newNode);
-            energyInit.init(newNode, CommonState.r.nextBoolean());
+            rangeInit.initialize(newNode);
+            bdwInit.initialize(newNode);
+            storageInit.initialize(newNode);
+            energyInit.initialize(newNode);
 
-            dataIDtoID.put(nodeID, newNode.getID());//Network.get(Network.size()-1).getID());
+            cycleScheduler.initialize(newNode);
+
+
+            dataIDtoID.put(nodeID, newNode.getID());
             return (NodeCoordinates) newNode.getProtocol(coordPid);
         } else {
             return (NodeCoordinates) Network.get(IDtoIndex.get(dataIDtoID.get(nodeID))).getProtocol(coordPid);
