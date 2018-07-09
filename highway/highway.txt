@@ -5,8 +5,7 @@ OBERVERS_CYCLE 100
 PROTOCOL_CYCLE 20
 CONTROL_CYCLE 50
 
-network.size 4
-map_size 1000
+network.size 0
 #random.seed 1234567890
 random.seed 22222222748
 
@@ -18,11 +17,6 @@ simulation.logtime 100
 
 init.0 example.update.initialisation.EnergyInitializer
 init.0.protocol energy
-
-init.1 example.update.initialisation.InetInitializer
-init.1.protocol coordinates
-init.1.max_node_speed 60
-init.1.min_node_speed 20
 
 init.3 example.update.initialisation.BandwidthInitializer
 init.3.protocol bandwidth
@@ -38,6 +32,8 @@ init.5.gaussian_mean 8000
 
 ################### protocols ===========================
 
+########## constraints ======================
+
 protocol.link IdleProtocol
 
 protocol.energy example.update.strategies.Energy
@@ -50,15 +46,15 @@ protocol.coordinates example.update.constraints.NodeCoordinates
 
 protocol.range example.update.constraints.NetworkRange
 
+
+########## logic protocols ======================
+
 protocol.neighbor example.update.DiscoveryNeighborhoodMaintainer
 protocol.neighbor.coord_protocol coordinates
 protocol.neighbor.range_protocol range
 protocol.neighbor.energy_protocol energy
 protocol.neighbor.transport tr
 protocol.neighbor.step PROTOCOL_CYCLE
-
-init.sch1 CDScheduler
-init.sch1.protocol neighbor
 
 protocol.gossip example.update.Gossiper
 protocol.gossip.neighbors_protocol neighbor
@@ -69,20 +65,13 @@ protocol.tr UniformRandomTransport
 protocol.tr.mindelay 0
 protocol.tr.maxdelay 1
 
-init.sch2 CDScheduler
-init.sch2.protocol supervisor
-
 protocol.supervisor example.update.NaiveScheduler
 protocol.supervisor.networking_protocol p2p_net_agent
 protocol.supervisor.gossip_protocol gossip
 protocol.supervisor.bandwidth_protocol bandwidth
 protocol.supervisor.disk_space_protocol disk_space
-protocol.supervisor.transport tr
+#protocol.supervisor.transport tr
 protocol.supervisor.step PROTOCOL_CYCLE
-
-
-init.sch3 CDScheduler
-init.sch3.protocol p2p_net_agent
 
 protocol.p2p_net_agent example.update.NetworkAgent
 protocol.p2p_net_agent.neighborhood_protocol neighbor
@@ -92,6 +81,10 @@ protocol.p2p_net_agent.piece_size 50
 protocol.p2p_net_agent.transport tr
 protocol.p2p_net_agent.step PROTOCOL_CYCLE
 
+################ Schedulers ==============================
+
+init.sch1 CDScheduler
+init.sch1.protocol neighbor supervisor p2p_net_agent
 
 ################ controls ==============================
 
@@ -107,8 +100,8 @@ control.batteryDrainer.step 200
 
 control.mover example.update.control.DatasetNodeMover
 control.mover.coord_protocol coordinates
-control.mover.data_file highway/poc.csv
-control.mover.step 1000
+control.mover.data_file highway_101_fixed.csv
+control.mover.step 500
 
 ################ Observers ==============================
 
