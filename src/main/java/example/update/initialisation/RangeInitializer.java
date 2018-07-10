@@ -6,8 +6,9 @@ import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
+import peersim.dynamics.NodeInitializer;
 
-public class RangeInitializer implements Control {
+public class RangeInitializer implements Control, NodeInitializer {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -64,17 +65,16 @@ public class RangeInitializer implements Control {
     public boolean execute() {
 
         for (int i = 0; i < Network.size(); i++) {
-            init(Network.get(i));
+            initialize(Network.get(i));
         }
         return false;
     }
 
-    public void init(Node n){
+    public void initialize(Node n){
         NetworkRange protocol = (NetworkRange) n.getProtocol(pid);
 
         int range =  Math.abs((int)((CommonState.r.nextGaussian()*deviation)+mean));
         if (range < mini) { range = mini;}
         protocol.setRange(range);
     }
-
 }

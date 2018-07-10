@@ -6,8 +6,9 @@ import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
+import peersim.dynamics.NodeInitializer;
 
-public class BandwidthInitializer implements Control {
+public class BandwidthInitializer implements Control, NodeInitializer {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -55,12 +56,12 @@ public class BandwidthInitializer implements Control {
         public boolean execute() {
 
         for (int i = 0; i < Network.size(); i++) {
-            init(Network.get(i));
+            initialize(Network.get(i));
         }
         return false;
     }
 
-    public void init (Node n){
+    public void initialize (Node n){
         Bandwidth protocol = (Bandwidth) n.getProtocol(pid);
 
         protocol.setDownlink(CommonState.r.nextInt(maxBandwidth));

@@ -7,12 +7,13 @@ print:
 	@echo $(JARS)
 	@echo $(LIBS)
 
-all:
+all: clean
 	javac -source 1.8 -target 1.8 -classpath $(LIBS) `find src/main/ -name "*.java"`
 clean:
 	rm -f `find src/main -name "*.class"`
 run: order
 	java -cp $(LIBS):src peersim.Simulator $(CONFIG).txt
+	find raw_dat -type f -empty -delete
 
 order:
 	rm -rf raw_dat/ figs/

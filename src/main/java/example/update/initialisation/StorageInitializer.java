@@ -6,8 +6,9 @@ import peersim.core.CommonState;
 import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
+import peersim.dynamics.NodeInitializer;
 
-public class StorageInitializer implements Control {
+public class StorageInitializer implements Control, NodeInitializer {
 
     // ------------------------------------------------------------------------
     // Parameters
@@ -61,13 +62,13 @@ public class StorageInitializer implements Control {
     public boolean execute() {
 
         for (int i = 0; i < Network.size(); i++) {
-            init(Network.get(i));
+            initialize(Network.get(i));
 
         }
         return false;
     }
 
-    public void init(Node n){
+    public void initialize(Node n){
         Storage protocol = (Storage) n.getProtocol(pid);
         protocol.init((int) Math.abs(1000* (CommonState.r.nextGaussian()*deviation+mean)));
     }

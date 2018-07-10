@@ -4,7 +4,6 @@ import argparse
 import os
 
 
-
 def plotter(file_seq, path):
     
         coord = np.genfromtxt(path+"/graph_dump"+file_seq+".dat", delimiter=';')
@@ -59,5 +58,5 @@ if __name__ == '__main__':
                 files.append(dat.lstrip("graph_dump").rstrip(".dat"))               
 
     # plot each file
-    for seq in files:
+    for seq in sorted(files):
         plotter(seq,args.path)
