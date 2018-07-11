@@ -2,14 +2,9 @@ package example.update.control;
 
 import example.update.EasyCSV;
 import example.update.constraints.NodeCoordinates;
-import example.update.initialisation.BandwidthInitializer;
-import example.update.initialisation.EnergyInitializer;
-import example.update.initialisation.RangeInitializer;
-import example.update.initialisation.StorageInitializer;
-import peersim.Simulator;
 import peersim.config.Configuration;
 import peersim.core.*;
-import peersim.edsim.CDScheduler;
+import peersim.dynamics.NodeInitializer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +17,23 @@ public class DatasetNodeMover implements Control {
     private int coordPid;
     private static final String PAR_COORDINATES_PROT = "coord_protocol";
 
+    /**
+     * Config parameter which gives the prefix of node initializers. An arbitrary
+     * number can be specified (Along with their parameters).
+     * These will be applied  on the newly created nodes. T
+     * Example:
+     control.0 DynamicNetwork
+     control.0.init.0 RandNI
+     control.0.init.0.k 5
+     control.0.init.0.protocol somelinkable
+     */
+    private static final String PAR_INIT = "init";
+
     private String dataFile;
     private static final String DATA_FILE = "data_file";
+
+    /** node initializers to apply on the newly added nodes */
+    private final NodeInitializer[] inits;
 
     // ======= Variables
 
@@ -35,13 +45,6 @@ public class DatasetNodeMover implements Control {
     ArrayList<Long> activity;
     HashMap<Long, Long> dataIDtoID = new HashMap<>();
 
-    RangeInitializer rangeInit;
-    BandwidthInitializer bdwInit;
-    StorageInitializer storageInit;
-    EnergyInitializer energyInit;
-
-    CDScheduler cycleScheduler;
-
     // Constructor
     public DatasetNodeMover(String prefix){
         coordPid = Configuration.getPid(prefix + "." + PAR_COORDINATES_PROT);
@@ -51,18 +54,12 @@ public class DatasetNodeMover implements Control {
         EasyCSV parser = new EasyCSV(dataFile);
         positions = parser.content;
 
-
-        //get instancees of initializers for the new nodes
-        // TODO : get inits from the config file, with Configuration.getInstanceArray
-        // see https://github.com/jbtrystram/peersim/blob/master/src/peersim/dynamics/DynamicNetwork.java#L163
-        rangeInit = new RangeInitializer("init.4");
-        bdwInit = new BandwidthInitializer("init.3");
-        storageInit = new StorageInitializer("init.5");
-        energyInit = new EnergyInitializer("init.0" );
-
-
-        cycleScheduler= new CDScheduler( "init.sch1" );
-
+        // TODO offloads all this to another class extending DynamicNetwork ?
+        Object[] tmp = Configuration.getInstanceArray(prefix + "." + PAR_INIT);
+        inits = new NodeInitializer[tmp.length];
+        for (int i = 0; i < tmp.length; ++i) {
+            inits[i] = (NodeInitializer) tmp[i];
+        }
 
     }
     // dataset should be : timestamp;id_node;x;y;id_node;x;y;...
@@ -74,16 +71,11 @@ public class DatasetNodeMover implements Control {
         if (! dataIDtoID.containsKey(nodeID) ) {
             // create a new node
             Node newNode = (Node) Network.prototype.clone();
+
+            for (int j = 0; j < inits.length; ++j) {
+                inits[j].initialize(newNode);
+            }
             Network.add(newNode);
-
-
-            rangeInit.initialize(newNode);
-            bdwInit.initialize(newNode);
-            storageInit.initialize(newNode);
-            energyInit.initialize(newNode);
-
-            cycleScheduler.initialize(newNode);
-
 
             dataIDtoID.put(nodeID, newNode.getID());
             return (NodeCoordinates) newNode.getProtocol(coordPid);

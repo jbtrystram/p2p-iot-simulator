@@ -100,8 +100,28 @@ control.batteryDrainer.step 200
 
 control.mover example.update.control.DatasetNodeMover
 control.mover.coord_protocol coordinates
-control.mover.data_file highway_101_fixed.csv
+#control.mover.data_file highway_101_fixed.csv
+control.mover.data_file shortway1.csv
 control.mover.step 100
+#######initalizers
+control.mover.init.0 example.update.initialisation.EnergyInitializer
+control.mover.init.0.protocol energy
+
+control.mover.init.3 example.update.initialisation.BandwidthInitializer
+control.mover.init.3.protocol bandwidth
+control.mover.init.3.max_bandwidth 1000
+
+control.mover.init.4 example.update.initialisation.RangeInitializer
+control.mover.init.4.protocol range
+control.mover.init.4.gaussian_mean 500
+
+control.mover.init.5 example.update.initialisation.StorageInitializer
+control.mover.init.5.protocol disk_space
+control.mover.init.5.gaussian_mean 8000
+
+control.mover.init.1 peersim.edsim.CDScheduler
+control.mover.init.1.protocol neighbor supervisor p2p_net_agent
+
 
 ################ Observers ==============================
 
