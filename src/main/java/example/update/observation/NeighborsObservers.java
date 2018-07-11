@@ -77,7 +77,7 @@ public class NeighborsObservers  implements Control {
             for (int j = 0; j < ((NeighborhoodMaintainer)current.getProtocol(pid)).getNeighbors().size(); j++) {
                 neighbors += ((NeighborhoodMaintainer) current.getProtocol(pid)).getNeighbors().get(j).getID() + ";";
             }
-            out.append(i+";"+neighbors+ System.lineSeparator());
+            out.append(current.getID()+";"+neighbors+ System.lineSeparator());
         }
         output.write(out.toString());
         return false;

@@ -98,7 +98,7 @@ public class InetObserver implements Control {
             int y = ((NodeCoordinates) current
                     .getProtocol(coordPid)).getY();
 
-            str.append(i + ";" + x + ";" + y + System.lineSeparator() );
+            str.append(current.getID() + ";" + x + ";" + y + System.lineSeparator() );
         }
         output.write(str.toString());
         return false;
