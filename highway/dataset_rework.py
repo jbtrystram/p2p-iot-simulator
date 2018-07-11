@@ -12,7 +12,8 @@ def percentage(total, progress):
                 
 #needed columns
 cols_to_get = ['Vehicle_ID', 'Total_Frames', 'Global_Time', 'Global_X', 'Global_Y']
-data_in = "highway/highway_101.csv"
+data_in = "highway_101.csv"
+#data_in = "shortway.csv"
 print("importing file : "+data_in)
 df = pandas.read_csv(data_in, usecols=cols_to_get, na_filter=False)
 
@@ -40,7 +41,7 @@ print("Casting coordinates into integers")
 df['Global_X'] = df['Global_X'].astype(int)
 df['Global_Y'] = df['Global_Y'].astype(int)
 
-data_out = "highway_101_fixed.csv"
+data_out = "highway_fixed.csv"
 cols_to_out = ['Global_Time', 'Vehicle_ID', 'Global_X', 'Global_Y']
 print("Saving new dataset : "+data_out)
 df[cols_to_out].to_csv(data_out, sep=';', index=False)
