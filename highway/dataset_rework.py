@@ -37,8 +37,8 @@ print("Sort by ascending time")
 df.sort_values('Global_Time', inplace=True)
 
 print("Casting coordinates into integers")
-df['global_X'] = df['Global_X'].astype(int)
-df['global_Y'] = df['Global_Y'].astype(int)
+df['Global_X'] = df['Global_X'].astype(int)
+df['Global_Y'] = df['Global_Y'].astype(int)
 
 data_out = "highway_101_fixed.csv"
 cols_to_out = ['Global_Time', 'Vehicle_ID', 'Global_X', 'Global_Y']
