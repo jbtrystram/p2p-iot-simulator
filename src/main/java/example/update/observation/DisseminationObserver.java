@@ -135,9 +135,8 @@ public class DisseminationObserver implements Control {
         // create an output log file with progress for each jobID.
         for (int i = 0; i < Network.size(); i++) {
 
-            out.append(i+";");
             Node current = Network.get(i);
-
+            out.append(current.getID()+";");
             sortedList.forEach(item -> {
                 String progress = ((NetworkAgent) current.getProtocol(netPid)).jobProgress(item);
 

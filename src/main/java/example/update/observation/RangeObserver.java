@@ -65,7 +65,7 @@ public class RangeObserver implements Control {
         for (int i = 0; i < Network.size(); i++) {
 
             NetworkRange range = ((NetworkRange) Network.get(i).getProtocol(pid));
-            log.append(i +  ";" + range.range).append(System.lineSeparator());
+            log.append(Network.get(i).getID() +  ";" + range.range).append(System.lineSeparator());
         }
         writer.write(log.toString());
 

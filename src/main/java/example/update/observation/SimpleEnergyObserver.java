@@ -73,9 +73,9 @@ public class SimpleEnergyObserver implements Control {
 
 
             if (energy.getOnlineStatus() ) {
-                log.append(i +  ";" + energy.getLevel()).append(System.lineSeparator());
+                log.append(current.getID() +  ";" + energy.getLevel()).append(System.lineSeparator());
 
-            }else log.append(i +  ";" + 0).append(System.lineSeparator());
+            }else log.append(current.getID() +  ";" + 0).append(System.lineSeparator());
         }
         writer.write(log.toString());
 

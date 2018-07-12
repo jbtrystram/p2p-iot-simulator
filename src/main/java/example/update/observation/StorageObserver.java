@@ -66,7 +66,7 @@ public class StorageObserver implements Control {
         for (int i = 0; i < Network.size(); i++) {
 
             Storage disk = ((Storage) Network.get(i).getProtocol(pid));
-            log.append(i +  ";" + disk.getFreeSpace()).append(System.lineSeparator());
+            log.append(Network.get(i).getID() +  ";" + disk.getFreeSpace()).append(System.lineSeparator());
         }
         writer.write(log.toString());
 
