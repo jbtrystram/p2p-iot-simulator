@@ -64,7 +64,12 @@ public class BandwidthInitializer implements Control, NodeInitializer {
     public void initialize (Node n){
         Bandwidth protocol = (Bandwidth) n.getProtocol(pid);
 
-        protocol.setDownlink(CommonState.r.nextInt(maxBandwidth));
-        protocol.setUplink(CommonState.r.nextInt(maxBandwidth));
+        int up = CommonState.r.nextInt(maxBandwidth);
+        up = (up > 0)  ? up : maxBandwidth/2 ;
+        int down = CommonState.r.nextInt(maxBandwidth);
+        down = (down > 0)  ? down : maxBandwidth/2 ;
+
+        protocol.setDownlink(down);
+        protocol.setUplink(up);
     }
 }
