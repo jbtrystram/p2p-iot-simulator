@@ -26,7 +26,6 @@ def plotter(file_seq, path):
         #plot neigbors relationships
         for line in open(neighbors):
              neighbors_list = line.rstrip(';\n').split(';')
-             print(len(neighbors_list))
              for node in range(1, len(neighbors_list)-1):
                   A = indexes.get_loc(int(neighbors_list[0]))
                   B = indexes.get_loc(int(neighbors_list[node]))

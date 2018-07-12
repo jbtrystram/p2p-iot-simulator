@@ -69,7 +69,7 @@ public class DiscoveryNeighborhoodMaintainer implements NeighborhoodMaintainer {
             this.neighbors.addLast(sender);
         }
     }
-    //TODO : wether actively remove nodes that are not in the network anymore, ore implement a suicide method to clean neigbor list on node removal.
+
     private void removeNeighbor(Node sender){
         if (this.neighbors.contains(sender)) {
             this.neighbors.remove(sender);
@@ -93,11 +93,9 @@ public class DiscoveryNeighborhoodMaintainer implements NeighborhoodMaintainer {
 
         Energy power = ((Energy) localNode.getProtocol(energyPid));
 
-        // don't send any annouce if offline and empty neighbors list
-        if ( ! power.getOnlineStatus() ){
-            cleanNeighborsList();
-        }
-        else {
+        cleanNeighborsList();
+        // don't send any annouces if offline
+        if ( power.getOnlineStatus() ){
 
             // get range of the local node
             int localRange = ((NetworkRange) localNode.getProtocol(rangeProtcol)).range;
@@ -119,7 +117,6 @@ public class DiscoveryNeighborhoodMaintainer implements NeighborhoodMaintainer {
                 // Node not in range or offline; remove it from my neighbors list
                 else {
                     ((DiscoveryNeighborhoodMaintainer) localNode.getProtocol(protId)).removeNeighbor(Network.get(i));
-
                 }
             }
         }

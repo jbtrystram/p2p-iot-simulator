@@ -104,6 +104,7 @@ control.mover.data_file highway_101_fixed.csv
 control.mover.step 100
 
 #######initalizers
+
 control.mover.init.0 example.update.initialisation.EnergyInitializer
 control.mover.init.0.protocol energy
 
