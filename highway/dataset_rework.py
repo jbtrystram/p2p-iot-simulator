@@ -11,11 +11,14 @@ def percentage(total, progress):
         print(str(percent)+"%")
                 
 #needed columns
-cols_to_get = ['Vehicle_ID', 'Total_Frames', 'Global_Time', 'Global_X', 'Global_Y']
+cols_to_get = ['Vehicle_ID', 'Total_Frames', 'Global_Time', 'Global_X', 'Global_Y', 'Location']
 data_in = "highway_101.csv"
 #data_in = "shortway.csv"
 print("importing file : "+data_in)
 df = pandas.read_csv(data_in, usecols=cols_to_get, na_filter=False)
+
+print("Isolation of highway 101")
+df = df.loc[df['Location'] == 'us-101']
 
 print("Processing duplicates")
 uniques = df.drop_duplicates(subset=['Vehicle_ID', 'Total_Frames'])
