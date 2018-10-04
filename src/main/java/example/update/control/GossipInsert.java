@@ -12,7 +12,6 @@ import peersim.core.Node;
 import peersim.edsim.EDSimulator;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -32,6 +31,8 @@ public class GossipInsert implements Control {
     private static final String NETWORK_PROTOCOL = "network_protocol";
 
     private static final String FILE = "filename";
+    private static final String SIZE = "size";
+
 
     // ------------------------------------------------------------------------
     // Fields
@@ -42,6 +43,7 @@ public class GossipInsert implements Control {
      */
     private final int gossipPID;
     private final int networkPID;
+    private final int dataSize;
     private final String file;
 
     //the list of jobs to insert.
@@ -61,18 +63,30 @@ public class GossipInsert implements Control {
 
         gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
         networkPID = Configuration.getPid(prefix + "." + NETWORK_PROTOCOL);
-        file = Configuration.getString(prefix + "." + FILE);
+        file = Configuration.getString(prefix + "." + FILE, null);
+        dataSize = Configuration.getInt(prefix + "."+ SIZE, 1000);
 
-        // Parse the CSV into the hashmap
-        EasyCSV csv = new EasyCSV(file);
-        for (int i=1; i<csv.content.size() ;i++){
+        if (file != null) {
+            // Parse the CSV into the hashmap
+            EasyCSV csv = new EasyCSV(file);
+            for (int i = 1; i < csv.content.size(); i++) {
 
-            SoftwareJob job = new SoftwareJob(csv.content.get(i)[1], csv.content.get(i)[2],
-                    LocalDateTime.MAX.toString(), SoftwareJob.PRIORITY_STANDARD,
+                SoftwareJob job = new SoftwareJob(csv.content.get(i)[1], csv.content.get(i)[2],
+                        LocalDateTime.MAX.toString(), SoftwareJob.PRIORITY_STANDARD,
+                        SoftwareJob.QOS_INSTALL_BEST_EFFORT,
+                        Integer.parseInt(csv.content.get(i)[3]) / 1000);
+
+                jobs.put(Long.parseLong(csv.content.get(i)[0]), job);
+            }
+        }else {
+            SoftwareJob randomJob = new SoftwareJob(
+                    "aBigSoftware", "1.0.0",
+                    LocalDateTime.MAX.toString(),
+                    SoftwareJob.PRIORITY_STANDARD,
                     SoftwareJob.QOS_INSTALL_BEST_EFFORT,
-                    Integer.parseInt(csv.content.get(i)[3])/1000);
+                    dataSize);
 
-            jobs.put( Long.parseLong(csv.content.get(i)[0]) , job);
+            jobs.put(Integer.toUnsignedLong(500), randomJob);
         }
     }
 
