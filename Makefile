@@ -12,7 +12,7 @@ all: clean
 clean:
 	rm -f `find src/main -name "*.class"`
 run: order
-	java -cp $(LIBS):src peersim.Simulator $(CONFIG).txt
+	java -cp $(LIBS):src peersim.Simulator $(CONFIG)
 	find raw_dat -type f -empty -delete
 
 order:
