@@ -13,7 +13,7 @@ The node connections are set up by discovery.
 
 ### Let's dive into it !
 #### Run an experiment
-Clone the repo on your machine then compile the code. A makefile is provided to ease things.
+Clone the repo on your computer (if you plan to contribute, a fork to your personnal account will make things easier) then compile the code. A makefile is provided to ease things.
 
 `make all` will compile the code.
 
