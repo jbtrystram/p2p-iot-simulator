@@ -56,7 +56,7 @@ protocol.disk_space example.update.strategies.Storage
 
 protocol.bandwidth example.update.constraints.Bandwidth
 
-protocol.neighbor example.update.NeighborhoodMaintainer
+protocol.neighbor example.update.DiscoveryNeighborhoodMaintainer
 protocol.neighbor.coord_protocol localisation
 protocol.neighbor.range_protocol range
 protocol.neighbor.energy_protocol energy
@@ -94,6 +94,7 @@ init.sch3.protocol p2p_net_agent
 protocol.p2p_net_agent example.update.NetworkAgent
 protocol.p2p_net_agent.neighborhood_protocol neighbor
 protocol.p2p_net_agent.bandwidth_protocol bandwidth
+protocol.p2p_net_agent.energy_protocol energy
 protocol.p2p_net_agent.piece_size 200
 protocol.p2p_net_agent.transport tr
 protocol.p2p_net_agent.step PROTOCOL_CYCLE
@@ -104,7 +105,7 @@ protocol.p2p_net_agent.step PROTOCOL_CYCLE
 control.inserter example.update.control.GossipInsert
 control.inserter.gossip_protocol gossip
 control.inserter.network_protocol p2p_net_agent
-control.inserter.file_size 600
+control.inserter.size 600
 control.inserter.step CONTROL_CYCLE
 
 control.mover example.update.control.NodeMover
@@ -117,6 +118,7 @@ control.mover.step CONTROL_CYCLE
 
 control.dlProgress example.update.observation.DisseminationObserver
 control.dlProgress.transfer_protocol p2p_net_agent
+control.dlProgress.jobs_total_count 2
 control.dlProgress.sched_protocol supervisor
 control.dlProgress.step OBERVERS_CYCLE
 
