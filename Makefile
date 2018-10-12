@@ -8,9 +8,9 @@ print:
 	@echo $(LIBS)
 
 all: clean
-	javac -source 1.8 -target 1.8 -classpath $(LIBS) `find src/main/ -name "*.java"`
+	javac -source 1.8 -target 1.8 -classpath $(LIBS) `find src/ -name "*.java"`
 clean:
-	rm -f `find src/main -name "*.class"`
+	rm -f `find src/ -name "*.class"`
 run: order
 	java -cp $(LIBS):src peersim.Simulator $(CONFIG)
 	find raw_dat -type f -empty -delete
@@ -22,7 +22,7 @@ order:
 graph:
 	rm -rf figs
 	mkdir -p figs
-	python plot/2d_graph.py raw_dat
+	python3 plot/2d_graph.py raw_dat
 
 
 gif: graph
@@ -31,3 +31,6 @@ gif: graph
 
 stats:
 	python3 plot/statistics.py raw_dat
+
+extract:
+	python3 data_extraction.py raw_dat

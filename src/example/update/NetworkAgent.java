@@ -1,12 +1,10 @@
 package example.update;
 
 import example.update.constraints.Bandwidth;
-import example.update.constraints.NetworkRange;
 import example.update.strategies.Energy;
 import peersim.cdsim.CDProtocol;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
-import peersim.core.Network;
 import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 import peersim.edsim.EDSimulator;
