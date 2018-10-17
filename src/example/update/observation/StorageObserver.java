@@ -62,7 +62,7 @@ public class StorageObserver implements Control {
     // Control interface method. does the file handling
     public boolean execute() {
         StringBuilder log = new StringBuilder();
-        log.append("0"+  ";" + "1 \n");
+        log.append("0;1" + System.lineSeparator());
 
         for (int i = 0; i < Network.size(); i++) {
 
