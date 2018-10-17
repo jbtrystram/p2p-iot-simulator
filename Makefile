@@ -22,7 +22,7 @@ order:
 graph:
 	rm -rf figs
 	mkdir -p figs
-	python plot/2d_graph.py raw_dat
+	python3 plot/2d_graph.py raw_dat
 
 
 gif: graph
