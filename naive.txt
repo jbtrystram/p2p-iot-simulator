@@ -20,7 +20,7 @@ simulation.logtime 50
 init.0 example.update.initialisation.EnergyInitializer
 init.0.protocol energy
 
-init.1 example.update.initialisation.InetInitializer
+init.1 example.update.initialisation.CoordinatesInitializer
 init.1.protocol localisation
 init.1.max_node_speed 60
 init.1.min_node_speed 10

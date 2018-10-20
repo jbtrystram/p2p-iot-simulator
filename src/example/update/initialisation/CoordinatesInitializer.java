@@ -43,7 +43,7 @@ import example.update.EasyCSV;
  *
  * @author Gian Paolo Jesi
  */
-public class InetInitializer implements Control {
+public class CoordinatesInitializer implements Control {
     // ------------------------------------------------------------------------
     // Parameters
     // ------------------------------------------------------------------------
@@ -90,7 +90,7 @@ public class InetInitializer implements Control {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public InetInitializer(String prefix) {
+    public CoordinatesInitializer(String prefix) {
 
         pid = Configuration.getPid(prefix + "." + PAR_PROT);
         maxSpeed = Configuration.getInt(prefix + "." + MAX_NODE_SPEED);
