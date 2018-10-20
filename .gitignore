@@ -9,7 +9,4 @@ build.xml
 
 figs/
 raw_dat/
-
-venv/bin/
-
 venv/
