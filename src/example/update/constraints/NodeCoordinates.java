@@ -1,6 +1,6 @@
 package example.update.constraints;
 
-import example.update.initialisation.InetInitializer;
+import example.update.initialisation.CoordinatesInitializer;
 import peersim.core.Protocol;
 
 /**
