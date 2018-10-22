@@ -113,9 +113,6 @@ control.mover.coord_protocol localisation
 control.mover.map_size map_size
 control.mover.step CONTROL_CYCLE
 
-control.timewatch example.update.control.TimeWatchController
-control.timewatch.customSetting whatever
-control.timewatch.step 2
 
 ################ Observers ==============================
 
