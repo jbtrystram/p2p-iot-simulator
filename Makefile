@@ -22,7 +22,7 @@ order:
 graph:
 	rm -rf figs
 	mkdir -p figs
-	python plot/2d_graph.py raw_dat
+	python3 plot/2d_graph.py raw_dat
 
 
 gif: graph
@@ -31,3 +31,6 @@ gif: graph
 
 stats:
 	python3 plot/statistics.py raw_dat
+
+extract:
+	python3 data_extraction.py raw_dat

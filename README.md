@@ -8,8 +8,9 @@ The node connections are set up by discovery.
 ### Requirements
 
 * java 1.8 or superior
-* python3 with pandas and matplotlib installed
+* python3 with pandas, textable and matplotlib installed
 * Coffee and patience.
+
 
 ### Let's dive into it !
 #### Run an experiment
