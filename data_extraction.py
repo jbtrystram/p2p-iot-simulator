@@ -6,7 +6,7 @@ from texttable import Texttable
 
 
 # Sets the interval for the data we want to look at (1-400):
-interval = 40
+interval = 20
 
 
 f = open("log.txt", "w+")
@@ -25,13 +25,19 @@ def progressSinceLastInterval(file_seq, path, id, packageNr):
     else:
         return
 
+
     progressNew = pandas.read_csv(
         path + "/progress_dump" + file_seq + ".dat", delimiter=';')
 
-    progress = int(progressNew.iloc[id, packageNr]) - \
-        int(progressOld.iloc[id, packageNr])
+    if interval>19:
 
-    return progress
+      progress = int(progressNew.iloc[id, packageNr]) - \
+      int(progressOld.iloc[id, packageNr])
+
+      return progress
+
+    else:
+      return
 
 
 def printTable(coord, progress, storage, file_seq, path):

@@ -4,6 +4,8 @@ import argparse
 import os
 import math
 
+interval = 10
+
 def plotter(file_seq, path):
     
         coord = pandas.read_csv(path+"/graph_dump"+file_seq+".dat", header=None, delimiter=';')
@@ -61,4 +63,5 @@ if __name__ == '__main__':
     # plot each file
     
     for seq in sorted(files):
-        plotter(seq,args.path)
+        if int(seq)%interval== 0:
+          plotter(seq,args.path)
