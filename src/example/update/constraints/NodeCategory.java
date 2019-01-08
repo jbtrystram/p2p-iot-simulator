@@ -11,15 +11,14 @@ import peersim.core.Protocol;
  * </p>
  */
 
-public class NodeDetails implements Protocol {
+public class NodeCategory implements Protocol {
 
     // ------------------------------------------------------------------------
-    // Parameters
+    // Values
     // ------------------------------------------------------------------------
-    //TODO : find a clever way to populate these values.
 
-    private static final String BANDW = "bandwidth";
-    private static final String STORAGE = "storage";
+    public static final int ANTENNA = 0;
+    public static final int CAR = 1;
 
 
     // ------------------------------------------------------------------------
@@ -27,13 +26,7 @@ public class NodeDetails implements Protocol {
     // ------------------------------------------------------------------------
 
     /** node bandwidth coordinates */
-    public final int uplink, downlink;
-
-
-    /** Storage space */
-    public final int totalStorage;
-
-    private int availableStorage;
+    private int type;
 
     String prefix;
     // ------------------------------------------------------------------------
@@ -48,15 +41,24 @@ public class NodeDetails implements Protocol {
      * @param prefix
      *            the configuration prefix for this class.
      */
-    public NodeDetails(String prefix) {
+    public NodeCategory(String prefix) {
         this.prefix = prefix;
 
-        uplink = downlink = Configuration.getInt(prefix + "." +BANDW);
-        totalStorage = availableStorage = Configuration.getInt(prefix + "." +STORAGE);
+        type = -1;
+        //uplink = downlink = Configuration.getInt(prefix + "." +BANDW);
+        //totalStorage = availableStorage = Configuration.getInt(prefix + "." +STORAGE);
     }
 
     public Object clone() {
-            return  new NodeDetails(this.prefix);
+            return  new NodeCategory(this.prefix);
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
     }
 
 }
