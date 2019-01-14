@@ -12,7 +12,7 @@ import peersim.dynamics.NodeInitializer;
 
 import java.util.List;
 
-public class AntennaInitializer implements Control, NodeInitializer {
+public class AntennaInitializer implements Control {
 
     // ------------------------------------------------------------------------
     // Parameters

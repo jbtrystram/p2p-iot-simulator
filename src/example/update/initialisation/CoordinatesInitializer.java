@@ -63,6 +63,9 @@ public class CoordinatesInitializer implements Control {
     // get filename of nodes location
     private static final String NODES_LOCATION_FILENAME_PARAM = "nodes_location_file";
 
+    private static final String NUMBER_OF_ANTENNAS = "antennas_number";
+
+
     // ------------------------------------------------------------------------
     // Fields
     // ------------------------------------------------------------------------
@@ -73,6 +76,7 @@ public class CoordinatesInitializer implements Control {
     private final int minSpeed;
 
     private final String nodeLocationFile;
+    private final int antennaNumber;
 
     private List<String[]> positions;
 
@@ -97,6 +101,8 @@ public class CoordinatesInitializer implements Control {
         minSpeed = Configuration.getInt(prefix + "." + MIN_NODE_SPEED);
 
         nodeLocationFile = Configuration.getString(prefix + "." + NODES_LOCATION_FILENAME_PARAM, null);
+
+        antennaNumber = Configuration.getInt(prefix + "." + NUMBER_OF_ANTENNAS, 0);
 
         if (nodeLocationFile != null ) {
             EasyCSV parser = new EasyCSV(nodeLocationFile);
@@ -146,7 +152,7 @@ public class CoordinatesInitializer implements Control {
     public boolean execute() {
 
 
-        for (int i=0; i<Network.size(); i++){
+        for (int i=antennaNumber; i<Network.size(); i++){
             cache[(int) Network.get(i).getID()] = i;
         }
 

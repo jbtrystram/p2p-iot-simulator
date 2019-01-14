@@ -4,6 +4,7 @@ import example.update.EasyCSV;
 import example.update.NetworkAgent;
 import example.update.NetworkMessage;
 import example.update.SoftwareJob;
+import example.update.constraints.NodeCategory;
 import peersim.config.Configuration;
 import peersim.core.CommonState;
 import peersim.core.Control;
@@ -29,6 +30,8 @@ public class GossipInsert implements Control {
      */
     private static final String GOSSIP_PROTOCOL = "gossip_protocol";
     private static final String NETWORK_PROTOCOL = "network_protocol";
+    private static final String CATEGORY_PROTOCOL = "category_protocol";
+
 
     private static final String FILE = "filename";
     private static final String SIZE = "size";
@@ -43,6 +46,8 @@ public class GossipInsert implements Control {
      */
     private final int gossipPID;
     private final int networkPID;
+    private final int typePID;
+
     private final int dataSize;
     private final String file;
 
@@ -63,6 +68,7 @@ public class GossipInsert implements Control {
 
         gossipPID = Configuration.getPid(prefix + "." + GOSSIP_PROTOCOL);
         networkPID = Configuration.getPid(prefix + "." + NETWORK_PROTOCOL);
+        typePID = Configuration.getPid(prefix + "." + CATEGORY_PROTOCOL);
         file = Configuration.getString(prefix + "." + FILE, null);
         dataSize = Configuration.getInt(prefix + "."+ SIZE, 1000);
 
@@ -102,20 +108,26 @@ public class GossipInsert implements Control {
             long scheduledTime = (long) jobs.keySet().toArray()[i];
 
             if (CommonState.getTime() >= scheduledTime && Network.size() > 0) {
-                Node n = Network.get(0);
 
-                SoftwareJob toInsert = jobs.get(scheduledTime);
+                for (int node = 0; node < Network.size(); i++) {
 
-                NetworkMessage msg = new NetworkMessage(toInsert, n);
+                    Node n = Network.get(node);
+                    if (((NodeCategory) n.getProtocol(typePID)).getType() == NodeCategory.ANTENNA) {
 
-                //trigger gossip
-                EDSimulator.add(70, msg, n, gossipPID);
+                        SoftwareJob toInsert = jobs.get(scheduledTime);
 
-                //fill the data on the node
-                ((NetworkAgent) n.getProtocol(networkPID)).completeJob(toInsert);
-                System.out.println("node " + n.getID() + " is the seed for " + toInsert.name+"  "+toInsert.version);
+                        NetworkMessage msg = new NetworkMessage(toInsert, n);
 
-                jobs.remove(scheduledTime);
+                        //trigger gossip
+                        EDSimulator.add(70, msg, n, gossipPID);
+
+                        //fill the data on the node
+                        ((NetworkAgent) n.getProtocol(networkPID)).completeJob(toInsert);
+                        System.out.println("node " + n.getID() + " is the seed for " + toInsert.name + "  " + toInsert.version);
+
+                        jobs.remove(scheduledTime);
+                    }
+                }
             }
         }
         return false;
