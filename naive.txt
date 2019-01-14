@@ -28,7 +28,7 @@ init.1.min_node_speed 10
 init.2 example.update.initialisation.GossipInitializer
 init.2.gossip_protocol gossip
 init.2.network_protocol p2p_net_agent
-init.2.file_size 250
+init.2.file_size 600
 
 init.3 example.update.initialisation.BandwidthInitializer
 init.3.protocol bandwidth
@@ -102,11 +102,11 @@ protocol.p2p_net_agent.step PROTOCOL_CYCLE
 
 ################ controls ==============================
 
-control.inserter example.update.control.GossipInsert
-control.inserter.gossip_protocol gossip
-control.inserter.network_protocol p2p_net_agent
-control.inserter.size 600
-control.inserter.step CONTROL_CYCLE
+#control.inserter example.update.control.GossipInsert
+#control.inserter.gossip_protocol gossip
+#control.inserter.network_protocol p2p_net_agent
+#control.inserter.size 600
+#control.inserter.step CONTROL_CYCLE
 
 control.mover example.update.control.NodeMover
 control.mover.coord_protocol localisation
